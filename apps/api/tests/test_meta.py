@@ -53,10 +53,9 @@ def test_error_handler_tahan_objek_yang_tidak_bisa_di_json():
     import asyncio
     import json
 
-    from pydantic import BaseModel, ValidationError, field_validator
-
     from app.core.errors import AppError, app_error_handler, validation_error_handler
     from fastapi.exceptions import RequestValidationError
+    from pydantic import BaseModel, ValidationError, field_validator
 
     class Contoh(BaseModel):
         n: int
