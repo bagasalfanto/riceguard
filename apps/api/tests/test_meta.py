@@ -1,0 +1,69 @@
+"""GET /meta/years dan format error seragam."""
+from app.core.cache import ResponseCache
+
+
+def test_health_tanpa_database():
+    from fastapi.testclient import TestClient
+
+    from app.main import app
+
+    with TestClient(app) as c:
+        assert c.get("/health").json() == {"status": "ok"}
+
+
+def test_meta_years_memuat_versi_published(client):
+    r = client.get("/api/v1/meta/years")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["jumlah_tahun"] >= 1
+    assert body["tahun_terbaru"] == 2025
+    assert body["butuh_minimal_2_tahun"] is (body["jumlah_tahun"] < 2)
+    pertama = body["tahun"][0]
+    assert set(pertama) == {"tahun", "version_id", "version_no", "published_at"}
+
+
+def test_docs_tersedia(client):
+    assert client.get("/openapi.json").status_code == 200
+
+
+def test_format_error_seragam():
+    """Handler error langsung: format sama untuk AppError dan error validasi Pydantic."""
+    import asyncio
+    import json
+
+    from fastapi.exceptions import RequestValidationError
+
+    from app.core.errors import AppError, app_error_handler, validation_error_handler
+
+    async def jalankan(handler, exc):
+        return await handler(None, exc)
+
+    r = asyncio.run(jalankan(app_error_handler, AppError("NO_PUBLISHED_VERSION", 404, "kosong", {"tahun": 2019})))
+    body = json.loads(r.body)
+    assert r.status_code == 404
+    assert body == {"error": {"code": "NO_PUBLISHED_VERSION", "message": "kosong", "details": {"tahun": 2019}}}
+
+    r = asyncio.run(jalankan(validation_error_handler, RequestValidationError([])))
+    body = json.loads(r.body)
+    assert r.status_code == 400
+    assert body["error"]["code"] == "INVALID_PARAMS"
+    assert set(body["error"]) == {"code", "message", "details"}
+
+
+def test_cache_hit_dan_invalidasi():
+    cache = ResponseCache()
+    cache.set(("a", "v1", "x=1"), {"nilai": 1})
+
+    assert cache.get(("a", "v1", "x=1")) == {"nilai": 1}
+    assert cache.get(("a", "v2", "x=1")) is None
+
+    cache.set(("b", "v1", ""), {"nilai": 2})
+    cache.clear_version("v1")
+    assert cache.get(("a", "v1", "x=1")) is None
+    assert cache.get(("b", "v1", "")) is None
+
+
+def test_cache_kedaluwarsa():
+    cache = ResponseCache(ttl=0)
+    cache.set(("a", "v1", ""), 1)
+    assert cache.get(("a", "v1", "")) is None
