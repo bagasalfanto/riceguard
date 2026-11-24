@@ -48,6 +48,43 @@ def test_format_error_seragam():
     assert set(body["error"]) == {"code", "message", "details"}
 
 
+def test_error_handler_tahan_objek_yang_tidak_bisa_di_json():
+    """Validator kustom menaruh ValueError di ctx. Tanpa penyaringan ini jadi 500, bukan 400."""
+    import asyncio
+    import json
+
+    from pydantic import BaseModel, ValidationError, field_validator
+
+    from app.core.errors import AppError, app_error_handler, validation_error_handler
+    from fastapi.exceptions import RequestValidationError
+
+    class Contoh(BaseModel):
+        n: int
+
+        @field_validator("n")
+        @classmethod
+        def selalu_gagal(cls, v: int) -> int:
+            raise ValueError("gagal di validator")
+
+    try:
+        Contoh(n=1)
+    except ValidationError as err:
+        galat = err.errors()
+    assert isinstance(galat[0]["ctx"]["error"], ValueError)
+
+    async def jalankan(handler, exc):
+        return await handler(None, exc)
+
+    r = asyncio.run(jalankan(validation_error_handler, RequestValidationError(galat)))
+    body = json.loads(r.body)
+    assert r.status_code == 400
+    assert body["error"]["details"][0]["ctx"]["error"] == "gagal di validator"
+    assert body["error"]["details"][0]["loc"] == ["n"]
+
+    r = asyncio.run(jalankan(app_error_handler, AppError("X", 409, "detail aneh", {"err": ValueError("boom")})))
+    assert json.loads(r.body)["error"]["details"] == {"err": "boom"}
+
+
 def test_cache_hit_dan_invalidasi():
     cache = ResponseCache()
     cache.set(("a", "v1", "x=1"), {"nilai": 1})
