@@ -1,0 +1,245 @@
+[
+  {
+    "urutan":1,
+    "dari_kode":"32",
+    "dari":"Jawa Barat",
+    "ke_kode":"31",
+    "ke":"DKI Jakarta",
+    "ton":863504.3199999999,
+    "jarak_km":116.8
+  },
+  {
+    "urutan":2,
+    "dari_kode":"13",
+    "dari":"Sumatera Barat",
+    "ke_kode":"14",
+    "ke":"Riau",
+    "ton":252356.09,
+    "jarak_km":212.8
+  },
+  {
+    "urutan":3,
+    "dari_kode":"12",
+    "dari":"Sumatera Utara",
+    "ke_kode":"14",
+    "ke":"Riau",
+    "ton":115719.38,
+    "jarak_km":358.9
+  },
+  {
+    "urutan":4,
+    "dari_kode":"16",
+    "dari":"Sumatera Selatan",
+    "ke_kode":"14",
+    "ke":"Riau",
+    "ton":59850.04,
+    "jarak_km":489.7
+  },
+  {
+    "urutan":5,
+    "dari_kode":"16",
+    "dari":"Sumatera Selatan",
+    "ke_kode":"21",
+    "ke":"Kepulauan Riau",
+    "ton":168680.16,
+    "jarak_km":539.7
+  },
+  {
+    "urutan":6,
+    "dari_kode":"76",
+    "dari":"Sulawesi Barat",
+    "ke_kode":"64",
+    "ke":"Kalimantan Timur",
+    "ton":63524.33,
+    "jarak_km":457.3
+  },
+  {
+    "urutan":7,
+    "dari_kode":"63",
+    "dari":"Kalimantan Selatan",
+    "ke_kode":"64",
+    "ke":"Kalimantan Timur",
+    "ton":87579.21,
+    "jarak_km":473.4
+  },
+  {
+    "urutan":8,
+    "dari_kode":"52",
+    "dari":"Nusa Tenggara Barat",
+    "ke_kode":"51",
+    "ke":"Bali",
+    "ton":138476.6,
+    "jarak_km":262.6
+  },
+  {
+    "urutan":9,
+    "dari_kode":"75",
+    "dari":"Gorontalo",
+    "ke_kode":"71",
+    "ke":"Sulawesi Utara",
+    "ton":29420.52,
+    "jarak_km":247.1
+  },
+  {
+    "urutan":10,
+    "dari_kode":"72",
+    "dari":"Sulawesi Tengah",
+    "ke_kode":"71",
+    "ke":"Sulawesi Utara",
+    "ton":92000.37,
+    "jarak_km":447.4
+  },
+  {
+    "urutan":11,
+    "dari_kode":"32",
+    "dari":"Jawa Barat",
+    "ke_kode":"36",
+    "ke":"Banten",
+    "ton":119552.94,
+    "jarak_km":172.9
+  },
+  {
+    "urutan":12,
+    "dari_kode":"74",
+    "dari":"Sulawesi Tenggara",
+    "ke_kode":"81",
+    "ke":"Maluku",
+    "ton":108348.95,
+    "jarak_km":863.5
+  },
+  {
+    "urutan":13,
+    "dari_kode":"72",
+    "dari":"Sulawesi Tengah",
+    "ke_kode":"82",
+    "ke":"Maluku Utara",
+    "ton":102718.17,
+    "jarak_km":717.6
+  },
+  {
+    "urutan":14,
+    "dari_kode":"16",
+    "dari":"Sumatera Selatan",
+    "ke_kode":"15",
+    "ke":"Jambi",
+    "ton":96174.88,
+    "jarak_km":233.3
+  },
+  {
+    "urutan":15,
+    "dari_kode":"16",
+    "dari":"Sumatera Selatan",
+    "ke_kode":"19",
+    "ke":"Kepulauan Bangka Belitung",
+    "ton":87628.67,
+    "jarak_km":278.2
+  },
+  {
+    "urutan":16,
+    "dari_kode":"95",
+    "dari":"Papua Selatan",
+    "ke_kode":"96",
+    "ke":"Papua Tengah",
+    "ton":85668.67,
+    "jarak_km":445.7
+  },
+  {
+    "urutan":17,
+    "dari_kode":"95",
+    "dari":"Papua Selatan",
+    "ke_kode":"94",
+    "ke":"Papua",
+    "ton":73097.51,
+    "jarak_km":465.5
+  },
+  {
+    "urutan":18,
+    "dari_kode":"52",
+    "dari":"Nusa Tenggara Barat",
+    "ke_kode":"53",
+    "ke":"Nusa Tenggara Timur",
+    "ton":71611.89,
+    "jarak_km":518.6
+  },
+  {
+    "urutan":19,
+    "dari_kode":"95",
+    "dari":"Papua Selatan",
+    "ke_kode":"97",
+    "ke":"Papua Pegunungan",
+    "ton":11645.34,
+    "jarak_km":268.1
+  },
+  {
+    "urutan":20,
+    "dari_kode":"74",
+    "dari":"Sulawesi Tenggara",
+    "ke_kode":"97",
+    "ke":"Papua Pegunungan",
+    "ton":9677.49,
+    "jarak_km":1932.3
+  },
+  {
+    "urutan":21,
+    "dari_kode":"72",
+    "dari":"Sulawesi Tengah",
+    "ke_kode":"97",
+    "ke":"Papua Pegunungan",
+    "ton":31235.4,
+    "jarak_km":2063.4
+  },
+  {
+    "urutan":22,
+    "dari_kode":"73",
+    "dari":"Sulawesi Selatan",
+    "ke_kode":"97",
+    "ke":"Papua Pegunungan",
+    "ton":12494.62,
+    "jarak_km":2145.8
+  },
+  {
+    "urutan":23,
+    "dari_kode":"73",
+    "dari":"Sulawesi Selatan",
+    "ke_kode":"92",
+    "ke":"Papua Barat Daya",
+    "ton":48500.83,
+    "jarak_km":1341.9
+  },
+  {
+    "urutan":24,
+    "dari_kode":"63",
+    "dari":"Kalimantan Selatan",
+    "ke_kode":"62",
+    "ke":"Kalimantan Tengah",
+    "ton":43437.19,
+    "jarak_km":261.5
+  },
+  {
+    "urutan":25,
+    "dari_kode":"16",
+    "dari":"Sumatera Selatan",
+    "ke_kode":"17",
+    "ke":"Bengkulu",
+    "ton":42504.01,
+    "jarak_km":206.5
+  },
+  {
+    "urutan":26,
+    "dari_kode":"73",
+    "dari":"Sulawesi Selatan",
+    "ke_kode":"91",
+    "ke":"Papua Barat",
+    "ton":37744.5,
+    "jarak_km":1502.3
+  },
+  {
+    "urutan":27,
+    "dari_kode":"63",
+    "dari":"Kalimantan Selatan",
+    "ke_kode":"65",
+    "ke":"Kalimantan Utara",
+    "ton":36036.4,
+    "jarak_km":728.7
+  }
+]
