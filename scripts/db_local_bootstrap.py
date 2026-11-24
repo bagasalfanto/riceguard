@@ -5,14 +5,24 @@ Argumen: port, nama_database, path_file_sql.
 """
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
 import psycopg
 
+NAMA_DATABASE_VALID = re.compile(r"^[a-z_][a-z0-9_]{0,62}$")
+
 
 def main() -> int:
     port, database, sql_path = sys.argv[1], sys.argv[2], sys.argv[3]
+    if not NAMA_DATABASE_VALID.match(database):
+        print(f"nama database tidak valid: {database!r}")
+        return 2
+    if not port.isdigit():
+        print(f"port tidak valid: {port!r}")
+        return 2
+
     koneksi = f"host=127.0.0.1 port={port} user=postgres"
     sql = Path(sql_path).read_text(encoding="utf-8")
 
