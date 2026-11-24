@@ -1,4 +1,4 @@
-"""CLI tipis: rekomendasi distribusi dari dataset_v1.csv. Logika ada di paket riceguard_calc.
+﻿"""CLI tipis: rekomendasi distribusi dari dataset_v1.csv. Logika ada di paket riceguard_calc.
 
 Jalankan dari folder repo:  python dataset/scripts/matching.py
 Output: dataset/rekomendasi_distribusi_v1.csv dan dataset/data/distribution.json
@@ -12,7 +12,8 @@ _SRC = Path(__file__).resolve().parents[2] / "packages" / "riceguard_calc" / "sr
 if _SRC.is_dir() and str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from riceguard_calc.matching import haversine_km, match as rekomendasi_distribusi  # noqa: E402,F401
+from riceguard_calc.matching import haversine_km  # noqa: E402,F401
+from riceguard_calc.matching import match as rekomendasi_distribusi  # noqa: E402
 
 BASE = Path(__file__).resolve().parent.parent
 

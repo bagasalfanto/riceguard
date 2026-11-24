@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from typing import Annotated
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
@@ -11,7 +11,7 @@ router = APIRouter(tags=["meta"])
 
 
 @router.get("/meta/years", response_model=MetaYears)
-def meta_years(db: Session = Depends(get_db)) -> MetaYears:
+def meta_years(db: Annotated[Session, Depends(get_db)]) -> MetaYears:
     versi = list_published_years(db)
     daftar = [
         TahunPublished(

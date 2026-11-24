@@ -4,16 +4,23 @@ Idempoten: kalau tahun itu sudah punya versi published, tidak menulis apa pun.
 """
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
 from pathlib import Path
 
 import pandas as pd
+from riceguard_calc import (
+    build,
+    match,
+    parse_konsumsi,
+    parse_penduduk,
+    parse_produksi,
+    parse_referensi,
+    total_indonesia,
+)
 from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
-
-from riceguard_calc import build, match, parse_konsumsi, parse_penduduk, parse_produksi, parse_referensi, total_indonesia
 
 from app.db.models import (
     DatasetVersion,
@@ -100,7 +107,7 @@ def seed(db: Session, tahun: int = TAHUN_SEED) -> dict:
             "konsumsi": f"konsumsi_bapanas_{tahun}.csv",
             "referensi": "provinces-reference-serlin.csv",
         },
-        published_at=datetime.now(timezone.utc),
+        published_at=datetime.now(UTC),
     )
     db.add(versi)
     db.flush()

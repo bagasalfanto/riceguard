@@ -3,9 +3,8 @@ from app.core.cache import ResponseCache
 
 
 def test_health_tanpa_database():
-    from fastapi.testclient import TestClient
-
     from app.main import app
+    from fastapi.testclient import TestClient
 
     with TestClient(app) as c:
         assert c.get("/health").json() == {"status": "ok"}
@@ -31,9 +30,8 @@ def test_format_error_seragam():
     import asyncio
     import json
 
-    from fastapi.exceptions import RequestValidationError
-
     from app.core.errors import AppError, app_error_handler, validation_error_handler
+    from fastapi.exceptions import RequestValidationError
 
     async def jalankan(handler, exc):
         return await handler(None, exc)

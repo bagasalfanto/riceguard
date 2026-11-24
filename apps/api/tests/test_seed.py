@@ -1,8 +1,7 @@
 """Seed 2025: angka harus sama dengan dataset_v1.csv dan rekomendasi_distribusi_v1.csv."""
-from sqlalchemy import delete, select
-
 from app.db.models import DatasetVersion, DistributionRecommendation, Province, ProvinceStat
 from app.services.seed import seed
+from sqlalchemy import select
 
 
 def _kosongkan_tahun(db, tahun=2025):

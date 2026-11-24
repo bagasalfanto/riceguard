@@ -31,12 +31,11 @@ def _skema_ada(engine):
 @pytest.fixture(scope="session", autouse=True)
 def _ada_versi_published(_skema_ada):
     """Pastikan ada versi 2025 published supaya endpoint publik bisa diuji."""
-    from sqlalchemy import select
-    from sqlalchemy.orm import Session
-
     from app.db.models import DatasetVersion
     from app.db.session import get_engine
     from app.services.seed import seed
+    from sqlalchemy import select
+    from sqlalchemy.orm import Session
 
     with Session(get_engine()) as db:
         ada = db.scalars(
@@ -63,10 +62,9 @@ def db(engine):
 
 @pytest.fixture
 def client(db):
-    from fastapi.testclient import TestClient
-
     from app.db.session import get_db
     from app.main import app
+    from fastapi.testclient import TestClient
 
     app.dependency_overrides[get_db] = lambda: db
     with TestClient(app) as c:

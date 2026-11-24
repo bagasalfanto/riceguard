@@ -178,7 +178,8 @@ Tidak ada fitur produk di wave ini. Tidak ada endpoint fitur selain `health` dan
 - `apps/api/tests/conftest.py`: `TestClient`, fixture DB transaksional yang di-rollback.
 
 **Acceptance**
-- `GET /api/v1/meta/years` → `[{"tahun": 2025, "version_id": "...", "version_no": 1, "published_at": "..."}]`.
+- `GET /api/v1/meta/years` → `{"tahun": [{"tahun": 2025, "version_id": "...", "version_no": 1, "published_at": "..."}], "jumlah_tahun": 1, "butuh_minimal_2_tahun": true, "tahun_terbaru": 2025}`.
+  (Objek, bukan array telanjang, karena T1.3 menambahkan field di level atas.)
 - `GET /api/v1/provinces?tahun=2019` → 404 body `{"error": {"code": "NO_PUBLISHED_VERSION", ...}}`.
 - `GET /docs` menampilkan OpenAPI.
 
