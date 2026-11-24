@@ -44,12 +44,20 @@ tiap tiket di file ini dipindah jadi GitHub issue apa adanya (judul + body + edg
 
 | # | Blocker | Kenapa | Jalan keluar |
 | --- | --- | --- | --- |
-| B1 | `DATABASE_URL` (connection string pooler + password DB) | Migrasi dan seed butuh DDL; publishable key tidak bisa menulis | Ambil di Supabase → Project Settings → Database → Connection string (Session pooler, port 5432/6543) |
-| B2 | `SUPABASE_SERVICE_ROLE_KEY` / secret key (`sb_secret_...`) | Upload file mentah ke bucket privat `raw-uploads` (T10.4) dan baca ulang (T8.4) | Project Settings → API keys → secret key |
-| B3 | MCP Supabase tidak tersedia di sesi ini | Hanya ada MCP `context7` dan `stitch` | Pakai `psql`/`supabase db push` dengan B1; atau tambahkan MCP server supabase lalu restart opencode |
+| B1 | `DATABASE_URL` (connection string pooler + password DB) | Migrasi dan seed butuh DDL; publishable key tidak bisa menulis | Ambil di Supabase → Project Settings → Database → Connection string (Session pooler). Isi `apps/api/.env`, lalu jalankan migrasi + seed. |
+| B2 | `SUPABASE_SERVICE_ROLE_KEY` / secret key (`sb_secret_...`) | Upload file mentah ke bucket privat `raw-uploads` (T10.4) dan baca ulang (T8.4) | Project Settings → API keys → secret key. Baru dibutuhkan saat wave 10. |
+| B3 | MCP Supabase tidak tersedia di sesi agent | Hanya ada MCP `context7` dan `stitch` | Sudah diakali: wave 0 diverifikasi pada Postgres 16 lokal. Migrasi tetap SQL murni sehingga tinggal dijalankan ke Supabase. |
 | B4 | `gh` CLI tidak terpasang | Tiket lokal, bukan GitHub issue | `winget install GitHub.cli` lalu `gh auth login` |
 | B5 | `dataset/geo/provinsi-38.min.geojson` belum ada | Wave 3 tidak bisa mengecek "tidak ada provinsi abu-abu" | Minta file GeoJSON dari P3 |
 | B6 | `luas_km2` belum ada di dataset | Layer kepadatan penduduk (T3.3) | Pakai luas BPS, atau hitung dari poligon GeoJSON (pertanyaan terbuka PRD #2) |
+
+## Status wave
+
+| Wave | Status | Catatan |
+| --- | --- | --- |
+| 0 | Selesai | Diverifikasi pada Postgres 16 lokal: migrasi idempoten, seed 38 provinsi / 27 rekomendasi, 40 tes hijau, build FE 148 kB gzip, smoke test 4 lebar layar tanpa error konsol. Tinggal mengisi `DATABASE_URL` Supabase dan menjalankan dua file SQL. |
+| 1–10 | Belum mulai | |
+
 
 ## Keputusan yang sudah dikunci untuk semua tiket
 
