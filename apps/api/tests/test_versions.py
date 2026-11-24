@@ -44,6 +44,24 @@ def test_version_id_dihormati_untuk_admin(db):
     assert versi.id == draft.id
 
 
+@pytest.mark.parametrize("buruk", ["bukan-uuid", "../../etc/passwd", "1' or '1'='1", "0" * 40])
+def test_version_id_bukan_uuid_ditolak_tanpa_menyentuh_database(db, buruk):
+    """Nilai non-UUID tidak boleh sampai ke Postgres: DataError akan membatalkan transaksi."""
+    with pytest.raises(AppError) as err:
+        resolve_for_read(db, tahun=2025, version_id=buruk, admin=object())
+    assert err.value.status_code == 404
+    assert err.value.code == "NOT_FOUND"
+
+    # Sesi masih sehat: query berikutnya harus jalan, bukan InFailedSqlTransaction.
+    assert resolve_published(db, 2025).status == "published"
+
+
+def test_version_id_uuid_tapi_tidak_ada(db):
+    with pytest.raises(AppError) as err:
+        resolve_for_read(db, tahun=2025, version_id="00000000-0000-4000-8000-000000000000", admin=object())
+    assert err.value.status_code == 404
+
+
 def test_hanya_satu_published_per_tahun(db):
     dari_db = db.scalars(
         select(DatasetVersion).where(DatasetVersion.tahun == 2025, DatasetVersion.status == "published")
