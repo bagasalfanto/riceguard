@@ -1,0 +1,39 @@
+Aceh | 1.615.200,00 | 930.489,00
+Sumatera Utara | 2.752.655,00 | 1.578.968,00
+Sumatera Barat | 1.382.697,00 | 800.613,00
+Riau | 232.071,00 | 133.187,00
+Jambi | 367.791,00 | 212.757,00
+Sumatera Selatan | 3.627.022,00 | 2.082.836,00
+Bengkulu | 266.567,00 | 153.533,00
+Lampung | 3.252.627,00 | 1.869.782,00
+Kepulauan Bangka Belitung | 64.304,00 | 38.115,00
+Kepulauan Riau | 688,00 | 394,00
+DKI Jakarta | 1.487,00 | 877,00
+Jawa Barat | 10.226.654,00 | 5.905.710,00
+Jawa Tengah | 9.304.063,00 | 5.350.386,00
+DI Yogyakarta | 547.510,00 | 311.000,00
+Jawa Timur | 10.438.361,00 | 6.027.320,00
+Banten | 1.774.017,00 | 1.010.357,00
+Bali | 587.866,00 | 331.531,00
+Nusa Tenggara Barat | 1.708.619,00 | 973.144,00
+Nusa Tenggara Timur | 968.324,00 | 567.178,00
+Kalimantan Barat | 757.829,00 | 448.325,00
+Kalimantan Tengah | 333.429,00 | 198.061,00
+Kalimantan Selatan | 1.179.338,00 | 697.788,00
+Kalimantan Timur | 270.867,00 | 157.555,00
+Kalimantan Utara | 38.038,00 | 22.550,00
+Sulawesi Utara | 265.112,00 | 148.975,00
+Sulawesi Tengah | 920.086,00 | 543.107,00
+Sulawesi Selatan | 5.466.592,00 | 3.136.929,00
+Sulawesi Tenggara | 680.820,00 | 390.981,00
+Gorontalo | 281.171,00 | 156.995,00
+Sulawesi Barat | 386.084,00 | 221.738,00
+Maluku | 103.819,00 | 58.139,00
+Maluku Utara | 22.642,00 | 12.670,00
+Papua Barat | 13.366,00 | 8.031,00
+Papua Barat Daya | 830,00 | 499,00
+Papua | 1.859,00 | 1.061,00
+Papua Selatan | 362.542,00 | 207.007,00
+Papua Tengah | 3.805,00 | 2.173,00
+Papua Pegunungan | 346,00 | 198,00
+Indonesia | 60.207.101,00 | 34.690.959,00

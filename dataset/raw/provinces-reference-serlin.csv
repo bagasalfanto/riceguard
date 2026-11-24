@@ -1,0 +1,39 @@
+kode_bps,kode_kemendagri,provinsi,pulau,lat,lng
+"11","11","Aceh","Sumatera",4.2257,96.9119
+"12","12","Sumatera Utara","Sumatera",2.1884,99.0581
+"13","13","Sumatera Barat","Sumatera",-0.8485,100.4654
+"14","14","Riau","Sumatera",0.5087,101.815
+"15","15","Jambi","Sumatera",-1.6988,102.7159
+"16","16","Sumatera Selatan","Sumatera",-3.2127,104.1703
+"17","17","Bengkulu","Sumatera",-3.5563,102.3425
+"18","18","Lampung","Sumatera",-4.9173,105.0217
+"19","19","Kepulauan Bangka Belitung","Sumatera",-2.4499,106.5561
+"21","21","Kepulauan Riau","Sumatera",1.481,105.4049
+"31","31","DKI Jakarta","Jawa",-6.199,106.8344
+"32","32","Jawa Barat","Jawa",-6.9206,107.6033
+"33","33","Jawa Tengah","Jawa",-7.2594,110.2015
+"34","34","Daerah Istimewa Yogyakarta","Jawa",-7.8949,110.4456
+"35","35","Jawa Timur","Jawa",-7.7194,112.7324
+"36","36","Banten","Jawa",-6.4561,106.109
+"51","51","Bali","Bali & Nusa Tenggara",-8.3698,115.1317
+"52","52","Nusa Tenggara Barat","Bali & Nusa Tenggara",-8.6066,117.5076
+"53","53","Nusa Tenggara Timur","Bali & Nusa Tenggara",-9.2604,122.1818
+"61","61","Kalimantan Barat","Kalimantan",-0.0865,111.1208
+"62","62","Kalimantan Tengah","Kalimantan",-1.6062,113.4163
+"63","63","Kalimantan Selatan","Kalimantan",-3.4843,114.8339
+"64","64","Kalimantan Timur","Kalimantan",0.4547,116.4509
+"65","65","Kalimantan Utara","Kalimantan",2.915,116.2457
+"71","71","Sulawesi Utara","Sulawesi",1.2611,124.5227
+"72","72","Sulawesi Tengah","Sulawesi",-1.0179,121.2069
+"73","73","Sulawesi Selatan","Sulawesi",-3.7341,120.1611
+"74","74","Sulawesi Tenggara","Sulawesi",-4.1365,122.0746
+"75","75","Gorontalo","Sulawesi",0.6863,122.3757
+"76","76","Sulawesi Barat","Sulawesi",-2.4656,119.3474
+"81","81","Maluku","Maluku",-4.7381,129.8402
+"82","82","Maluku Utara","Maluku",0.2116,127.5421
+"91","92","Papua Barat","Papua",-2.654,133.6495
+"92","96","Papua Barat Daya","Papua",-1.1238,131.9547
+"94","91","Papua","Papua",-2.6179,138.5322
+"95","93","Papua Selatan","Papua",-6.6801,139.547
+"96","94","Papua Tengah","Papua",-3.9033,136.6442
+"97","95","Papua Pegunungan","Papua",-4.2694,139.4986
