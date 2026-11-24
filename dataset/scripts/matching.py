@@ -1,4 +1,4 @@
-﻿"""CLI tipis: rekomendasi distribusi dari dataset_v1.csv. Logika ada di paket riceguard_calc.
+"""CLI tipis: rekomendasi distribusi dari dataset_v1.csv. Logika ada di paket riceguard_calc.
 
 Jalankan dari folder repo:  python dataset/scripts/matching.py
 Output: dataset/rekomendasi_distribusi_v1.csv dan dataset/data/distribution.json
