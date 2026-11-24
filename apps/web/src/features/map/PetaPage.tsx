@@ -83,7 +83,7 @@ export function PetaPage() {
   const statusFilter = parseStatusParam(searchParams.get("status"))
   const pulauFilter = searchParams.get("pulau") ?? ""
 
-  const [basemap, setBasemap] = useState<BasemapId>("auto")
+  const [basemap, setBasemap] = useState<BasemapId>("satellite")
   const [showCentroidLabels, setShowCentroidLabels] = useState(false)
   const [focusTarget, setFocusTarget] = useState<MapFocusTarget | null>(null)
 
@@ -297,11 +297,11 @@ export function PetaPage() {
                     onChange={(e) => setBasemap(e.target.value as BasemapId)}
                     value={basemap}
                   >
-                    <option value="auto">Otomatis (Ikut Tema)</option>
-                    <option value="positron">CARTO Positron (Terang)</option>
-                    <option value="dark">CARTO Dark Matter (Gelap)</option>
-                    <option value="osm">OpenStreetMap</option>
                     <option value="satellite">Esri Satelit</option>
+                    <option value="auto">Otomatis (Ikut Tema)</option>
+                    <option value="esri-light">Esri Light Gray</option>
+                    <option value="esri-dark">Esri Dark Gray</option>
+                    <option value="osm">OpenStreetMap</option>
                     <option value="minimal">Canvas Polos</option>
                   </select>
                 </label>

@@ -12,7 +12,7 @@ import { formatAngka } from "@/lib/format"
 import { SEMUA_STATUS, tampilanStatus, type StatusProvinsi } from "@/lib/status"
 
 export type MapLayerId = "status" | "produksi" | "kebutuhan" | "kepadatan"
-export type BasemapId = "auto" | "positron" | "dark" | "osm" | "satellite" | "minimal"
+export type BasemapId = "auto" | "esri-light" | "esri-dark" | "osm" | "satellite" | "minimal"
 
 export interface ProvinceRecord {
   tahun: number

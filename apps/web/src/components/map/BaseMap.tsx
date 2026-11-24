@@ -22,17 +22,15 @@ type TileSpec = {
 }
 
 const TILE_SPECS: Record<Exclude<BasemapId, "auto" | "minimal">, TileSpec> = {
-  positron: {
-    url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    maxZoom: 19,
+  "esri-light": {
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+    attribution: "&copy; Esri &mdash; Light Gray Canvas",
+    maxZoom: 16,
   },
-  dark: {
-    url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    maxZoom: 19,
+  "esri-dark": {
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+    attribution: "&copy; Esri &mdash; Dark Gray Canvas",
+    maxZoom: 16,
   },
   osm: {
     url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -115,7 +113,7 @@ export interface BaseMapProps {
 }
 
 export function BaseMap({
-  basemap = "auto",
+  basemap = "satellite",
   focusTarget = null,
   ariaLabel = "Peta interaktif keseimbangan beras 38 provinsi Indonesia",
   className = "h-[520px] w-full",
@@ -126,7 +124,7 @@ export function BaseMap({
   const { tema } = useTema()
 
   const resolvedBasemap: Exclude<BasemapId, "auto"> =
-    basemap === "auto" ? (tema === "gelap" ? "dark" : "positron") : basemap
+    basemap === "auto" ? (tema === "gelap" ? "esri-dark" : "esri-light") : basemap
 
   const tileSpec = resolvedBasemap === "minimal" ? null : TILE_SPECS[resolvedBasemap]
 
