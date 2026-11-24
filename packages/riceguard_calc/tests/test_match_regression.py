@@ -3,7 +3,6 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
-
 from riceguard_calc import build, match, parse_konsumsi, parse_penduduk, parse_produksi, parse_referensi
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -47,7 +46,7 @@ def test_urutan_dan_pasangan_sama(rekomendasi, acuan):
 
 
 def test_ton_dan_jarak_sama(rekomendasi, acuan):
-    for r, a in zip(rekomendasi, acuan.itertuples()):
+    for r, a in zip(rekomendasi, acuan.itertuples(), strict=True):
         assert r["ton"] == pytest.approx(a.ton, abs=0.01)
         assert r["jarak_km"] == pytest.approx(a.jarak_km, abs=0.05)
 

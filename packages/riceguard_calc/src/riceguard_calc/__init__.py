@@ -1,7 +1,6 @@
 """Rumus dan algoritma RiceGuard. Satu-satunya tempat rumus hidup."""
 
 from riceguard_calc.build import KOLOM, build, klasifikasi
-from riceguard_calc.matching import haversine_km, match
 from riceguard_calc.ingest import (
     ALIAS_NAMA_BPS,
     parse_konsumsi,
@@ -10,6 +9,7 @@ from riceguard_calc.ingest import (
     parse_referensi,
     total_indonesia,
 )
+from riceguard_calc.matching import haversine_km, match
 
 __all__ = [
     "KOLOM",

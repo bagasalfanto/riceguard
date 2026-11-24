@@ -69,7 +69,7 @@ def build(
     df["rasio_swasembada"] = df["produksi_beras_ton"] / df["kebutuhan_beras_ton"]
     df["status"] = [
         klasifikasi(r, b, ambang)
-        for r, b in zip(df["rasio_swasembada"], df["rice_balance_ton"])
+        for r, b in zip(df["rasio_swasembada"], df["rice_balance_ton"], strict=True)
     ]
     df.insert(0, "tahun", tahun)
 

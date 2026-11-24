@@ -3,7 +3,6 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
-
 from riceguard_calc import build, parse_konsumsi, parse_penduduk, parse_produksi, parse_referensi
 
 ROOT = Path(__file__).resolve().parents[3]

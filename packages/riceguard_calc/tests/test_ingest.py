@@ -3,7 +3,6 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
-
 from riceguard_calc import ALIAS_NAMA_BPS, parse_konsumsi, parse_penduduk, parse_produksi, total_indonesia
 from riceguard_calc.ingest import angka_id
 
@@ -17,14 +16,14 @@ def test_angka_id_membaca_format_indonesia():
 
 
 def test_parse_produksi_dari_bytes():
-    isi = "Aceh | 1.615.200,00 | 930.489,00\nIndonesia | 34.690.959,00 | 19.000.000,00\n".encode()
+    isi = b"Aceh | 1.615.200,00 | 930.489,00\nIndonesia | 34.690.959,00 | 19.000.000,00\n"
     df = parse_produksi(isi)
     assert list(df.columns) == ["provinsi", "produksi_padi_ton_gkg", "produksi_beras_ton"]
     assert df.loc[df["provinsi"] == "Aceh", "produksi_beras_ton"].iloc[0] == 930_489.0
 
 
 def test_alias_di_yogyakarta_dipetakan():
-    isi = "DI Yogyakarta | 1.000,00 | 500,00\n".encode()
+    isi = b"DI Yogyakarta | 1.000,00 | 500,00\n"
     df = parse_produksi(isi)
     assert df["provinsi"].iloc[0] == ALIAS_NAMA_BPS["DI Yogyakarta"]
     assert df["provinsi"].iloc[0] == "Daerah Istimewa Yogyakarta"
