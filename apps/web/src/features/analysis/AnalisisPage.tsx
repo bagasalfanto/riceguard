@@ -1,4 +1,4 @@
-﻿import { BelumTersedia, HalamanFitur } from "@/components/common/HalamanFitur"
+import { BelumTersedia, HalamanFitur } from "@/components/common/HalamanFitur"
 
 export function AnalisisPage() {
   return (

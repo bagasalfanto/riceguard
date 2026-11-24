@@ -1,4 +1,4 @@
-﻿import { FileDown, Menu, Moon, Sprout, Sun } from "lucide-react"
+import { FileDown, Menu, Moon, Sprout, Sun } from "lucide-react"
 import { Link, NavLink } from "react-router-dom"
 
 import { Button } from "@/components/ui/button"

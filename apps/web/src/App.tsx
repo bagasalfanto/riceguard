@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
+import { Toaster } from "@/components/ui/sonner"
 import { Router } from "@/router"
 import { TemaProvider } from "@/hooks/useTema"
 
@@ -19,6 +20,7 @@ export function App() {
     <QueryClientProvider client={queryClient}>
       <TemaProvider>
         <Router />
+        <Toaster />
       </TemaProvider>
     </QueryClientProvider>
   )

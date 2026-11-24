@@ -1,4 +1,4 @@
-﻿import { useQuery } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 import { CalendarDays } from "lucide-react"
 
 import { apiGet } from "@/lib/api"
