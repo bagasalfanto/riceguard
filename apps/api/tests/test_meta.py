@@ -101,3 +101,14 @@ def test_cache_kedaluwarsa():
     cache = ResponseCache(ttl=0)
     cache.set(("a", "v1", ""), 1)
     assert cache.get(("a", "v1", "")) is None
+
+
+def test_cache_dibatasi_ukuran():
+    """Kunci cache memuat query string klien, jadi jumlah entri harus dibatasi."""
+    cache = ResponseCache(maks_entri=3)
+    for i in range(10):
+        cache.set(("provinces", "v1", f"q={i}"), i)
+
+    assert len(cache) == 3
+    assert cache.get(("provinces", "v1", "q=9")) == 9
+    assert cache.get(("provinces", "v1", "q=0")) is None
