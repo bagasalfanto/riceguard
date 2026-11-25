@@ -39,24 +39,29 @@ tiap tiket di file ini dipindah jadi GitHub issue apa adanya (judul + body + edg
 | 8 | 8. Data Management & Transparency (§5.8) | `wave-8-data-transparency.md` | T8.1–T8.5 | Wave 0 |
 | 9 | 9. Report & Export (§5.9) | `wave-9-reports.md` | T9.1–T9.4 | Wave 8 |
 | 10 | Panel admin (§6) — di luar 9 fitur | `wave-10-admin.md` | T10.1–T10.9 | Wave 0 |
+| 11 | Prediksi produksi (AI, model eksternal §5.10) — di luar 9 fitur | `wave-11-ai-forecast.md` | T11.0–T11.5 | T11.0 (kontrak model) |
 
 ## Blocker yang harus dibuka pemilik repo
 
 | # | Blocker | Kenapa | Jalan keluar |
 | --- | --- | --- | --- |
-| B1 | `DATABASE_URL` (connection string pooler + password DB) | Migrasi dan seed butuh DDL; publishable key tidak bisa menulis | Ambil di Supabase → Project Settings → Database → Connection string (Session pooler). Isi `apps/api/.env`, lalu jalankan migrasi + seed. |
+| B1 | `DATABASE_URL` (connection string pooler + password DB) | Migrasi dan seed butuh DDL; publishable key tidak bisa menulis | **Selesai.** Migrasi, seed statis, dan seed dataset 2025 sudah dijalankan ke Supabase `riceguard` lewat session pooler. |
 | B2 | `SUPABASE_SERVICE_ROLE_KEY` / secret key (`sb_secret_...`) | Upload file mentah ke bucket privat `raw-uploads` (T10.4) dan baca ulang (T8.4) | Project Settings → API keys → secret key. Baru dibutuhkan saat wave 10. |
-| B3 | MCP Supabase tidak tersedia di sesi agent | Hanya ada MCP `context7` dan `stitch` | Sudah diakali: wave 0 diverifikasi pada Postgres 16 lokal. Migrasi tetap SQL murni sehingga tinggal dijalankan ke Supabase. |
+| B3 | MCP Supabase tidak tersedia di sesi agent | Hanya ada MCP `context7` dan `stitch` | **Selesai.** MCP `supabase` tersedia; DDL dan seed statis diterapkan langsung. |
 | B4 | `gh` CLI tidak terpasang | Tiket lokal, bukan GitHub issue | `winget install GitHub.cli` lalu `gh auth login` |
-| B5 | `dataset/geo/provinsi-38.min.geojson` belum ada | Wave 3 tidak bisa mengecek "tidak ada provinsi abu-abu" | Minta file GeoJSON dari P3 |
-| B6 | `luas_km2` belum ada di dataset | Layer kepadatan penduduk (T3.3) | Pakai luas BPS, atau hitung dari poligon GeoJSON (pertanyaan terbuka PRD #2) |
+| B5 | `dataset/geo/provinsi-38.min.geojson` belum ada | Wave 3 tidak bisa mengecek "tidak ada provinsi abu-abu" | **Selesai.** File ada (38 fitur) dan disalin ke `apps/web/public/geo/`. |
+| B6 | `luas_km2` belum ada di dataset | Layer kepadatan penduduk (T3.3) | Pakai luas BPS, atau hitung dari poligon GeoJSON (pertanyaan terbuka PRD #2). Selama kosong, `/map/layers?layer=kepadatan` membalas 409. |
 
 ## Status wave
 
 | Wave | Status | Catatan |
 | --- | --- | --- |
-| 0 | Selesai | Diverifikasi pada Postgres 16 lokal: migrasi idempoten, seed 38 provinsi / 27 rekomendasi, 40 tes hijau, build FE 148 kB gzip, smoke test 4 lebar layar tanpa error konsol. Tinggal mengisi `DATABASE_URL` Supabase dan menjalankan dua file SQL. |
-| 1–10 | Belum mulai | |
+| 0 | Selesai | Diverifikasi pada Postgres 16 lokal: migrasi idempoten, seed 38 provinsi / 27 rekomendasi, 40 tes hijau, build FE 148 kB gzip, smoke test 4 lebar layar tanpa error konsol. Migrasi + seed statis sudah diterapkan ke Supabase `riceguard`; seed dataset 2025 dijalankan lewat `python -m app.seed` dengan `DATABASE_URL` pooler. |
+| 1 | Selesai (backend + FE) | T1.1–T1.3 lulus tes; T1.4 halaman Landing membaca `/summary`, `/content`, `/sources` tanpa teks hardcode. Lighthouse belum diukur. |
+| 2 | Selesai (backend + FE) | T2.1–T2.4 lulus tes; T2.5 Dashboard dengan 4 kartu KPI, tiga grafik Recharts, empat daftar top-5. Angka acuan tiket dikoreksi ke `dataset_v1.csv` (Jawa Timur, bukan Jawa Barat, yang tertinggi). |
+| 3 | Selesai (backend + FE) | T3.1–T3.3 lulus tes; T3.4 peta rekan tim disambungkan ke API (`/provinces`, `/map/layers`) dengan snapshot statis sebagai cadangan. T3.5 menunggu T7.1 (butuh 2 tahun). Layer kepadatan tetap 409 sampai `luas_km2` diisi (B6). |
+| 4–10 | Belum mulai | |
+| 11 | Belum mulai | Menunggu kontrak dan URL endpoint model dari pemilik model (T11.0). |
 
 
 ## Keputusan yang sudah dikunci untuk semua tiket
