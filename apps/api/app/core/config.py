@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     supabase_jwt_secret: str = ""
     cors_origins: str = "http://localhost:5173"
     max_upload_mb: int = 2
+    ai_endpoint_url: str = ""
+    ai_api_token: str = ""
+    ai_timeout_detik: float = 20.0
 
     @property
     def cors_origin_list(self) -> list[str]:

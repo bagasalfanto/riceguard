@@ -13,6 +13,7 @@ from app.routers.public import (
     content,
     data_exports,
     distribution,
+    forecast,
     map_layers,
     meta,
     provinces,
@@ -74,6 +75,7 @@ app.include_router(rice_balance.router, prefix=API)
 app.include_router(trends.router, prefix=API)
 app.include_router(data_exports.router, prefix=API)
 app.include_router(reports.router, prefix=API)
+app.include_router(forecast.router, prefix=API)
 app.include_router(admin_versions.router, prefix=API)
 app.include_router(admin_content.router, prefix=API)
 app.include_router(admin_audit.router, prefix=API)

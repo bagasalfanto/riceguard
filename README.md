@@ -56,3 +56,16 @@ dipakai di CI dan tidak menyentuh Supabase.
 
 Semua angka berasal dari satu tempat: `packages/riceguard_calc`. Frontend tidak menghitung
 rumus. Setiap angka publik bisa dilacak ke versi dataset, file mentah, dan admin yang publish.
+
+## Prediksi AI (opsional)
+
+Endpoint `GET /api/v1/forecast` memproksi permintaan ke model eksternal (Hugging Face Space) dari
+backend agar token tidak masuk bundle frontend dan bentuk respons tetap seragam.
+
+Variabel environment di `apps/api`:
+
+- `AI_ENDPOINT_URL`: URL endpoint `POST` model prediksi. **Kosongkan** untuk mematikan fitur
+  secara aman — `GET /api/v1/forecast` akan membalas `503 AI_UNAVAILABLE`, `/health` serta seluruh
+  endpoint resmi tetap normal, dan menu `"Prediksi"` di frontend tidak dirender.
+- `AI_API_TOKEN`: token opsional (`Authorization: Bearer ...`) jika endpoint Space bersifat privat.
+- `AI_TIMEOUT_DETIK`: batas waktu tunggu respons model dalam detik (default `20`).
