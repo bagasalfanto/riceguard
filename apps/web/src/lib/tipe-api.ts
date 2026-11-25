@@ -22,3 +22,11 @@ export type RankingsResponse = components["schemas"]["RankingsResponse"]
 
 export type MapLayerClass = components["schemas"]["MapLayerClass"]
 export type MapLayerResponse = components["schemas"]["MapLayerResponse"]
+
+export type RecommendationItem = components["schemas"]["RecommendationItem"]
+export type RecommendationSummary = components["schemas"]["RecommendationSummary"]
+export type RecommendationsResponse = components["schemas"]["RecommendationsResponse"]
+
+export type RiceBalanceItem = components["schemas"]["RiceBalanceItem"]
+export type RiceBalanceNasional = components["schemas"]["RiceBalanceNasional"]
+export type RiceBalanceResponse = components["schemas"]["RiceBalanceResponse"]

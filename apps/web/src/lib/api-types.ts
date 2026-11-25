@@ -126,6 +126,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/recommendations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recommendations */
+        get: operations["recommendations_api_v1_recommendations_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rice-balance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Rice Balance */
+        get: operations["rice_balance_api_v1_rice_balance_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -305,6 +339,91 @@ export interface components {
             tahun: number;
             /** Items */
             items: components["schemas"]["RankingItem"][];
+        };
+        /** RecommendationItem */
+        RecommendationItem: {
+            /** Urutan */
+            urutan: number;
+            /** Dari Kode */
+            dari_kode: string;
+            /** Dari */
+            dari: string;
+            /** Ke Kode */
+            ke_kode: string;
+            /** Ke */
+            ke: string;
+            /** Ton */
+            ton: number;
+            /** Jarak Km */
+            jarak_km: number;
+            /** Persen Kebutuhan Penerima */
+            persen_kebutuhan_penerima?: number | null;
+            /** Satu Pulau */
+            satu_pulau: boolean;
+            /** Explanation */
+            explanation: string;
+        };
+        /** RecommendationSummary */
+        RecommendationSummary: {
+            /** Total Dialokasikan Ton */
+            total_dialokasikan_ton: number;
+            /** Persen Defisit Tertutup */
+            persen_defisit_tertutup?: number | null;
+            /** Jumlah Pasangan */
+            jumlah_pasangan: number;
+            /** Rata Jarak Tertimbang Ton */
+            rata_jarak_tertimbang_ton?: number | null;
+            /** Total Ton Km */
+            total_ton_km: number;
+        };
+        /** RecommendationsResponse */
+        RecommendationsResponse: {
+            /** Tahun */
+            tahun: number;
+            version: components["schemas"]["SummaryVersion"];
+            ringkasan: components["schemas"]["RecommendationSummary"];
+            /** Items */
+            items: components["schemas"]["RecommendationItem"][];
+        };
+        /** RiceBalanceItem */
+        RiceBalanceItem: {
+            /** Kode Bps */
+            kode_bps: string;
+            /** Provinsi */
+            provinsi: string;
+            /** Pulau */
+            pulau: string;
+            /** Produksi Beras Ton */
+            produksi_beras_ton: number;
+            /** Kebutuhan Beras Ton */
+            kebutuhan_beras_ton: number;
+            /** Rice Balance Ton */
+            rice_balance_ton: number;
+            /** Rasio Swasembada */
+            rasio_swasembada: number;
+            /** Status */
+            status: string;
+        };
+        /** RiceBalanceNasional */
+        RiceBalanceNasional: {
+            /** Produksi Beras Ton */
+            produksi_beras_ton: number;
+            /** Kebutuhan Beras Ton */
+            kebutuhan_beras_ton: number;
+            /** Rice Balance Ton */
+            rice_balance_ton: number;
+            /** Rasio Swasembada */
+            rasio_swasembada?: number | null;
+            jumlah_status: components["schemas"]["SummaryStatus"];
+        };
+        /** RiceBalanceResponse */
+        RiceBalanceResponse: {
+            /** Tahun */
+            tahun: number;
+            version: components["schemas"]["SummaryVersion"];
+            nasional: components["schemas"]["RiceBalanceNasional"];
+            /** Items */
+            items: components["schemas"]["RiceBalanceItem"][];
         };
         /** SourceItem */
         SourceItem: {
@@ -601,6 +720,76 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MapLayerResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    recommendations_api_v1_recommendations_get: {
+        parameters: {
+            query?: {
+                tahun?: number | null;
+                version_id?: string | null;
+                dari_kode?: string | null;
+                ke_kode?: string | null;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecommendationsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    rice_balance_api_v1_rice_balance_get: {
+        parameters: {
+            query?: {
+                tahun?: number | null;
+                version_id?: string | null;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiceBalanceResponse"];
                 };
             };
             /** @description Validation Error */

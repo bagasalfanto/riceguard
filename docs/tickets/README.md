@@ -58,10 +58,19 @@ tiap tiket di file ini dipindah jadi GitHub issue apa adanya (judul + body + edg
 | --- | --- | --- |
 | 0 | Selesai | Diverifikasi pada Postgres 16 lokal: migrasi idempoten, seed 38 provinsi / 27 rekomendasi, 40 tes hijau, build FE 148 kB gzip, smoke test 4 lebar layar tanpa error konsol. Migrasi + seed statis sudah diterapkan ke Supabase `riceguard`; seed dataset 2025 dijalankan lewat `python -m app.seed` dengan `DATABASE_URL` pooler. |
 | 1 | Selesai (backend + FE) | T1.1–T1.3 lulus tes; T1.4 halaman Landing membaca `/summary`, `/content`, `/sources` tanpa teks hardcode. Lighthouse belum diukur. |
-| 2 | Selesai (backend + FE) | T2.1–T2.4 lulus tes; T2.5 Dashboard dengan 4 kartu KPI, tiga grafik Recharts, empat daftar top-5. Angka acuan tiket dikoreksi ke `dataset_v1.csv` (Jawa Timur, bukan Jawa Barat, yang tertinggi). |
+| 2 | Selesai (backend + FE) | T2.1–T2.4 lulus tes; T2.5 Dashboard dengan 4 kartu KPI, tiga grafik Recharts, empat daftar top-5. Angka acuan tiket dikoreksi ke `dataset_v1.csv` (Jawa Timur, bukan Jawa Barat, yang tertinggi). Tambahan di luar tiket: `GET /rice-balance` (neraca per provinsi + total nasional, satu sumber dengan `/summary`). |
 | 3 | Selesai (backend + FE) | T3.1–T3.3 lulus tes; T3.4 peta rekan tim disambungkan ke API (`/provinces`, `/map/layers`) dengan snapshot statis sebagai cadangan. T3.5 menunggu T7.1 (butuh 2 tahun). Layer kepadatan tetap 409 sampai `luas_km2` diisi (B6). |
 | 4–10 | Belum mulai | |
 | 11 | Belum mulai | Menunggu kontrak dan URL endpoint model dari pemilik model (T11.0). |
+
+**Di luar urutan wave:**
+
+- `GET /recommendations` (T6.3) sudah jalan lebih awal karena datanya sudah ada di DB dan
+  dibutuhkan halaman Distribusi serta garis alur di peta. Yang belum: `POST /recommendations/simulate`
+  (T6.4, butuh parameter matching T6.1) dan `explain.py` versi penuh dengan `{n}`/`{sisa}` —
+  kalimat saat ini hanya memakai angka yang tersimpan, tanpa memutar ulang algoritma.
+- Cache respons publik + header `Cache-Control: public, max-age=300` sudah aktif di semua
+  endpoint baca publik (kecuali request yang membawa token admin).
 
 
 ## Keputusan yang sudah dikunci untuk semua tiket
