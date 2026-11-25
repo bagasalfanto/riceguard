@@ -4,6 +4,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
+from app.core.cache import cache
 from app.core.security import optional_admin
 from app.db.session import get_db
 from app.schemas.summary import SummaryResponse
@@ -21,4 +22,12 @@ def summary(
     version_id: Annotated[str | None, Query()] = None,
 ) -> SummaryResponse:
     versi = resolve_for_read(db, tahun=tahun, version_id=version_id, admin=admin)
-    return bangun_respons(db, versi)
+
+    kunci = ("summary", str(versi.id), "")
+    tersimpan = cache.get(kunci)
+    if tersimpan is not None:
+        return tersimpan
+
+    hasil = bangun_respons(db, versi)
+    cache.set(kunci, hasil)
+    return hasil

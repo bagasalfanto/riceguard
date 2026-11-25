@@ -62,11 +62,16 @@ def db(engine):
 
 @pytest.fixture
 def client(db):
+    from app.core.cache import cache
     from app.db.session import get_db
     from app.main import app
     from fastapi.testclient import TestClient
 
+    # Cache respons bersifat proses-wide: tanpa dibersihkan, tes yang mengubah DB
+    # akan membaca hasil tes sebelumnya.
+    cache.clear_all()
     app.dependency_overrides[get_db] = lambda: db
     with TestClient(app) as c:
         yield c
     app.dependency_overrides.clear()
+    cache.clear_all()

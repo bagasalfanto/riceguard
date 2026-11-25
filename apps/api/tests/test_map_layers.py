@@ -53,7 +53,7 @@ def test_kelas_kuantil_monoton_dan_menutup_data(client, layer):
     assert classes[0]["min"] == body["min"]
     assert classes[-1]["max"] == body["max"]
 
-    for sebelum, sesudah in zip(classes, classes[1:]):
+    for sebelum, sesudah in zip(classes, classes[1:], strict=False):
         assert sebelum["max"] <= sesudah["min"]
         assert sesudah["min"] > sebelum["min"]
 

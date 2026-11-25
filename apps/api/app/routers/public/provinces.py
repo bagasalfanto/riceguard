@@ -4,6 +4,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
+from app.core.cache import cache
 from app.core.security import optional_admin
 from app.db.session import get_db
 from app.schemas.provinces import ProvincesResponse, RankingsResponse
@@ -28,6 +29,16 @@ def provinces(
     offset: Annotated[int, Query(ge=0)] = 0,
 ) -> ProvincesResponse:
     versi = resolve_for_read(db, tahun=tahun, version_id=version_id, admin=admin)
+
+    kunci = (
+        "provinces",
+        str(versi.id),
+        f"{status}|{pulau}|{q}|{sort}|{order}|{limit}|{offset}",
+    )
+    tersimpan = cache.get(kunci)
+    if tersimpan is not None:
+        return tersimpan
+
     items, total = daftar_provinsi(
         db,
         versi,
@@ -39,12 +50,14 @@ def provinces(
         limit=limit,
         offset=offset,
     )
-    return ProvincesResponse(
+    hasil = ProvincesResponse(
         tahun=versi.tahun,
         version={"id": str(versi.id), "version_no": versi.version_no},
         items=items,
         total=total,
     )
+    cache.set(kunci, hasil)
+    return hasil
 
 
 @router.get("/rankings", response_model=RankingsResponse)
@@ -57,4 +70,12 @@ def rankings(
     limit: Annotated[int, Query()] = 5,
 ) -> RankingsResponse:
     versi = resolve_for_read(db, tahun=tahun, version_id=version_id, admin=admin)
-    return RankingsResponse(by=by, tahun=versi.tahun, items=peringkat(db, versi, by, limit))
+
+    kunci = ("rankings", str(versi.id), f"{by}|{limit}")
+    tersimpan = cache.get(kunci)
+    if tersimpan is not None:
+        return tersimpan
+
+    hasil = RankingsResponse(by=by, tahun=versi.tahun, items=peringkat(db, versi, by, limit))
+    cache.set(kunci, hasil)
+    return hasil

@@ -7,7 +7,7 @@ def test_lima_kelas_untuk_seri_merata():
     assert len(classes) == 5
     assert classes[0]["min"] == 1
     assert classes[-1]["max"] == 100
-    for sebelum, sesudah in zip(classes, classes[1:]):
+    for sebelum, sesudah in zip(classes, classes[1:], strict=False):
         assert sebelum["max"] <= sesudah["min"]
 
 

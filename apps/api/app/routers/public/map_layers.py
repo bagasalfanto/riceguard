@@ -4,6 +4,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
+from app.core.cache import cache
 from app.core.security import optional_admin
 from app.db.session import get_db
 from app.schemas.map_layers import MapLayerResponse
@@ -22,4 +23,12 @@ def map_layers(
     version_id: Annotated[str | None, Query()] = None,
 ) -> MapLayerResponse:
     versi = resolve_for_read(db, tahun=tahun, version_id=version_id, admin=admin)
-    return MapLayerResponse(**bangun_layer(db, versi, layer))
+
+    kunci = ("map-layers", str(versi.id), layer)
+    tersimpan = cache.get(kunci)
+    if tersimpan is not None:
+        return tersimpan
+
+    hasil = MapLayerResponse(**bangun_layer(db, versi, layer))
+    cache.set(kunci, hasil)
+    return hasil
