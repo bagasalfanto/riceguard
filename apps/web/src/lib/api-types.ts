@@ -92,6 +92,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/provinces/{kode_bps}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Province Detail */
+        get: operations["province_detail_api_v1_provinces__kode_bps__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/rankings": {
         parameters: {
             query?: never;
@@ -181,6 +198,15 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** CalculationStep */
+        CalculationStep: {
+            /** Langkah */
+            langkah: string;
+            /** Rumus */
+            rumus: string;
+            /** Hasil */
+            hasil: number | string;
+        };
         /** ContentItem */
         ContentItem: {
             /** Key */
@@ -262,6 +288,63 @@ export interface components {
             /** Tahun Terbaru */
             tahun_terbaru?: number | null;
         };
+        /** ProvinceDetailResponse */
+        ProvinceDetailResponse: {
+            /** Tahun */
+            tahun: number;
+            /** Kode Bps */
+            kode_bps: string;
+            /** Kode Kemendagri */
+            kode_kemendagri: string;
+            /** Provinsi */
+            provinsi: string;
+            /** Pulau */
+            pulau: string;
+            /** Lat */
+            lat: number;
+            /** Lng */
+            lng: number;
+            /** Penduduk Jiwa */
+            penduduk_jiwa: number;
+            /** Konsumsi Kg Kapita Tahun */
+            konsumsi_kg_kapita_tahun: number;
+            /** Produksi Padi Ton Gkg */
+            produksi_padi_ton_gkg: number;
+            /** Produksi Beras Ton */
+            produksi_beras_ton: number;
+            /** Kebutuhan Beras Ton */
+            kebutuhan_beras_ton: number;
+            /** Rice Balance Ton */
+            rice_balance_ton: number;
+            /** Rasio Swasembada */
+            rasio_swasembada: number;
+            /** Status */
+            status: string;
+            version: components["schemas"]["SummaryVersion"];
+            /** Perhitungan */
+            perhitungan: components["schemas"]["CalculationStep"][];
+            /** Rekomendasi Terkait */
+            rekomendasi_terkait: components["schemas"]["ProvinceRelatedRecommendation"][];
+            /** Catatan */
+            catatan?: string | null;
+            /** Riwayat */
+            riwayat: components["schemas"]["ProvinceHistoryItem"][];
+        };
+        /** ProvinceHistoryItem */
+        ProvinceHistoryItem: {
+            /** Tahun */
+            tahun: number;
+            /** Produksi Beras Ton */
+            produksi_beras_ton: number;
+            /** Kebutuhan Beras Ton */
+            kebutuhan_beras_ton: number;
+            /** Rice Balance Ton */
+            rice_balance_ton: number;
+            /** Rasio Swasembada */
+            rasio_swasembada: number;
+            /** Status */
+            status: string;
+        };
         /** ProvinceItem */
         ProvinceItem: {
             /** Tahun */
@@ -294,6 +377,29 @@ export interface components {
             rasio_swasembada: number;
             /** Status */
             status: string;
+        };
+        /** ProvinceRelatedRecommendation */
+        ProvinceRelatedRecommendation: {
+            /** Urutan */
+            urutan: number;
+            /** Dari Kode */
+            dari_kode: string;
+            /** Dari */
+            dari: string;
+            /** Ke Kode */
+            ke_kode: string;
+            /** Ke */
+            ke: string;
+            /** Ton */
+            ton: number;
+            /** Jarak Km */
+            jarak_km: number;
+            /** Persen Kebutuhan Penerima */
+            persen_kebutuhan_penerima?: number | null;
+            /** Satu Pulau */
+            satu_pulau: boolean;
+            /** Explanation */
+            explanation: string;
         };
         /** ProvincesResponse */
         ProvincesResponse: {
@@ -631,6 +737,7 @@ export interface operations {
                 q?: string | null;
                 sort?: string;
                 order?: string | null;
+                fields?: string | null;
                 limit?: number;
                 offset?: number;
             };
@@ -649,6 +756,42 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProvincesResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    province_detail_api_v1_provinces__kode_bps__get: {
+        parameters: {
+            query?: {
+                tahun?: number | null;
+                version_id?: string | null;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                kode_bps: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProvinceDetailResponse"];
                 };
             };
             /** @description Validation Error */

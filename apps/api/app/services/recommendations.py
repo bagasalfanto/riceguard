@@ -7,6 +7,7 @@ from __future__ import annotations
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, aliased
 
+from app.core.rounding import bulatkan_ton
 from app.db.models import DatasetVersion, DistributionRecommendation, Province, ProvinceStat
 from app.schemas.recommendations import (
     RecommendationItem,
@@ -59,8 +60,8 @@ def bangun_rekomendasi(
     total_ton_km = 0.0
 
     for rec, dari_nama, dari_pulau, ke_nama, ke_pulau in baris:
-        ton = float(rec.ton)
-        jarak = float(rec.jarak_km)
+        ton = bulatkan_ton(rec.ton)
+        jarak = round(float(rec.jarak_km), 1)
         persen = _persen(ton, float(kebutuhan[rec.ke_kode]) if rec.ke_kode in kebutuhan else None)
 
         total_ton += ton
@@ -100,13 +101,13 @@ def bangun_rekomendasi(
         tahun=versi.tahun,
         version={"id": str(versi.id), "version_no": versi.version_no},
         ringkasan=RecommendationSummary(
-            total_dialokasikan_ton=round(total_ton, 2),
+            total_dialokasikan_ton=bulatkan_ton(total_ton),
             persen_defisit_tertutup=(
                 round(total_ton / float(total_defisit) * 100, 2) if float(total_defisit) else None
             ),
             jumlah_pasangan=len(items),
             rata_jarak_tertimbang_ton=round(total_ton_km / total_ton, 2) if total_ton else None,
-            total_ton_km=round(total_ton_km, 2),
+            total_ton_km=bulatkan_ton(total_ton_km),
         ),
         items=items,
     )

@@ -17,6 +17,10 @@ export type ContentItem = components["schemas"]["ContentItem"]
 
 export type ProvinceItem = components["schemas"]["ProvinceItem"]
 export type ProvincesResponse = components["schemas"]["ProvincesResponse"]
+export type CalculationStep = components["schemas"]["CalculationStep"]
+export type ProvinceRelatedRecommendation = components["schemas"]["ProvinceRelatedRecommendation"]
+export type ProvinceHistoryItem = components["schemas"]["ProvinceHistoryItem"]
+export type ProvinceDetailResponse = components["schemas"]["ProvinceDetailResponse"]
 export type RankingItem = components["schemas"]["RankingItem"]
 export type RankingsResponse = components["schemas"]["RankingsResponse"]
 

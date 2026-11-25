@@ -10,6 +10,7 @@ from __future__ import annotations
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from app.core.rounding import bulatkan_ton
 from app.db.models import (
     DatasetVersion,
     DistributionRecommendation,
@@ -152,12 +153,12 @@ def bangun_respons(db: Session, versi: DatasetVersion) -> SummaryResponse:
     return SummaryResponse(
         tahun=versi.tahun,
         version={"id": str(versi.id), "version_no": versi.version_no},
-        produksi_beras_ton=float(summary["produksi_beras_ton"]),
-        kebutuhan_beras_ton=float(summary["kebutuhan_beras_ton"]),
-        rice_balance_ton=float(summary["rice_balance_ton"]),
+        produksi_beras_ton=bulatkan_ton(summary["produksi_beras_ton"]),
+        kebutuhan_beras_ton=bulatkan_ton(summary["kebutuhan_beras_ton"]),
+        rice_balance_ton=bulatkan_ton(summary["rice_balance_ton"]),
         rasio_swasembada=summary.get("rasio_swasembada"),
         jumlah_status=summary["jumlah_status"],
-        total_dialokasikan_ton=float(summary["total_dialokasikan_ton"]),
+        total_dialokasikan_ton=bulatkan_ton(summary["total_dialokasikan_ton"]),
         delta_tahun_sebelumnya=delta_tahun_sebelumnya(db, versi, summary),
         pulau_breakdown=[PulauBreakdown(**p) for p in summary.get("pulau_breakdown", [])],
     )

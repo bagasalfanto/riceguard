@@ -1,9 +1,10 @@
-import { BelumTersedia, HalamanFitur } from "@/components/common/HalamanFitur"
+import { useParams } from "react-router-dom"
+
+import { AnalisisDetailView } from "@/features/analysis/AnalisisDetailView"
+import { AnalisisListView } from "@/features/analysis/AnalisisListView"
 
 export function AnalisisPage() {
-  return (
-    <HalamanFitur judul="Regional Analysis" deskripsi="Tabel ranking 38 provinsi">
-      <BelumTersedia fitur="Tabel ranking 38 provinsi" wave={4} />
-    </HalamanFitur>
-  )
+  const { kode } = useParams<{ kode?: string }>()
+  if (kode) return <AnalisisDetailView kode={kode} />
+  return <AnalisisListView />
 }

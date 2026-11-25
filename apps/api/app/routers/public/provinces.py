@@ -1,14 +1,19 @@
-"""GET /provinces dan GET /rankings (PRD bagian 5.2)."""
+"""GET /provinces, GET /provinces/{kode_bps}, dan GET /rankings (PRD 5.2 & 5.4)."""
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from app.core.cache import cache
 from app.core.security import optional_admin
 from app.db.session import get_db
-from app.schemas.provinces import ProvincesResponse, RankingsResponse
-from app.services.provinces import daftar_provinsi, peringkat
+from app.schemas.provinces import (
+    ProvinceDetailResponse,
+    ProvincesResponse,
+    RankingsResponse,
+)
+from app.services.provinces import daftar_provinsi, detail_provinsi, parse_fields, peringkat
 from app.services.versions import resolve_for_read
 
 router = APIRouter(tags=["provinces"])
@@ -25,19 +30,21 @@ def provinces(
     q: Annotated[str | None, Query()] = None,
     sort: Annotated[str, Query()] = "provinsi",
     order: Annotated[str | None, Query()] = None,
+    fields: Annotated[str | None, Query()] = None,
     limit: Annotated[int, Query(ge=1, le=500)] = 100,
     offset: Annotated[int, Query(ge=0)] = 0,
-) -> ProvincesResponse:
+) -> ProvincesResponse | JSONResponse:
     versi = resolve_for_read(db, tahun=tahun, version_id=version_id, admin=admin)
+    daftar_fields = parse_fields(fields)
 
     kunci = (
         "provinces",
         str(versi.id),
-        f"{status}|{pulau}|{q}|{sort}|{order}|{limit}|{offset}",
+        f"{status}|{pulau}|{q}|{sort}|{order}|{fields}|{limit}|{offset}",
     )
     tersimpan = cache.get(kunci)
     if tersimpan is not None:
-        return tersimpan
+        return JSONResponse(content=tersimpan) if daftar_fields else tersimpan
 
     items, total = daftar_provinsi(
         db,
@@ -50,12 +57,43 @@ def provinces(
         limit=limit,
         offset=offset,
     )
+
+    if daftar_fields:
+        payload = {
+            "tahun": versi.tahun,
+            "version": {"id": str(versi.id), "version_no": versi.version_no},
+            "items": [{f: getattr(item, f) for f in daftar_fields} for item in items],
+            "total": total,
+        }
+        cache.set(kunci, payload)
+        return JSONResponse(content=payload)
+
     hasil = ProvincesResponse(
         tahun=versi.tahun,
         version={"id": str(versi.id), "version_no": versi.version_no},
         items=items,
         total=total,
     )
+    cache.set(kunci, hasil)
+    return hasil
+
+
+@router.get("/provinces/{kode_bps}", response_model=ProvinceDetailResponse)
+def province_detail(
+    kode_bps: str,
+    db: Annotated[Session, Depends(get_db)],
+    admin: Annotated[object, Depends(optional_admin)],
+    tahun: Annotated[int | None, Query()] = None,
+    version_id: Annotated[str | None, Query()] = None,
+) -> ProvinceDetailResponse:
+    versi = resolve_for_read(db, tahun=tahun, version_id=version_id, admin=admin)
+
+    kunci = ("province-detail", str(versi.id), kode_bps)
+    tersimpan = cache.get(kunci)
+    if tersimpan is not None:
+        return tersimpan
+
+    hasil = detail_provinsi(db, versi, kode_bps)
     cache.set(kunci, hasil)
     return hasil
 
