@@ -6,7 +6,15 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_settings
 from app.core.errors import AppError, app_error_handler, validation_error_handler
-from app.routers.public import content, map_layers, meta, provinces, summary
+from app.routers.public import (
+    content,
+    map_layers,
+    meta,
+    provinces,
+    recommendations,
+    rice_balance,
+    summary,
+)
 
 app = FastAPI(
     title="RiceGuard API",
@@ -27,11 +35,33 @@ app.add_exception_handler(AppError, app_error_handler)
 app.add_exception_handler(RequestValidationError, validation_error_handler)
 
 API = "/api/v1"
+
+
+@app.middleware("http")
+async def cache_control_publik(request, call_next):
+    """Data publik jarang berubah: izinkan cache 5 menit.
+
+    Request yang membawa token admin (preview draft) tidak diberi header ini supaya
+    draft tidak ikut tersimpan di cache bersama.
+    """
+    response = await call_next(request)
+    if (
+        request.method == "GET"
+        and request.url.path.startswith(API)
+        and "authorization" not in request.headers
+        and response.status_code == 200
+    ):
+        response.headers["Cache-Control"] = "public, max-age=300"
+    return response
+
+
 app.include_router(meta.router, prefix=API)
 app.include_router(summary.router, prefix=API)
 app.include_router(content.router, prefix=API)
 app.include_router(provinces.router, prefix=API)
 app.include_router(map_layers.router, prefix=API)
+app.include_router(recommendations.router, prefix=API)
+app.include_router(rice_balance.router, prefix=API)
 
 
 @app.get("/health", tags=["meta"])
