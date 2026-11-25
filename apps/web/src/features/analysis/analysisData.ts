@@ -81,6 +81,38 @@ export function useAnalysisRankings(by: AnalysisRankingBy, tahun?: number, limit
   })
 }
 
+export interface MetricGlossaryItem {
+  field: string
+  label: string
+  satuan?: string
+  tooltip: string
+  penjelasan: string
+  rumus?: string
+  sumber?: string
+}
+
+export interface MetricsDictionary {
+  tahun: number
+  catatan_umum: string
+  metrik: MetricGlossaryItem[]
+  template_ringkasan: Record<"surplus" | "balanced" | "defisit", string>
+  catatan_jarak?: string
+}
+
+export function useMetricsDictionary() {
+  return useQuery({
+    queryKey: ["metrics-dictionary", 2025],
+    queryFn: async () => {
+      const res = await fetch("/data/metrics-2025.json", {
+        headers: { Accept: "application/json" },
+      })
+      if (!res.ok) return null
+      return (await res.json()) as MetricsDictionary
+    },
+    staleTime: Number.POSITIVE_INFINITY,
+  })
+}
+
 export function useProvinceDetail(kodeBps: string, tahun?: number) {
   return useQuery({
     queryKey: ["province-detail", kodeBps, tahun],

@@ -5,6 +5,7 @@ import {
   ArrowLeft,
   ArrowUpRight,
   Calculator,
+  Info,
   MapPin,
   Minus,
   Scale,
@@ -39,7 +40,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useProvinceDetail } from "@/features/analysis/analysisData"
+import {
+  Tooltip as UiTooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import {
+  useMetricsDictionary,
+  useProvinceDetail,
+  type MetricGlossaryItem,
+} from "@/features/analysis/analysisData"
 import {
   buildLayerFromProvinces,
   useMapProvinces,
@@ -57,6 +68,30 @@ function StatusIcon({ status }: { status: string }) {
   return <ArrowDownRight aria-hidden="true" className="size-3.5" />
 }
 
+function MetricInfo({ item }: { item?: MetricGlossaryItem }) {
+  if (!item) return null
+  return (
+    <TooltipProvider>
+      <UiTooltip>
+        <TooltipTrigger asChild>
+          <button
+            aria-label={`Penjelasan ${item.label}`}
+            className="inline-flex size-5 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            type="button"
+          >
+            <Info aria-hidden="true" className="size-3.5" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-xs space-y-1 text-left">
+          <div className="font-semibold">{item.label}</div>
+          <p>{item.penjelasan}</p>
+          {item.sumber ? <p className="text-[11px] opacity-80">Sumber: {item.sumber}</p> : null}
+        </TooltipContent>
+      </UiTooltip>
+    </TooltipProvider>
+  )
+}
+
 export function AnalisisDetailView({ kode }: { kode: string }) {
   const navigate = useNavigate()
   const { tahun } = useTahun()
@@ -64,6 +99,7 @@ export function AnalisisDetailView({ kode }: { kode: string }) {
 
   const detailQuery = useProvinceDetail(kode, tahun)
   const detail = detailQuery.data
+  const metricsQuery = useMetricsDictionary()
 
   const activeYear = detail?.tahun ?? tahun ?? 2025
   const geoQuery = useProvincesGeoJSON()
@@ -156,6 +192,22 @@ export function AnalisisDetailView({ kode }: { kode: string }) {
   const balanceStep = detail.perhitungan.find((s) => s.langkah === "balance")
   const klasifikasiStep = detail.perhitungan.find((s) => s.langkah === "klasifikasi")
 
+  const metricsByField = new Map(
+    (metricsQuery.data?.metrik ?? []).map((item) => [item.field, item]),
+  )
+  const rawTemplate =
+    metricsQuery.data?.template_ringkasan[
+      detail.status as "surplus" | "balanced" | "defisit"
+    ]
+  const narasiRingkasan = rawTemplate
+    ? rawTemplate
+        .replaceAll("{provinsi}", detail.provinsi)
+        .replaceAll("{produksi_beras_ton}", formatAngka(detail.produksi_beras_ton, 0))
+        .replaceAll("{kebutuhan_beras_ton}", formatAngka(detail.kebutuhan_beras_ton, 0))
+        .replaceAll("{rice_balance_ton_abs}", formatAngka(Math.abs(detail.rice_balance_ton), 0))
+        .replaceAll("{rasio_persen}", formatPersen(rasioPersen, 1))
+    : null
+
   return (
     <div className="mx-auto w-full max-w-7xl space-y-6 px-4 py-8">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -244,6 +296,12 @@ export function AnalisisDetailView({ kode }: { kode: string }) {
               </span>
             </div>
           </div>
+
+          {narasiRingkasan ? (
+            <p className="rounded-lg border bg-muted/35 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+              {narasiRingkasan}
+            </p>
+          ) : null}
         </CardContent>
       </Card>
 
@@ -254,9 +312,12 @@ export function AnalisisDetailView({ kode }: { kode: string }) {
             {/* Production Analysis */}
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Sprout aria-hidden="true" className="size-4 text-primary" />
-                  Production Analysis
+                <CardTitle className="flex items-center justify-between gap-2 text-base">
+                  <span className="flex items-center gap-2">
+                    <Sprout aria-hidden="true" className="size-4 text-primary" />
+                    Production Analysis
+                  </span>
+                  <MetricInfo item={metricsByField.get("produksi_beras_ton")} />
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2.5 text-sm">
@@ -276,9 +337,12 @@ export function AnalisisDetailView({ kode }: { kode: string }) {
             {/* Consumption Analysis */}
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Users aria-hidden="true" className="size-4 text-primary" />
-                  Consumption Analysis
+                <CardTitle className="flex items-center justify-between gap-2 text-base">
+                  <span className="flex items-center gap-2">
+                    <Users aria-hidden="true" className="size-4 text-primary" />
+                    Consumption Analysis
+                  </span>
+                  <MetricInfo item={metricsByField.get("konsumsi_kg_kapita_tahun")} />
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2.5 text-sm">
@@ -302,9 +366,12 @@ export function AnalisisDetailView({ kode }: { kode: string }) {
           <div className="grid gap-4 sm:grid-cols-2">
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Calculator aria-hidden="true" className="size-4 text-primary" />
-                  Rice Demand Calculation
+                <CardTitle className="flex items-center justify-between gap-2 text-base">
+                  <span className="flex items-center gap-2">
+                    <Calculator aria-hidden="true" className="size-4 text-primary" />
+                    Rice Demand Calculation
+                  </span>
+                  <MetricInfo item={metricsByField.get("kebutuhan_beras_ton")} />
                 </CardTitle>
                 <CardDescription>Dᵢ = (Pᵢ &times; Cᵢ) / 1.000</CardDescription>
               </CardHeader>
@@ -327,9 +394,12 @@ export function AnalisisDetailView({ kode }: { kode: string }) {
 
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Scale aria-hidden="true" className="size-4 text-primary" />
-                  Rice Balance Calculation
+                <CardTitle className="flex items-center justify-between gap-2 text-base">
+                  <span className="flex items-center gap-2">
+                    <Scale aria-hidden="true" className="size-4 text-primary" />
+                    Rice Balance Calculation
+                  </span>
+                  <MetricInfo item={metricsByField.get("rice_balance_ton")} />
                 </CardTitle>
                 <CardDescription>Bᵢ = Produksi Beras &minus; Estimasi Kebutuhan</CardDescription>
               </CardHeader>
