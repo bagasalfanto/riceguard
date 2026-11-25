@@ -58,6 +58,30 @@ async function lemparJikaGagal(res: Response): Promise<void> {
   throw new ApiError(res.status, errBody, `Permintaan gagal (${res.status})`)
 }
 
+function authHeader(): Record<string, string> {
+  return tokenAdmin ? { Authorization: `Bearer ${tokenAdmin}` } : {}
+}
+
+async function requestJson<T>(
+  method: "POST" | "PATCH" | "PUT" | "DELETE",
+  path: string,
+  body?: unknown,
+): Promise<T> {
+  const hasBody = body !== undefined
+  const res = await fetch(bangunUrl(path), {
+    method,
+    headers: {
+      Accept: "application/json",
+      ...(hasBody ? { "Content-Type": "application/json" } : {}),
+      ...authHeader(),
+    },
+    ...(hasBody ? { body: JSON.stringify(body) } : {}),
+  })
+
+  await lemparJikaGagal(res)
+  return (await res.json()) as T
+}
+
 function bacaNamaFile(disposition: string | null): string | null {
   if (!disposition) return null
   const utf8Match = /filename\*\s*=\s*UTF-8''([^;\n]+)/i.exec(disposition)
@@ -78,7 +102,7 @@ export async function apiGet<T>(path: string, query?: Query): Promise<T> {
   const res = await fetch(bangunUrl(path, query), {
     headers: {
       Accept: "application/json",
-      ...(tokenAdmin ? { Authorization: `Bearer ${tokenAdmin}` } : {}),
+      ...authHeader(),
     },
   })
 
@@ -87,18 +111,33 @@ export async function apiGet<T>(path: string, query?: Query): Promise<T> {
 }
 
 export async function apiPost<T>(path: string, body: unknown): Promise<T> {
+  return requestJson<T>("POST", path, body)
+}
+
+export async function apiPostForm<T>(path: string, formData: FormData): Promise<T> {
   const res = await fetch(bangunUrl(path), {
     method: "POST",
     headers: {
       Accept: "application/json",
-      "Content-Type": "application/json",
-      ...(tokenAdmin ? { Authorization: `Bearer ${tokenAdmin}` } : {}),
+      ...authHeader(),
     },
-    body: JSON.stringify(body),
+    body: formData,
   })
 
   await lemparJikaGagal(res)
   return (await res.json()) as T
+}
+
+export async function apiPatch<T>(path: string, body: unknown): Promise<T> {
+  return requestJson<T>("PATCH", path, body)
+}
+
+export async function apiPut<T>(path: string, body: unknown): Promise<T> {
+  return requestJson<T>("PUT", path, body)
+}
+
+export async function apiDelete<T>(path: string): Promise<T> {
+  return requestJson<T>("DELETE", path)
 }
 
 export async function apiDownload(
@@ -107,7 +146,7 @@ export async function apiDownload(
 ): Promise<{ blob: Blob; filename: string | null }> {
   const res = await fetch(bangunUrl(path, query), {
     headers: {
-      ...(tokenAdmin ? { Authorization: `Bearer ${tokenAdmin}` } : {}),
+      ...authHeader(),
     },
   })
 
