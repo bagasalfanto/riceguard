@@ -14,6 +14,7 @@ from app.routers.public import (
     meta,
     provinces,
     recommendations,
+    reports,
     rice_balance,
     summary,
     trends,
@@ -69,6 +70,7 @@ app.include_router(recommendations.router, prefix=API)
 app.include_router(rice_balance.router, prefix=API)
 app.include_router(trends.router, prefix=API)
 app.include_router(data_exports.router, prefix=API)
+app.include_router(reports.router, prefix=API)
 
 
 @app.get("/health", tags=["meta"])

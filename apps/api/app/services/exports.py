@@ -28,7 +28,12 @@ from app.schemas.data_transparency import (
     ValidationRuleItem,
 )
 from app.schemas.summary import SummaryVersion
+from app.services.map_layers import bangun_layer
+from app.services.provinces import daftar_provinsi, detail_provinsi, peringkat
+from app.services.recommendations import bangun_rekomendasi
 from app.services.storage import download_raw_object
+from app.services.summary import bangun_respons as bangun_summary_respons
+from app.services.versions import resolve_for_read
 
 PROVINCE_CSV_HEADERS = [
     "tahun",
@@ -354,24 +359,24 @@ def render_workbook_xlsx(
     return out.getvalue()
 
 
-def ekspor_workbook_xlsx(db: Session, versi: DatasetVersion, *, active_sheet: str = "Provinsi") -> bytes:
-    """Ambil data dari DB dan hasilkan file Excel 3 sheet untuk versi dataset."""
-    province_rows = _load_province_rows(db, versi)
-    recommendation_rows = _load_recommendation_rows(db, versi)
-
+def _ambil_metadata_laporan(db: Session, versi: DatasetVersion) -> dict[str, Any]:
+    """Bangun metadata standar (versi, tanggal cetak, sumber, batasan) untuk ekspor & laporan PDF."""
     admin_nama = _admin_nama(db, versi.published_by)
-    published_by = admin_nama or (str(versi.published_by) if versi.published_by is not None else "Sistem (Seed awal)")
+    published_by = admin_nama or (
+        str(versi.published_by) if versi.published_by is not None else "Sistem (Seed awal)"
+    )
 
     batasan_row = db.get(SiteContent, "limitations")
-    batasan_klaim = (
+    batasan = (
         " ".join(batasan_row.body_md.split())
         if batasan_row is not None and batasan_row.body_md.strip()
         else _DEFAULT_BATASAN_KLAIM
     )
 
     source_rows = list(db.scalars(select(DataSource).order_by(DataSource.id.asc())))
-    sources = [
+    sumber = [
         {
+            "key": s.key,
             "nama": s.nama,
             "instansi": s.instansi,
             "tabel_resmi": s.tabel_resmi,
@@ -380,24 +385,187 @@ def ekspor_workbook_xlsx(db: Session, versi: DatasetVersion, *, active_sheet: st
         for s in source_rows
     ]
 
-    meta = {
+    return {
+        "versi": f"v{versi.version_no}",
         "version_id": str(versi.id),
         "version_no": int(versi.version_no),
         "tahun": int(versi.tahun),
         "published_at": versi.published_at.isoformat() if versi.published_at is not None else "-",
         "published_by": published_by,
-        "notes": versi.notes or "-",
-        "batasan_klaim": batasan_klaim,
         "tanggal_cetak": datetime.now(UTC).isoformat(),
+        "sumber": sumber,
+        "batasan": batasan,
+    }
+
+
+def ekspor_workbook_xlsx(db: Session, versi: DatasetVersion, *, active_sheet: str = "Provinsi") -> bytes:
+    """Ambil data dari DB dan hasilkan file Excel 3 sheet untuk versi dataset."""
+    province_rows = _load_province_rows(db, versi)
+    recommendation_rows = _load_recommendation_rows(db, versi)
+    meta_laporan = _ambil_metadata_laporan(db, versi)
+
+    meta = {
+        "version_id": meta_laporan["version_id"],
+        "version_no": meta_laporan["version_no"],
+        "tahun": meta_laporan["tahun"],
+        "published_at": meta_laporan["published_at"],
+        "published_by": meta_laporan["published_by"],
+        "notes": versi.notes or "-",
+        "batasan_klaim": meta_laporan["batasan"],
+        "tanggal_cetak": meta_laporan["tanggal_cetak"],
     }
 
     return render_workbook_xlsx(
         province_rows=province_rows,
         recommendation_rows=recommendation_rows,
         meta=meta,
-        sources=sources,
+        sources=meta_laporan["sumber"],
         active_sheet=active_sheet,
     )
+
+
+def laporan_nasional(
+    db: Session,
+    tahun: int | None = None,
+    *,
+    version_id: str | None = None,
+    admin=None,
+) -> dict[str, Any]:
+    """Komposisi data Laporan Ketahanan Beras Nasional (T9.2)."""
+    versi = resolve_for_read(db, tahun=tahun, version_id=version_id, admin=admin)
+    summary_res = bangun_summary_respons(db, versi)
+    status_layer = bangun_layer(db, versi, "status")
+
+    return {
+        "jenis": "nasional",
+        "judul": "National Rice Security Report",
+        "subjudul": "Laporan Ketahanan Beras Nasional",
+        "tahun": int(versi.tahun),
+        "kpi": summary_res.model_dump(),
+        "ringkasan_status": summary_res.jumlah_status.model_dump(),
+        "top_surplus": [r.model_dump() for r in peringkat(db, versi, "surplus", limit=5)],
+        "top_defisit": [r.model_dump() for r in peringkat(db, versi, "defisit", limit=5)],
+        "top_produksi": [r.model_dump() for r in peringkat(db, versi, "produksi", limit=5)],
+        "top_kebutuhan": [r.model_dump() for r in peringkat(db, versi, "kebutuhan", limit=5)],
+        "pulau_breakdown": [p.model_dump() for p in summary_res.pulau_breakdown],
+        "map_values": status_layer["values"],
+        "map_classes": status_layer["classes"],
+        "metadata": _ambil_metadata_laporan(db, versi),
+    }
+
+
+def laporan_provinsi(
+    db: Session,
+    tahun: int | None,
+    kode_bps: str,
+    *,
+    version_id: str | None = None,
+    admin=None,
+) -> dict[str, Any]:
+    """Komposisi data Laporan Analisis Wilayah satu provinsi (T9.2)."""
+    versi = resolve_for_read(db, tahun=tahun, version_id=version_id, admin=admin)
+    detail = detail_provinsi(db, versi, kode_bps)
+    status_layer = bangun_layer(db, versi, "status")
+
+    return {
+        "jenis": "provinsi",
+        "judul": "Regional Analysis Report",
+        "subjudul": f"Laporan Analisis Wilayah — {detail.provinsi}",
+        "tahun": int(versi.tahun),
+        "provinsi": detail.model_dump(),
+        "perhitungan": [step.model_dump() for step in detail.perhitungan],
+        "rekomendasi_terkait": [r.model_dump() for r in detail.rekomendasi_terkait],
+        "catatan": detail.catatan,
+        "riwayat": [h.model_dump() for h in detail.riwayat],
+        "map_values": status_layer["values"],
+        "highlight_kode": detail.kode_bps,
+        "metadata": _ambil_metadata_laporan(db, versi),
+    }
+
+
+def laporan_surplus_defisit(
+    db: Session,
+    tahun: int | None = None,
+    *,
+    version_id: str | None = None,
+    admin=None,
+) -> dict[str, Any]:
+    """Komposisi data Laporan Surplus-Defisit 38 provinsi (T9.2)."""
+    versi = resolve_for_read(db, tahun=tahun, version_id=version_id, admin=admin)
+    summary_res = bangun_summary_respons(db, versi)
+    items, _ = daftar_provinsi(db, versi, sort="balance", order="desc", limit=100)
+    status_layer = bangun_layer(db, versi, "status")
+
+    semua = [item.model_dump() for item in items]
+    surplus_items = sorted(
+        (p for p in semua if p["status"] == "surplus"),
+        key=lambda p: (-p["rice_balance_ton"], p["kode_bps"]),
+    )
+    balanced_items = sorted(
+        (p for p in semua if p["status"] == "balanced"),
+        key=lambda p: (-p["rasio_swasembada"], p["kode_bps"]),
+    )
+    defisit_items = sorted(
+        (p for p in semua if p["status"] == "defisit"),
+        key=lambda p: (p["rice_balance_ton"], p["kode_bps"]),
+    )
+
+    return {
+        "jenis": "surplus-defisit",
+        "judul": "Surplus-Deficit Report",
+        "subjudul": "Laporan Status Surplus dan Defisit 38 Provinsi",
+        "tahun": int(versi.tahun),
+        "ringkasan": summary_res.model_dump(),
+        "kelompok": {
+            "surplus": surplus_items,
+            "balanced": balanced_items,
+            "defisit": defisit_items,
+        },
+        "provinsi": surplus_items + balanced_items + defisit_items,
+        "map_values": status_layer["values"],
+        "map_classes": status_layer["classes"],
+        "metadata": _ambil_metadata_laporan(db, versi),
+    }
+
+
+def laporan_rekomendasi(
+    db: Session,
+    tahun: int | None = None,
+    *,
+    version_id: str | None = None,
+    admin=None,
+) -> dict[str, Any]:
+    """Komposisi data Laporan Rekomendasi Distribusi Beras (T9.2)."""
+    versi = resolve_for_read(db, tahun=tahun, version_id=version_id, admin=admin)
+    rek = bangun_rekomendasi(db, versi)
+    status_layer = bangun_layer(db, versi, "status")
+
+    koordinat = {
+        kode: (float(lat), float(lng))
+        for kode, lat, lng in db.execute(select(Province.kode_bps, Province.lat, Province.lng)).all()
+    }
+
+    items: list[dict[str, Any]] = []
+    for item in rek.items:
+        d = item.model_dump()
+        dari_lat, dari_lng = koordinat.get(item.dari_kode, (0.0, 0.0))
+        ke_lat, ke_lng = koordinat.get(item.ke_kode, (0.0, 0.0))
+        d["dari_lat"] = dari_lat
+        d["dari_lng"] = dari_lng
+        d["ke_lat"] = ke_lat
+        d["ke_lng"] = ke_lng
+        items.append(d)
+
+    return {
+        "jenis": "rekomendasi",
+        "judul": "Distribution Recommendation Report",
+        "subjudul": "Laporan Rekomendasi Distribusi Beras Antarprovinsi",
+        "tahun": int(versi.tahun),
+        "ringkasan": rek.ringkasan.model_dump(),
+        "items": items,
+        "map_values": status_layer["values"],
+        "metadata": _ambil_metadata_laporan(db, versi),
+    }
 
 
 def ambil_file_mentah(versi: DatasetVersion, nama_file: str) -> tuple[str, bytes]:

@@ -44,7 +44,7 @@ jobs:
       - run: pip install -e packages/riceguard_calc -e apps/api pytest httpx
       - name: Terapkan migrasi dan seed
         run: |
-          sudo apt-get update && sudo apt-get install -y postgresql-client
+          sudo apt-get update && sudo apt-get install -y postgresql-client libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0
           PSQL_URL="${DATABASE_URL/+psycopg/}"
           psql "$PSQL_URL" -v ON_ERROR_STOP=1 <<'SQL'
           create schema if not exists auth;
