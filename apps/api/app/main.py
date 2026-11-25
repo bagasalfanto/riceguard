@@ -15,6 +15,7 @@ from app.routers.public import (
     recommendations,
     rice_balance,
     summary,
+    trends,
 )
 
 app = FastAPI(
@@ -64,6 +65,7 @@ app.include_router(map_layers.router, prefix=API)
 app.include_router(distribution.router, prefix=API)
 app.include_router(recommendations.router, prefix=API)
 app.include_router(rice_balance.router, prefix=API)
+app.include_router(trends.router, prefix=API)
 
 
 @app.get("/health", tags=["meta"])
