@@ -8,6 +8,7 @@ from app.core.config import get_settings
 from app.core.errors import AppError, app_error_handler, validation_error_handler
 from app.routers.public import (
     content,
+    data_exports,
     distribution,
     map_layers,
     meta,
@@ -31,6 +32,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type"],
+    expose_headers=["Content-Disposition"],
 )
 
 app.add_exception_handler(AppError, app_error_handler)
@@ -66,6 +68,7 @@ app.include_router(distribution.router, prefix=API)
 app.include_router(recommendations.router, prefix=API)
 app.include_router(rice_balance.router, prefix=API)
 app.include_router(trends.router, prefix=API)
+app.include_router(data_exports.router, prefix=API)
 
 
 @app.get("/health", tags=["meta"])
