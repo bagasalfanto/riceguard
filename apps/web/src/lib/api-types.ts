@@ -21,6 +21,111 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Summary */
+        get: operations["summary_api_v1_summary_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sources */
+        get: operations["sources_api_v1_sources_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/content": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Content
+         * @description `?keys=about&keys=sdg2` atau `?keys=about,sdg2`. Key tak dikenal diabaikan.
+         */
+        get: operations["content_api_v1_content_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/provinces": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Provinces */
+        get: operations["provinces_api_v1_provinces_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rankings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Rankings */
+        get: operations["rankings_api_v1_rankings_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/map/layers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Map Layers */
+        get: operations["map_layers_api_v1_map_layers_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -42,6 +147,76 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** ContentItem */
+        ContentItem: {
+            /** Key */
+            key: string;
+            /** Title */
+            title: string;
+            /** Body Md */
+            body_md: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** DeltaSummary */
+        DeltaSummary: {
+            /** Tahun */
+            tahun: number;
+            /** Produksi Persen */
+            produksi_persen?: number | null;
+            /** Kebutuhan Persen */
+            kebutuhan_persen?: number | null;
+            /** Balance Ton */
+            balance_ton?: number | null;
+            /** Balance Persen */
+            balance_persen?: number | null;
+        };
+        /** HTTPValidationError */
+        HTTPValidationError: {
+            /** Detail */
+            detail?: components["schemas"]["ValidationError"][];
+        };
+        /** MapLayerClass */
+        MapLayerClass: {
+            /** Min */
+            min?: number | null;
+            /** Max */
+            max?: number | null;
+            /** Label */
+            label: string;
+            /** Color Token */
+            color_token: string;
+            /** Key */
+            key?: string | null;
+            /** Pola */
+            pola?: string | null;
+        };
+        /** MapLayerResponse */
+        MapLayerResponse: {
+            /** Layer */
+            layer: string;
+            /** Tahun */
+            tahun: number;
+            /** Satuan */
+            satuan: string;
+            /** Values */
+            values: {
+                [key: string]: unknown;
+            };
+            /** Classes */
+            classes: components["schemas"]["MapLayerClass"][];
+            /** Min */
+            min?: number | null;
+            /** Max */
+            max?: number | null;
+            /** Details */
+            details?: {
+                [key: string]: unknown;
+            } | null;
+        };
         /** MetaYears */
         MetaYears: {
             /** Tahun */
@@ -53,6 +228,142 @@ export interface components {
             /** Tahun Terbaru */
             tahun_terbaru?: number | null;
         };
+        /** ProvinceItem */
+        ProvinceItem: {
+            /** Tahun */
+            tahun: number;
+            /** Kode Bps */
+            kode_bps: string;
+            /** Kode Kemendagri */
+            kode_kemendagri: string;
+            /** Provinsi */
+            provinsi: string;
+            /** Pulau */
+            pulau: string;
+            /** Lat */
+            lat: number;
+            /** Lng */
+            lng: number;
+            /** Penduduk Jiwa */
+            penduduk_jiwa: number;
+            /** Konsumsi Kg Kapita Tahun */
+            konsumsi_kg_kapita_tahun: number;
+            /** Produksi Padi Ton Gkg */
+            produksi_padi_ton_gkg: number;
+            /** Produksi Beras Ton */
+            produksi_beras_ton: number;
+            /** Kebutuhan Beras Ton */
+            kebutuhan_beras_ton: number;
+            /** Rice Balance Ton */
+            rice_balance_ton: number;
+            /** Rasio Swasembada */
+            rasio_swasembada: number;
+            /** Status */
+            status: string;
+        };
+        /** ProvincesResponse */
+        ProvincesResponse: {
+            /** Tahun */
+            tahun: number;
+            version: components["schemas"]["SummaryVersion"];
+            /** Items */
+            items: components["schemas"]["ProvinceItem"][];
+            /** Total */
+            total: number;
+        };
+        /** PulauBreakdown */
+        PulauBreakdown: {
+            /** Pulau */
+            pulau: string;
+            /** Produksi Beras Ton */
+            produksi_beras_ton: number;
+            /** Kebutuhan Beras Ton */
+            kebutuhan_beras_ton: number;
+            /** Porsi Produksi */
+            porsi_produksi: number;
+            /** Porsi Kebutuhan */
+            porsi_kebutuhan: number;
+            /** Jumlah Provinsi */
+            jumlah_provinsi: number;
+        };
+        /** RankingItem */
+        RankingItem: {
+            /** Peringkat */
+            peringkat: number;
+            /** Kode Bps */
+            kode_bps: string;
+            /** Provinsi */
+            provinsi: string;
+            /** Nilai */
+            nilai: number;
+        };
+        /** RankingsResponse */
+        RankingsResponse: {
+            /** By */
+            by: string;
+            /** Tahun */
+            tahun: number;
+            /** Items */
+            items: components["schemas"]["RankingItem"][];
+        };
+        /** SourceItem */
+        SourceItem: {
+            /** Id */
+            id: number;
+            /** Key */
+            key: string;
+            /** Nama */
+            nama: string;
+            /** Instansi */
+            instansi: string;
+            /** Tabel Resmi */
+            tabel_resmi?: string | null;
+            /** Tahun */
+            tahun?: number | null;
+            /** Diperbarui */
+            diperbarui?: string | null;
+            /** Url */
+            url?: string | null;
+        };
+        /** SummaryResponse */
+        SummaryResponse: {
+            /** Tahun */
+            tahun: number;
+            version: components["schemas"]["SummaryVersion"];
+            /** Produksi Beras Ton */
+            produksi_beras_ton: number;
+            /** Kebutuhan Beras Ton */
+            kebutuhan_beras_ton: number;
+            /** Rice Balance Ton */
+            rice_balance_ton: number;
+            /** Rasio Swasembada */
+            rasio_swasembada?: number | null;
+            jumlah_status: components["schemas"]["SummaryStatus"];
+            /** Total Dialokasikan Ton */
+            total_dialokasikan_ton: number;
+            delta_tahun_sebelumnya?: components["schemas"]["DeltaSummary"] | null;
+            /**
+             * Pulau Breakdown
+             * @default []
+             */
+            pulau_breakdown: components["schemas"]["PulauBreakdown"][];
+        };
+        /** SummaryStatus */
+        SummaryStatus: {
+            /** Surplus */
+            surplus: number;
+            /** Balanced */
+            balanced: number;
+            /** Defisit */
+            defisit: number;
+        };
+        /** SummaryVersion */
+        SummaryVersion: {
+            /** Id */
+            id: string;
+            /** Version No */
+            version_no: number;
+        };
         /** TahunPublished */
         TahunPublished: {
             /** Tahun */
@@ -63,6 +374,19 @@ export interface components {
             version_no: number;
             /** Published At */
             published_at?: string | null;
+        };
+        /** ValidationError */
+        ValidationError: {
+            /** Location */
+            loc: (string | number)[];
+            /** Message */
+            msg: string;
+            /** Error Type */
+            type: string;
+            /** Input */
+            input?: unknown;
+            /** Context */
+            ctx?: Record<string, never>;
         };
     };
     responses: never;
@@ -89,6 +413,203 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MetaYears"];
+                };
+            };
+        };
+    };
+    summary_api_v1_summary_get: {
+        parameters: {
+            query?: {
+                tahun?: number | null;
+                version_id?: string | null;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SummaryResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    sources_api_v1_sources_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SourceItem"][];
+                };
+            };
+        };
+    };
+    content_api_v1_content_get: {
+        parameters: {
+            query?: {
+                keys?: string[] | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ContentItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    provinces_api_v1_provinces_get: {
+        parameters: {
+            query?: {
+                tahun?: number | null;
+                version_id?: string | null;
+                status?: string | null;
+                pulau?: string | null;
+                q?: string | null;
+                sort?: string;
+                order?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProvincesResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    rankings_api_v1_rankings_get: {
+        parameters: {
+            query?: {
+                by?: string;
+                tahun?: number | null;
+                version_id?: string | null;
+                limit?: number;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RankingsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    map_layers_api_v1_map_layers_get: {
+        parameters: {
+            query?: {
+                layer?: string;
+                tahun?: number | null;
+                version_id?: string | null;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MapLayerResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
