@@ -24,7 +24,7 @@ SORT_KOLOM = {
     "rasio": ProvinceStat.rasio_swasembada,
     "peringkat": ProvinceStat.rasio_swasembada,
     "penduduk": ProvinceStat.penduduk_jiwa,
-    "provinsi": Province.nama,
+    "provinsi": func.lower(Province.nama),
 }
 
 STATUS_VALID = {"surplus", "balanced", "defisit"}
@@ -134,7 +134,9 @@ def daftar_provinsi(
     total = db.scalar(select(func.count()).select_from(dasar.subquery())) or 0
 
     arah = kolom_sort.asc() if order == "asc" else kolom_sort.desc()
-    baris = db.execute(dasar.order_by(arah).limit(limit).offset(offset)).all()
+    baris = db.execute(
+        dasar.order_by(arah, ProvinceStat.kode_bps.asc()).limit(limit).offset(offset)
+    ).all()
 
     return [_item(versi.tahun, stat, prov) for stat, prov in baris], int(total)
 
