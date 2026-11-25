@@ -70,3 +70,43 @@ def download_raw_object(object_path: str, *, nama_file: str | None = None) -> by
         )
 
     return resp.content
+
+
+def upload_raw_object(
+    object_path: str,
+    content: bytes,
+    *,
+    content_type: str | None = None,
+) -> None:
+    """Unggah objek file mentah ke Supabase Storage bucket privat menggunakan service role key."""
+    settings = get_settings()
+    if not settings.supabase_service_role_key:
+        raise AppError("STORAGE_UNAVAILABLE", 503, "Storage file mentah belum dikonfigurasi")
+
+    base_url = settings.supabase_url.rstrip("/")
+    url = f"{base_url}/storage/v1/object/{RAW_BUCKET}/{object_path}"
+    headers = {
+        "Authorization": f"Bearer {settings.supabase_service_role_key}",
+        "apikey": settings.supabase_service_role_key,
+        "Content-Type": content_type or content_type_untuk_file(object_path),
+        "x-upsert": "true",
+    }
+
+    try:
+        with _http_client() as client:
+            resp = client.post(url, headers=headers, content=content)
+    except httpx.HTTPError as exc:
+        raise AppError(
+            "STORAGE_UNAVAILABLE",
+            503,
+            "Gagal mengunggah file ke storage mentah",
+            {"alasan": str(exc)},
+        ) from exc
+
+    if resp.status_code >= 400:
+        raise AppError(
+            "STORAGE_UNAVAILABLE",
+            503,
+            "Storage file mentah gagal menyimpan file",
+            {"status_code": resp.status_code},
+        )

@@ -6,6 +6,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_settings
 from app.core.errors import AppError, app_error_handler, validation_error_handler
+from app.routers.admin import audit as admin_audit
+from app.routers.admin import content as admin_content
+from app.routers.admin import versions as admin_versions
 from app.routers.public import (
     content,
     data_exports,
@@ -71,6 +74,9 @@ app.include_router(rice_balance.router, prefix=API)
 app.include_router(trends.router, prefix=API)
 app.include_router(data_exports.router, prefix=API)
 app.include_router(reports.router, prefix=API)
+app.include_router(admin_versions.router, prefix=API)
+app.include_router(admin_content.router, prefix=API)
+app.include_router(admin_audit.router, prefix=API)
 
 
 @app.get("/health", tags=["meta"])
