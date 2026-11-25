@@ -40,6 +40,9 @@ const DataPage = lazy(() =>
 const LaporanPage = lazy(() =>
   import("@/features/reports/LaporanPage").then((m) => ({ default: m.LaporanPage })),
 )
+const PrediksiPage = lazy(() =>
+  import("@/features/forecast/PrediksiPage").then((m) => ({ default: m.PrediksiPage })),
+)
 const AdminLoginPage = lazy(() =>
   import("@/features/admin/AdminLoginPage").then((m) => ({ default: m.AdminLoginPage })),
 )
@@ -129,6 +132,7 @@ const router = createBrowserRouter([
       { path: "tren", element: <TrenPage /> },
       { path: "data", element: <DataPage /> },
       { path: "laporan", element: <LaporanPage /> },
+      { path: "prediksi", element: <PrediksiPage /> },
       {
         path: "*",
         element: (

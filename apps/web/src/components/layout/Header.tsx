@@ -6,6 +6,7 @@ import { YearSelect } from "@/components/layout/YearSelect"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { useForecastStatus } from "@/features/forecast/forecastData"
 import { useTahun } from "@/hooks/useTahun"
 import { useTema } from "@/hooks/useTema"
 import { apiGet } from "@/lib/api"
@@ -79,9 +80,13 @@ export function Header() {
     queryFn: () => apiGet<MetaYears>("/meta/years"),
     staleTime: 5 * 60 * 1000,
   })
+  const forecastStatus = useForecastStatus()
 
   const showMultiYearMenu = metaYears?.butuh_minimal_2_tahun === false
-  const visibleMenu = MENU.filter((item) => !item.butuhDuaTahun || showMultiYearMenu)
+  const visibleMenu: MenuItem[] = [
+    ...MENU.filter((item) => !item.butuhDuaTahun || showMultiYearMenu),
+    ...(forecastStatus.isSuccess ? [{ to: "/prediksi", label: "Prediksi" }] : []),
+  ]
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur">
