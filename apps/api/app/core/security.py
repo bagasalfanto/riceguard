@@ -119,7 +119,7 @@ def _authenticate_admin(db: Session, authorization: str | None) -> AdminIdentity
 
 def require_admin(
     db: Annotated[Session, Depends(get_db)],
-    authorization: Annotated[str | None, Header(default=None)] = None,
+    authorization: Annotated[str | None, Header()] = None,
 ) -> AdminIdentity:
     """Wajibkan token JWT Supabase yang valid dan terdaftar di tabel `admins`."""
     return _authenticate_admin(db, authorization)
@@ -127,7 +127,7 @@ def require_admin(
 
 def optional_admin(
     db: Annotated[Session, Depends(get_db)],
-    authorization: Annotated[str | None, Header(default=None)] = None,
+    authorization: Annotated[str | None, Header()] = None,
 ) -> AdminIdentity | None:
     """Kembalikan identitas admin jika token valid; `None` untuk request publik/non-admin."""
     if not authorization:
