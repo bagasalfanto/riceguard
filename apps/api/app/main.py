@@ -8,6 +8,7 @@ from app.core.config import get_settings
 from app.core.errors import AppError, app_error_handler, validation_error_handler
 from app.routers.public import (
     content,
+    distribution,
     map_layers,
     meta,
     provinces,
@@ -60,6 +61,7 @@ app.include_router(summary.router, prefix=API)
 app.include_router(content.router, prefix=API)
 app.include_router(provinces.router, prefix=API)
 app.include_router(map_layers.router, prefix=API)
+app.include_router(distribution.router, prefix=API)
 app.include_router(recommendations.router, prefix=API)
 app.include_router(rice_balance.router, prefix=API)
 
