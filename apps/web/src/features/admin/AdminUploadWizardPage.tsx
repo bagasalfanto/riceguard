@@ -104,22 +104,22 @@ function isAllowedFile(file: File): boolean {
   return ACCEPTED_EXTENSIONS.some((ext) => lower.endsWith(ext))
 }
 
+function filterRuleItems(value: unknown): ValidationRuleItem[] {
+  if (!Array.isArray(value)) return []
+  return value.filter(
+    (item): item is ValidationRuleItem =>
+      typeof item === "object" && item !== null && "kode" in item && "label" in item,
+  )
+}
+
 function extractValidationRulesFromDetails(details: unknown): ValidationRuleItem[] {
-  if (!details) return []
-  if (Array.isArray(details)) {
-    return details.filter(
-      (item): item is ValidationRuleItem =>
-        typeof item === "object" && item !== null && "kode" in item && "label" in item,
-    )
-  }
-  if (typeof details === "object" && "aturan" in details) {
-    const aturan = (details as { aturan?: unknown }).aturan
-    if (Array.isArray(aturan)) {
-      return aturan.filter(
-        (item): item is ValidationRuleItem =>
-          typeof item === "object" && item !== null && "kode" in item && "label" in item,
-      )
-    }
+  if (!details || typeof details !== "object") return []
+  if (Array.isArray(details)) return filterRuleItems(details)
+  const record = details as { aturan?: unknown; validasi?: { aturan?: unknown } | null }
+  const direct = filterRuleItems(record.aturan)
+  if (direct.length > 0) return direct
+  if (record.validasi && typeof record.validasi === "object") {
+    return filterRuleItems(record.validasi.aturan)
   }
   return []
 }
@@ -519,12 +519,33 @@ export function AdminUploadWizardPage() {
                     {validateError.failedRules.map((rule) => {
                       const formatted = formatValidationDetail(rule)
                       return (
-                        <div key={rule.kode} className="rounded-lg border border-red-500/35 p-4">
+                        <div
+                          key={rule.kode}
+                          className={cn(
+                            "rounded-lg border p-4",
+                            rule.status === "gagal" ? "border-red-500/35" : "border-border",
+                          )}
+                        >
                           <div className="flex flex-wrap items-center justify-between gap-2">
-                            <p className="font-medium">{rule.label}</p>
+                            <div>
+                              <p className="font-medium">{rule.label}</p>
+                              <p className="font-mono text-xs text-muted-foreground">{rule.kode}</p>
+                            </div>
                             <RuleStatusBadge status={rule.status} />
                           </div>
-                          <p className="mt-1 text-sm text-muted-foreground">{formatted.summary}</p>
+                          <p className="mt-2 text-sm text-muted-foreground">{formatted.summary}</p>
+                          {formatted.rows.length > 0 ? (
+                            <dl className="mt-2 grid gap-1.5 rounded-md bg-muted/40 p-2.5 text-xs sm:grid-cols-2">
+                              {formatted.rows.map((row) => (
+                                <div key={row.label} className="flex justify-between gap-2">
+                                  <dt className="text-muted-foreground">{row.label}</dt>
+                                  <dd className={row.mono ? "font-mono" : "font-medium"}>
+                                    {row.value}
+                                  </dd>
+                                </div>
+                              ))}
+                            </dl>
+                          ) : null}
                         </div>
                       )
                     })}
