@@ -1,7 +1,8 @@
 /**
  * Kontrak data dan query TanStack untuk halaman Peta WebGIS (`/peta`) dan komponen peta.
- * Default membaca dataset statis 2025 hasil pre-process `riceguard_calc`;
- * set `VITE_USE_API_MAP=true` untuk menyambungkan langsung ke FastAPI (`/provinces`, `/map/layers`).
+ * Default membaca API (`/provinces`, `/map/layers`, `/recommendations`);
+ * set `VITE_USE_API_MAP=false` untuk memakai snapshot statis `public/data/*.json`
+ * (mode demo tanpa backend). Kalau API gagal, snapshot statis dipakai sebagai cadangan.
  */
 import { useMemo } from "react"
 import { useQuery } from "@tanstack/react-query"
@@ -73,7 +74,7 @@ export interface ProvinceGeoProperties {
 
 export type ProvinceGeoJSON = FeatureCollection<Geometry, ProvinceGeoProperties>
 
-const USE_API_MAP = import.meta.env.VITE_USE_API_MAP === "true"
+const USE_API_MAP = import.meta.env.VITE_USE_API_MAP !== "false"
 
 const SEQ_TOKENS = ["--seq-1", "--seq-2", "--seq-3", "--seq-4", "--seq-5"] as const
 
@@ -263,8 +264,12 @@ export function useMapProvinces(tahun = 2025) {
     queryKey: ["provinces", tahun],
     queryFn: async () => {
       if (USE_API_MAP) {
-        const res = await apiGet<{ items: ProvinceRecord[] }>("/provinces", { tahun, limit: 100 })
-        return res.items
+        try {
+          const res = await apiGet<{ items: ProvinceRecord[] }>("/provinces", { tahun, limit: 100 })
+          return res.items
+        } catch {
+          // API belum siap (mis. demo tanpa backend): pakai snapshot statis.
+        }
       }
       return fetchStaticJson<ProvinceRecord[]>("/data/provinces-2025.json")
     },
@@ -299,7 +304,11 @@ export function useMapLayer(
     queryKey: ["map-layer", layer, tahun],
     queryFn: async () => {
       if (USE_API_MAP) {
-        return apiGet<MapLayerResponse>("/map/layers", { tahun, layer })
+        try {
+          return await apiGet<MapLayerResponse>("/map/layers", { tahun, layer })
+        } catch {
+          // 409 LAYER_UNAVAILABLE atau API mati: jatuh ke snapshot statis.
+        }
       }
       return buildLayerFromProvinces(provinces ?? [], layer, tahun)
     },
@@ -313,8 +322,12 @@ export function useDistributionFlows(tahun = 2025) {
     queryKey: ["distribution-flows", tahun],
     queryFn: async () => {
       if (USE_API_MAP) {
-        const res = await apiGet<{ items: DistributionFlow[] }>("/recommendations", { tahun })
-        return res.items
+        try {
+          const res = await apiGet<{ items: DistributionFlow[] }>("/recommendations", { tahun })
+          return res.items
+        } catch {
+          // Endpoint rekomendasi belum ada (wave 5): pakai snapshot statis.
+        }
       }
       return fetchStaticJson<DistributionFlow[]>("/data/distribution-2025.json")
     },
