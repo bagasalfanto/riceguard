@@ -50,9 +50,10 @@ Catatan: endpoint laporan PDF (`GET /api/v1/reports/{jenis}.pdf`) memakai WeasyP
 ## Verifikasi & Tes
 
 ```bash
-npm run ci:check     # standar verifikasi gabungan (ruff, test:calc, docs:check, lint:web, build:web)
-npm run docs:check   # lint markdown + guard tautan, indeks, keterbacaan, dan harness
-npm run docs:drift   # cek keselarasan kode vs dokumen pada perubahan lokal
+npm run ci:check            # standar verifikasi gabungan (ruff, test:calc, docs:guard, lint:web, build:web)
+npm run docs:check          # jalankan docs:guard + docs:drift sekaligus
+npm run docs:drift          # cek keselarasan kode vs dokumen pada perubahan lokal
+npx --yes markdownlint-cli2 # lint gaya penulisan berkas Markdown (.markdownlint-cli2.jsonc)
 npm run lint:py      # ruff check packages/riceguard_calc apps/api scripts
 npm run test:calc    # regresi dataset_v1.csv + tes algoritma riceguard_calc
 npm run test:api     # butuh DATABASE_URL yang sudah dimigrasi

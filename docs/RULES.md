@@ -28,10 +28,11 @@ npm run ci:check
 
 | Perintah | Kegunaan | Berkas Konfigurasi / Target |
 |---|---|---|
-| `npm run ci:check` | Verifikasi gabungan (`ruff`, `test:calc`, `docs:check`, `lint:web`, `build:web`) | `scripts/ci-check.py` |
-| `npm run docs:check` | Markdownlint + tautan, indeks `docs/INDEX.md`, keterbacaan, harness | `.markdownlint-cli2.jsonc`, `scripts/docs-guard.py` |
+| `npm run ci:check` | Verifikasi gabungan (`ruff`, `test:calc`, `docs:guard`, `lint:web`, `build:web`) | `scripts/ci-check.py` |
+| `npm run docs:check` | Menjalankan `docs:guard` dan `docs:drift` sekaligus | `package.json`, `scripts/docs-guard.py` |
 | `npm run docs:guard` | Cek tautan, rujukan indeks, keterbacaan, dan harness via Python | `scripts/docs-guard.py` |
 | `npm run docs:drift` | Cek drift kode-vs-dokumen pada perubahan lokal (`--drift --pending`) | `docs-map.json`, `scripts/docs-guard.py` |
+| `npx --yes markdownlint-cli2` | Lint gaya penulisan Markdown (dijalankan CI `docs-verify.yml`) | `.markdownlint-cli2.jsonc` |
 | `npm run lint:py` | Lint Python (`ruff check packages/riceguard_calc apps/api scripts`) | `ruff.toml` |
 | `npm run lint:web` | Lint TypeScript/React (`oxlint`) | `apps/web/package.json` |
 | `npm run build:web` | Typecheck & build Vite produksi (`tsc -b && vite build`) | `apps/web/tsconfig.json`, `apps/web/vite.config.ts` |

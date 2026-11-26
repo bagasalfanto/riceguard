@@ -69,7 +69,7 @@ last-verified: 2026-11-26
 ## 5. Gotchas (Jebakan Penting)
 
 - **6 Provinsi Papua berbeda kode BPS vs Kemendagri:** Join `produksi` & `penduduk` memakai nama provinsi (dengan alias `DI Yogyakarta` → `Daerah Istimewa Yogyakarta`), sedangkan `konsumsi` **wajib** join lewat `kode_kemendagri`. Primary key sistem adalah `kode_bps`.
-- **Kalimantan Barat (`61`) pada 2025:** `rice_balance_ton` bernilai negatif (`-49.777,xx` ton), namun `rasio_swasembada` = `0,9001` (>= 0,90), sehingga berstatus `balanced`. UI dan peta **wajib** memakai kolom `status`, bukan tanda balance.
+- **Kalimantan Barat (`61`) pada 2025:** `rice_balance_ton` bernilai negatif (`-49.776,59` ton), namun `rasio_swasembada` = `0,9001` (>= 0,90), sehingga berstatus `balanced`. UI dan peta **wajib** memakai kolom `status`, bukan tanda balance.
 - **SQL murni tanpa Alembic + RLS Supabase:** Skema dikelola di `supabase/migrations/0001_init.sql`. Semua tabel `public` mengaktifkan RLS tanpa policy `anon`/`authenticated`; backend membaca/menulis lewat connection string Postgres langsung.
 - **Dependency sistem PDF WeasyPrint:** `apps/api/app/services/pdf.py` meng-import `weasyprint` secara *lazy* di `render_pdf_bytes()`. Di Linux/Docker/CI, `libpango-1.0-0`, `libpangoft2-1.0-0`, `libharfbuzz-subset0` harus terpasang (`apps/api/Dockerfile`, `.github/workflows/ci.yml`). Di Windows tanpa GTK/Pango, endpoint PDF membalas `503 PDF_UNAVAILABLE` tanpa mematikan endpoint lain.
 - **Layer `kepadatan` (`409 LAYER_UNAVAILABLE`):** Selama `provinces.luas_km2` bernilai `NULL` semua, `GET /api/v1/map/layers?layer=kepadatan` membalas HTTP 409 agar UI menampilkan state terkendali.
