@@ -1,0 +1,46 @@
+{
+  "$comment": "Hook Claude Code. Instruksi di CLAUDE.md tidak mengikat, jadi penegakan drift dipasang di PreToolUse dan Stop. Rujuk docs/INDEX.md dan AGENTS.md bagian 0.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR/scripts/docs-hook.py\" preflight --agent=claude"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR/scripts/docs-hook.py\" preflight --agent=claude"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|Bash|Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR/scripts/docs-hook.py\" gate --agent=claude"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR/scripts/docs-hook.py\" stop --agent=claude"
+          }
+        ]
+      }
+    ]
+  }
+}

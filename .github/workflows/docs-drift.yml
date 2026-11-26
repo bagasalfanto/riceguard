@@ -1,0 +1,101 @@
+# =============================================================================
+# Gerbang Drift Kode-vs-Dokumen — RiceGuard
+# =============================================================================
+# Membandingkan berkas kode yang berubah terhadap berkas docs yang berubah.
+# Bila kode di area yang dipetakan docs-map.json berubah tanpa dokumen
+# pendampingnya, job ini GAGAL.
+#
+# Pelepasan sadar (tercatat di ringkasan job, bukan hilang tanpa jejak):
+#   - label PR `docs-exempt`, atau
+#   - trailer `Docs-Exempt: <alasan>` di badan PR atau pesan commit
+# =============================================================================
+
+name: docs-drift
+
+on:
+  pull_request:
+    paths:
+      - 'apps/api/**'
+      - 'apps/web/src/**'
+      - 'packages/riceguard_calc/**'
+      - 'supabase/migrations/**'
+      - 'package.json'
+      - 'apps/web/package.json'
+      - 'apps/api/pyproject.toml'
+      - 'ruff.toml'
+      - '.env.example'
+      - 'apps/api/.env.example'
+      - 'apps/web/.env.example'
+      - '.github/workflows/**'
+      - 'scripts/docs-*.py'
+      - 'scripts/ci-check.py'
+      - 'docs/**'
+      - 'AGENTS.md'
+      - 'CLAUDE.md'
+      - 'llms.txt'
+      - 'opencode.json'
+      - 'docs-map.json'
+      - '.agents/**'
+      - '.claude/**'
+      - '.codex/**'
+      - '.opencode/**'
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: docs-drift-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  drift:
+    name: Kode Berubah, Dokumen Wajib Ikut
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    if: github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]'
+
+    steps:
+      - name: Checkout kode
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Tulis ringkasan drift ke job summary
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+        run: |
+          python scripts/docs-guard.py --drift \
+            --base="origin/${{ github.base_ref }}" \
+            --summary >> "$GITHUB_STEP_SUMMARY" || true
+
+      - name: Arsipkan laporan drift (JSON)
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+        run: |
+          python scripts/docs-guard.py --drift \
+            --base="origin/${{ github.base_ref }}" \
+            --json --quiet > drift-report.json || true
+
+      - name: Unggah laporan drift
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: drift-report
+          path: drift-report.json
+          retention-days: 14
+
+      - name: Tegakkan gerbang drift
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+        run: python scripts/docs-guard.py --drift --base="origin/${{ github.base_ref }}"

@@ -1,0 +1,62 @@
+{
+  "$comment": "Hook Codex. SessionStart dan UserPromptSubmit menyuntik peta dokumen; PreToolUse dan SubagentStart menolak aksi tulis saat drift dokumen terdeteksi; Stop menahan penghentian (maksimum 3 kali) agar agen menyelesaikan dokumen dulu. Hook non-managed harus ditinjau dan dipercaya lewat /hooks sebelum berjalan. Codex juga membaca AGENTS.md sebagai pedoman proyek.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/docs-hook.py preflight --agent=codex",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/docs-hook.py preflight --agent=codex",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Edit|Write|apply_patch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/docs-hook.py gate --agent=codex",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/docs-hook.py gate --agent=codex",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/docs-hook.py stop --agent=codex",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}

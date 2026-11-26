@@ -1,0 +1,74 @@
+# =============================================================================
+# Validasi Dokumentasi — RiceGuard
+# =============================================================================
+# Gerbang kualitas berkas dokumentasi: gaya markdown, tautan, rujukan
+# docs/INDEX.md, keterbacaan agen, kelengkapan harness, dan atestasi PR.
+# =============================================================================
+
+name: docs-verify
+
+on:
+  pull_request:
+    paths:
+      - 'docs/**'
+      - '**/*.md'
+      - 'llms.txt'
+      - 'AGENTS.md'
+      - 'CLAUDE.md'
+      - 'opencode.json'
+      - '.agents/**'
+      - '.claude/**'
+      - '.codex/**'
+      - '.opencode/**'
+      - 'docs-map.json'
+      - 'scripts/docs-*.py'
+      - '.markdownlint-cli2.jsonc'
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+      - '**/*.md'
+      - 'llms.txt'
+      - 'AGENTS.md'
+      - 'CLAUDE.md'
+      - 'docs-map.json'
+      - '.markdownlint-cli2.jsonc'
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: docs-verify-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dokumen:
+    name: Lint, Tautan, Rujukan, Keterbacaan Agen
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Checkout kode
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Markdownlint (gaya penulisan)
+        uses: DavidAnson/markdownlint-cli2-action@v19
+
+      - name: Guard dokumen (tautan, rujukan, keterbacaan, harness)
+        run: python scripts/docs-guard.py --check-links --check-refs --check-readability --check-harness
+
+      - name: Atestasi konfirmasi agen (Docs Consulted / Docs Updated) [advisory]
+        continue-on-error: true
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: python scripts/docs-guard.py --check-attestation
