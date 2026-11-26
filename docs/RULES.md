@@ -99,7 +99,7 @@ Satu implementasi Python (`scripts/docs-guard.py`) + satu dispatcher (`scripts/d
 
 | Mode | Fungsi |
 |---|---|
-| `--check-links` | Tautan markdown `](...)` dan rujukan gaya backtick `*.md` (melarang `file://` dan path absolut) |
+| `--check-links` | Tautan markdown di luar blok/span kode dan rujukan gaya backtick `*.md` (melarang `file://` dan path absolut) |
 | `--check-refs` | `docs/INDEX.md` bagian 2 versus berkas di disk (mendeteksi *ghost* & *orphan*) |
 | `--check-readability` | Frontmatter wajib (`scope`, `canonical-for`, `sources`, `last-verified`), tepat 1 H1, batas 400 baris (kecuali `max-lines`), `llms.txt`, dan frontmatter rule Antigravity |
 | `--check-harness` | Keberadaan & validitas berkas config pada `docs-map.json` kunci `harness` serta rujukannya ke `scripts/docs-hook.py` |

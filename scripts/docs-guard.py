@@ -307,9 +307,11 @@ def _clean_markdown_link_target(raw_target: str) -> str:
 
 def guard_collect_references(content: str) -> list[tuple[str, str]]:
     normalized = guard_normalize_text(content)
+    without_fences = re.sub(r"```.*?```", "", normalized, flags=re.S)
+    without_code = re.sub(r"`[^`\r\n]+`", "", without_fences)
     references: list[tuple[str, str]] = []
 
-    for raw_target in re.findall(r"\]\(([^)\r\n]+)\)", normalized):
+    for raw_target in re.findall(r"\]\(([^)\r\n]+)\)", without_code):
         target = _clean_markdown_link_target(raw_target)
         if not target or target.startswith("#"):
             continue
@@ -343,6 +345,8 @@ def guard_collect_references(content: str) -> list[tuple[str, str]]:
 
 
 def guard_resolve_reference(file: str, target: str) -> bool:
+    if any(set(part) == {"."} and len(part) >= 3 for part in target.replace("\\", "/").split("/") if part):
+        return False
     directory = posixpath.dirname(file)
     candidates: list[str] = []
     if directory and directory != ".":
