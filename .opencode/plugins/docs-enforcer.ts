@@ -82,6 +82,7 @@ export const DocsEnforcer: Plugin = async ({ directory }) => {
 
         const child = spawn(current.bin, [...current.argsPrefix, event, "--agent=opencode"], {
           cwd: directory,
+          stdio: ["ignore", "pipe", "pipe"],
           windowsHide: true,
         });
 

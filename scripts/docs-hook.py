@@ -221,7 +221,10 @@ def hook_run(event: str, argv: list[str] | None = None) -> int:
     _configure_stdio()
     args = sys.argv if argv is None else argv
     options = hook_options(args)
-    data = hook_input()
+    skip_stdin = options["agent"] == "opencode" or (
+        event == "preflight" and options["agent"] in ("antigravity", "opencode", "generic")
+    )
+    data = {} if skip_stdin else hook_input()
     agent = hook_agent(data, options["agent"])
     key = hook_conversation_key(data, agent)
     hook_event = hook_event_name(data)
