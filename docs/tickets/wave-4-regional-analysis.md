@@ -1,3 +1,10 @@
+---
+scope: tickets/wave-4
+canonical-for: ["spesifikasi tiket wave 4 analisis wilayah"]
+sources: ["docs/tickets/README.md", "docs/RiceGuard — PRD & Dokumen Teknis (FE + BE).md"]
+last-verified: 2026-11-26
+---
+
 # Wave 4 — Fitur 4: Regional Analysis (`/analisis`, `/analisis/:kode`)
 
 Kriteria selesai PRD §5.4: angka di rumus terisi sama dengan kolom dataset (kebutuhan dibulatkan

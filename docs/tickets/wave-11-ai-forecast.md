@@ -1,3 +1,10 @@
+---
+scope: tickets/wave-11
+canonical-for: ["spesifikasi tiket wave 11 prediksi AI ter-gating"]
+sources: ["docs/tickets/README.md", "docs/adr/0001-forecast-lewat-backend.md", "docs/RiceGuard — PRD & Dokumen Teknis (FE + BE).md"]
+last-verified: 2026-11-26
+---
+
 # Wave 11 — Prediksi Produksi (AI), model eksternal (`/prediksi`)
 
 Ini **bukan** salah satu dari 9 fitur inti. Spesifikasinya ada di PRD §5.10.

@@ -1,3 +1,10 @@
+---
+scope: tickets/wave-1
+canonical-for: ["spesifikasi tiket wave 1 landing"]
+sources: ["docs/tickets/README.md", "docs/RiceGuard — PRD & Dokumen Teknis (FE + BE).md"]
+last-verified: 2026-11-26
+---
+
 # Wave 1 — Fitur 1: Landing & General Information (`/`)
 
 Kriteria selesai PRD §5.1: 3 angka hero sama persis dengan Dashboard untuk tahun yang sama;

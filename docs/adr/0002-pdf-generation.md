@@ -1,3 +1,10 @@
+---
+scope: adr
+canonical-for: ["keputusan arsitektur pembuatan PDF backend"]
+sources: ["apps/api/app/services/pdf.py", "apps/api/app/routers/public/reports.py", "apps/api/app/templates/reports/laporan.html", "apps/api/Dockerfile", ".github/workflows/ci.yml"]
+last-verified: 2026-11-26
+---
+
 # 0002 — Pembuatan Laporan PDF di Backend (WeasyPrint + Jinja2 + Matplotlib)
 
 ## Status
@@ -6,27 +13,29 @@ Accepted
 
 ## Context
 
-Fitur Report & Export (`/laporan`, PRD §5.9) menyediakan empat jenis laporan yang dapat diunduh sebagai PDF A4 portrait:
+Fitur Report & Export (`/laporan`) menyediakan empat jenis laporan yang dapat diunduh sebagai PDF A4 portrait:
 
 1. National Rice Security Report (`nasional`) — maksimal 4 halaman A4, memuat KPI nasional, peta surplus–defisit, top-5, dan batasan klaim.
 2. Regional Analysis Report (`provinsi`) — detail satu provinsi beserta rumus terisi dan rekomendasi distribusi terkait.
 3. Surplus-Deficit Report (`surplus-defisit`) — daftar 38 provinsi dikelompokkan per status serta peta.
 4. Distribution Recommendation Report (`rekomendasi`) — seluruh pasangan rekomendasi distribusi, penjelasan, dan peta alur garis.
 
-Kriteria selesai pada PRD §5.9 mewajibkan:
+Kriteria selesai mewajibkan:
+
 - PDF berukuran A4 portrait (maksimal 4 halaman untuk laporan nasional).
 - Tetap terbaca saat dicetak hitam-putih (pola/simbol status, bukan warna semata).
 - Angka di PDF identik dengan tampilan web untuk versi dataset dan tahun yang sama.
 - Footer setiap halaman dan blok metadata mencantumkan versi dataset, tanggal cetak, sumber data, dan batasan klaim.
 
-PRD §12 mencatat dua kandidat arsitektur (Opsi A dari frontend vs Opsi B dari backend) yang harus dikunci sebelum implementasi T9.3.
+Dua kandidat arsitektur (Opsi A dari frontend vs Opsi B dari backend) dibandingkan sebelum implementasi T9.3.
 
 ## Decision
 
 Dipilih **Opsi B: Pembuatan PDF di backend (Jinja2 + WeasyPrint + Matplotlib static PNGs)** melalui endpoint `GET /api/v1/reports/{jenis}.pdf`.
 
 Alur rendering:
-1. Komposisi data laporan di `apps/api/app/services/exports.py` memanggil service sumber yang sama dengan API publik (`/summary`, `/provinces`, `/provinces/{kode_bps}`, `/recommendations`, `/map-layers`) sehingga tidak ada duplikasi perhitungan.
+
+1. Komposisi data laporan di `apps/api/app/services/exports.py` memanggil service sumber yang sama dengan API publik (`/summary`, `/provinces`, `/provinces/{kode_bps}`, `/recommendations`, `/map/layers`) sehingga tidak ada duplikasi perhitungan.
 2. Peta choropleth 38 provinsi (memakai `dataset/geo/provinsi-38.min.geojson`), peta alur distribusi, dan grafik batang dirender server-side sebagai PNG statis menggunakan Matplotlib (`Agg` backend) dengan pola arsiran (`hatch`) yang tetap terbaca pada cetakan grayscale/hitam-putih.
 3. Template Jinja2 (`apps/api/app/templates/reports/laporan.html`) menyusun layout `@page` A4 portrait dengan margin cetak, header/footer bernomor halaman, dan metadata lengkap, lalu WeasyPrint mengonversinya menjadi `application/pdf`.
 
@@ -42,7 +51,7 @@ Alur rendering:
 
 ## Alternatives
 
-Perbandingan sesuai PRD §12:
+Perbandingan opsi cetak PDF:
 
 | Opsi | Cara | Kelebihan | Kekurangan |
 | --- | --- | --- | --- |

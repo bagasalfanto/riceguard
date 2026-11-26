@@ -1,3 +1,10 @@
+---
+scope: tickets/wave-5
+canonical-for: ["spesifikasi tiket wave 5 distribusi"]
+sources: ["docs/tickets/README.md", "docs/RiceGuard — PRD & Dokumen Teknis (FE + BE).md"]
+last-verified: 2026-11-26
+---
+
 # Wave 5 — Fitur 5: Supply & Distribution Analysis (`/distribusi`)
 
 Kriteria selesai PRD §5.5: jumlah garis = jumlah baris rekomendasi (27 untuk 2025);

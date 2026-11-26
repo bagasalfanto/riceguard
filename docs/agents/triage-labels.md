@@ -1,15 +1,20 @@
+---
+scope: agents-triage-labels
+canonical-for: ["pemetaan lima peran label triase kanonik"]
+sources: ["AGENTS.md", "docs/agents/issue-tracker.md"]
+last-verified: 2026-11-26
+---
+
 # Triage Labels
 
-The skills speak in terms of five canonical triage roles. This file maps those roles to the actual label strings used in this repo's issue tracker.
+The repository uses five canonical triage roles. This table maps each role to the exact label string used in `bagasalfanto/riceguard`.
 
-| Label in mattpocock/skills | Label in our tracker | Meaning                                  |
-| -------------------------- | -------------------- | ---------------------------------------- |
-| `needs-triage`             | `needs-triage`       | Maintainer needs to evaluate this issue  |
-| `needs-info`               | `needs-info`         | Waiting on reporter for more information |
-| `ready-for-agent`          | `ready-for-agent`    | Fully specified, ready for an AFK agent  |
-| `ready-for-human`          | `ready-for-human`    | Requires human implementation            |
-| `wontfix`                  | `wontfix`            | Will not be actioned                     |
+| Canonical Role | Label in our tracker | Meaning |
+| --- | --- | --- |
+| `needs-triage` | `needs-triage` | Maintainer needs to evaluate this issue |
+| `needs-info` | `needs-info` | Waiting on reporter for more information |
+| `ready-for-agent` | `ready-for-agent` | Fully specified, ready for autonomous implementation |
+| `ready-for-human` | `ready-for-human` | Requires human decision or manual action |
+| `wontfix` | `wontfix` | Will not be actioned |
 
-When a skill mentions a role (e.g. "apply the AFK-ready triage label"), use the corresponding label string from this table.
-
-Edit the "Label in our tracker" column to match whatever vocabulary you actually use.
+When workflows or agents mention a triage role (for example, marking an issue ready for autonomous execution), apply the corresponding label string from the second column.

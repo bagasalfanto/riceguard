@@ -1,3 +1,10 @@
+---
+scope: tickets/wave-7
+canonical-for: ["spesifikasi tiket wave 7 tren historis"]
+sources: ["docs/tickets/README.md", "docs/RiceGuard — PRD & Dokumen Teknis (FE + BE).md"]
+last-verified: 2026-11-26
+---
+
 # Wave 7 — Fitur 7: Historical Data & Trend Monitoring (`/tren`)
 
 Kriteria selesai PRD §5.7: diuji dengan data dummy 2 tahun di dev (seed khusus), lalu otomatis
