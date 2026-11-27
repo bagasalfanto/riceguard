@@ -2,7 +2,7 @@
 scope: docs-index
 canonical-for: ["peta dokumentasi", "routing dokumen per tugas", "daftar berkas harness"]
 sources: ["AGENTS.md", "docs-map.json", "docs/"]
-last-verified: 2026-11-26
+last-verified: 2026-11-27
 ---
 
 # Indeks Dokumentasi RiceGuard
@@ -28,8 +28,9 @@ Aturan kanonik: satu fakta hidup di **satu** berkas. Bila fakta muncul di dua te
 | Menambah/mengubah endpoint admin (`/api/v1/admin/*`) | `docs/api/endpoints-admin.md` |
 | Stack, struktur folder, alur `riceguard_calc`, gotchas, cascade | `docs/ARCHITECTURE.md` |
 | Perintah verifikasi, gaya kode Python/TS, pengujian, harness docs | `docs/RULES.md` |
-| Keputusan arsitektur (proxy forecast AI & PDF WeasyPrint) | `docs/adr/0001-forecast-lewat-backend.md`, `docs/adr/0002-pdf-generation.md` |
+| Keputusan arsitektur (proxy forecast AI & laporan cetak browser) | `docs/adr/0001-forecast-lewat-backend.md`, `docs/adr/0003-laporan-pdf-dicetak-browser.md` |
 | Status tiket per wave & blocker | `docs/tickets/README.md` |
+| Status task tim per PIC (snapshot Trello, bukan spesifikasi) | `docs/rekap-riceguard.md` |
 | Setup mesin & menjalankan proyek lokal | `README.md` |
 
 Jika tugas menyentuh kode di `apps/api/` atau `apps/web/`, baca juga `AGENTS.md` terdekat di folder tersebut (`apps/api/AGENTS.md` atau `apps/web/AGENTS.md`).
@@ -59,7 +60,8 @@ Jika tugas menyentuh kode di `apps/api/` atau `apps/web/`, baca juga `AGENTS.md`
 | `docs/api/endpoints-public.md` | endpoint publik | spesifikasi seluruh rute API publik `/api/v1/*` | `apps/api/app/routers/public/`, `apps/api/app/schemas/` | 2026-11-26 |
 | `docs/api/endpoints-admin.md` | endpoint admin | spesifikasi seluruh rute admin `/api/v1/admin/*` | `apps/api/app/routers/admin/`, `apps/api/app/schemas/admin.py` | 2026-11-26 |
 | `docs/adr/0001-forecast-lewat-backend.md` | ADR forecast AI | alasan proxy `/forecast` melalui backend & off-switch | `apps/api/app/routers/public/forecast.py`, `apps/api/app/services/forecast.py` | 2026-11-26 |
-| `docs/adr/0002-pdf-generation.md` | ADR laporan PDF | pilihan WeasyPrint + Jinja2 + Matplotlib (Opsi B) | `apps/api/app/services/pdf.py`, `apps/api/Dockerfile` | 2026-11-26 |
+| `docs/adr/0002-pdf-generation.md` | ADR laporan PDF (digantikan) | catatan keputusan lama WeasyPrint; kanonik di ADR 0003 | `docs/adr/0003-laporan-pdf-dicetak-browser.md` | 2026-11-27 |
+| `docs/adr/0003-laporan-pdf-dicetak-browser.md` | ADR laporan cetak | laporan HTML siap-cetak, penghapusan WeasyPrint/Pango | `apps/api/app/routers/public/reports.py`, `apps/api/app/services/pdf.py`, `apps/web/src/features/reports/reportsData.ts` | 2026-11-27 |
 | `docs/agents/domain.md` | panduan skill domain | konvensi pembacaan `GLOSSARY.md` dan `docs/adr/` | `AGENTS.md`, `GLOSSARY.md` | 2026-11-26 |
 | `docs/agents/issue-tracker.md` | panduan issue tracker | konvensi `gh` CLI dan fallback lokal `docs/tickets/` | `AGENTS.md`, `docs/tickets/README.md` | 2026-11-26 |
 | `docs/agents/triage-labels.md` | label triase | pemetaan lima peran label triase kanonik | `AGENTS.md` | 2026-11-26 |
@@ -73,9 +75,10 @@ Jika tugas menyentuh kode di `apps/api/` atau `apps/web/`, baca juga `AGENTS.md`
 | `docs/tickets/wave-6-recommendation.md` | tiket wave 6 | matching parameter, `explain.py`, simulasi skenario | `docs/tickets/README.md` | 2026-11-26 |
 | `docs/tickets/wave-7-trends.md` | tiket wave 7 | tren multi-tahun, `/compare`, gating 2 tahun | `docs/tickets/README.md` | 2026-11-26 |
 | `docs/tickets/wave-8-data-transparency.md` | tiket wave 8 | validasi 5 aturan, ekspor CSV/XLSX/raw, `/data` | `docs/tickets/README.md` | 2026-11-26 |
-| `docs/tickets/wave-9-reports.md` | tiket wave 9 | ADR PDF, komposisi laporan, WeasyPrint, `/laporan` | `docs/tickets/README.md` | 2026-11-26 |
+| `docs/tickets/wave-9-reports.md` | tiket wave 9 | laporan HTML siap-cetak, komposisi laporan, `/laporan` | `docs/tickets/README.md` | 2026-11-27 |
 | `docs/tickets/wave-10-admin.md` | tiket wave 10 | auth JWKS, upload wizard, lifecycle versi, audit log | `docs/tickets/README.md` | 2026-11-26 |
 | `docs/tickets/wave-11-ai-forecast.md` | tiket wave 11 | proxy `/forecast` ter-gating, isolasi, `/prediksi` | `docs/tickets/README.md` | 2026-11-26 |
+| `docs/rekap-riceguard.md` | rekap Trello | snapshot status task tim per PIC (bukan spesifikasi produk) | Trello board 24 Nov | 2026-11-27 |
 | `docs/RiceGuard — PRD & Dokumen Teknis (FE + BE).md` | spesifikasi produk historis | PRD & checklist kriteria fitur awal (arsip rujukan) | `docs/` | 2026-11-26 |
 
 Berkas aturan agent dan berkas mesin penegakan dokumentasi di luar `docs/` tetap terdaftar di sini karena memengaruhi routing dan validasi otomatis (rincian mekanisme ada di `docs/RULES.md`):

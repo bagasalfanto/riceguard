@@ -22,12 +22,15 @@ Dokumentasi di bawah dioptimalkan untuk AI coding agent: modular per domain, sat
 - docs/ARCHITECTURE.md: stack terverifikasi, struktur folder monorepo, alur request & hitung, gotchas teknis, dan perilaku cascade delete.
 - docs/DOMAIN_MODEL.md: entitas database, kolom, relasi, enum, struktur JSONB, ERD, storage bucket, dan seed awal.
 - docs/ROLES_WORKFLOW.md: peran publik vs admin, autentikasi Supabase JWT, siklus versi dataset, wizard upload, simulasi, prediksi AI, dan audit log.
+- docs/adr/0001-forecast-lewat-backend.md: proxy `/forecast` lewat backend dan cara mematikan fitur prediksi AI.
+- docs/adr/0003-laporan-pdf-dicetak-browser.md: laporan HTML siap-cetak; WeasyPrint/Pango dihapus (menggantikan ADR 0002).
 
 ## API
 
 - docs/api/README.md: konvensi REST API `/api/v1`, autentikasi admin, format error seragam, cache in-memory, CORS, dan pembulatan.
-- docs/api/endpoints-public.md: spesifikasi seluruh endpoint publik (`/meta/years`, `/summary`, `/provinces`, `/map/layers`, `/distribution/*`, `/recommendations*`, `/rice-balance`, `/trends`, `/compare`, `/validation`, `/exports/*`, `/reports/*.pdf`, `/forecast`).
+- docs/api/endpoints-public.md: spesifikasi seluruh endpoint publik (`/meta/years`, `/summary`, `/provinces`, `/map/layers`, `/distribution/*`, `/recommendations*`, `/rice-balance`, `/trends`, `/compare`, `/validation`, `/exports/*`, `/reports/*.html`, `/forecast`).
 - docs/api/endpoints-admin.md: spesifikasi seluruh endpoint panel admin (`/admin/me`, `/admin/versions*`, `/admin/content*`, `/admin/sources/{id}`, `/admin/audit-log`).
+- docs/rekap-riceguard.md: snapshot status task tim per PIC dari Trello (bukan spesifikasi produk).
 
 ## Konvensi Kode per Folder
 

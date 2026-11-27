@@ -16,7 +16,7 @@ Panduan tambahan untuk berkas di `apps/api/` dan `packages/riceguard_calc/`. Atu
 - Auth admin (`app/core/security.py`): verifikasi JWT Supabase via `PyJWKClient(settings.jwks_url)` (fallback HS256 bila `SUPABASE_JWT_SECRET` diisi) + cek `user_id` di tabel `admins`.
 - Semua error terstruktur memakai `AppError` (`app/core/errors.py`) → `{"error": {"code", "message", "details"}}`.
 - Pembulatan ton pakai `bulatkan_ton` (`app/core/rounding.py`, 2 desimal); rasio 4 desimal; jarak 1 desimal.
-- Render PDF (`app/services/pdf.py`): `weasyprint` di-import lazy agar host tanpa Pango tetap bisa menjalankan API lain dan membalas `503 PDF_UNAVAILABLE`.
+- Laporan cetak (`app/services/pdf.py`): `render_report_html` menghasilkan HTML A4 siap-cetak (peta/grafik Matplotlib PNG data-URI, di-import lazy) yang disimpan PDF oleh browser; tidak ada WeasyPrint/Pango.
 - Semua aksi tulis admin wajib mencatat `audit_log` insert-only (`services/audit.py`) dan memanggil `cache.clear_all()` bila memengaruhi data publik.
 - Rincian skema: `../../docs/DOMAIN_MODEL.md`. Rincian endpoint: `../../docs/api/`.
 

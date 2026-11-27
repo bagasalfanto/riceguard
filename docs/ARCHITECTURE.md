@@ -2,7 +2,7 @@
 scope: architecture
 canonical-for: ["stack & versi", "struktur folder", "alur request", "logika bisnis", "gotchas", "cascade delete"]
 sources: ["apps/api/pyproject.toml", "apps/web/package.json", "packages/riceguard_calc/", "apps/api/app/services/", "apps/api/Dockerfile"]
-last-verified: 2026-11-26
+last-verified: 2026-11-27
 ---
 
 # Arsitektur & Gotchas RiceGuard
@@ -18,7 +18,7 @@ last-verified: 2026-11-26
 | Akses DB | SQLAlchemy 2 + psycopg 3 | `sqlalchemy>=2.0`, `psycopg[binary]>=3.2` (PostgreSQL 16 / Supabase) |
 | Paket hitung | `riceguard_calc` (`pandas`) | `packages/riceguard_calc` (di-import oleh `apps/api` dan `dataset/scripts/`) |
 | Auth JWT | `PyJWT[crypto]` | `pyjwt[crypto]>=2.9` (JWKS asimetris + fallback HS256) |
-| Ekspor & PDF | `openpyxl`, `jinja2`, `weasyprint`, `matplotlib` | `openpyxl>=3.1`, `jinja2>=3.1`, `weasyprint>=62`, `matplotlib>=3.9` |
+| Ekspor & Laporan | `openpyxl`, `jinja2`, `matplotlib` | `openpyxl>=3.1`, `jinja2>=3.1`, `matplotlib>=3.9` (Matplotlib di-import lazy) |
 | HTTP Client | `httpx` | `httpx>=0.27` (Storage bucket & proxy forecast AI) |
 | Frontend | React + Vite + TypeScript | `react ^19.1.0`, `vite ^7.1.0`, `typescript ~5.9.0` |
 | UI & Styling | Tailwind CSS v4 + Radix UI (`shadcn/ui`) + `lucide-react` | `@tailwindcss/vite ^4.1.0`, `radix-ui ^1.8.1`, `sonner ^2.0.8` |
@@ -36,7 +36,7 @@ last-verified: 2026-11-26
 | `apps/api/app/schemas/` | Skema Pydantic per fitur + `admin.py` |
 | `apps/api/app/routers/{public,admin}/` | 12 modul router publik + 3 modul router admin (`versions`, `content`, `audit`) |
 | `apps/api/app/services/` | Logika bisnis (`versions`, `compute`, `ingest`, `summary`, `provinces`, `distribution`, `recommendations`, `explain`, `map_layers`, `trends`, `exports`, `pdf`, `storage`, `forecast`, `audit`, `content`, `validation`, `seed`) |
-| `apps/api/app/templates/reports/laporan.html` | Template Jinja2 A4 portrait untuk WeasyPrint |
+| `apps/api/app/templates/reports/laporan.html` | Template Jinja2 A4 portrait siap-cetak browser (CSS `@media print`) |
 | `apps/web/src/features/` | Halaman & query hook per fitur (`landing`, `dashboard`, `map`, `analysis`, `distribution`, `recommendations`, `trends`, `data`, `reports`, `forecast`, `admin`) |
 | `apps/web/src/components/` | `ui/` (shadcn), `layout/`, `map/`, `charts/` |
 | `apps/web/src/lib/` | `api.ts`, `api-types.ts`, `tipe-api.ts`, `format.ts`, `status.ts`, `supabase.ts`, `utils.ts` |
@@ -71,7 +71,8 @@ last-verified: 2026-11-26
 - **6 Provinsi Papua berbeda kode BPS vs Kemendagri:** Join `produksi` & `penduduk` memakai nama provinsi (dengan alias `DI Yogyakarta` → `Daerah Istimewa Yogyakarta`), sedangkan `konsumsi` **wajib** join lewat `kode_kemendagri`. Primary key sistem adalah `kode_bps`.
 - **Kalimantan Barat (`61`) pada 2025:** `rice_balance_ton` bernilai negatif (`-49.776,59` ton), namun `rasio_swasembada` = `0,9001` (>= 0,90), sehingga berstatus `balanced`. UI dan peta **wajib** memakai kolom `status`, bukan tanda balance.
 - **SQL murni tanpa Alembic + RLS Supabase:** Skema dikelola di `supabase/migrations/0001_init.sql`. Semua tabel `public` mengaktifkan RLS tanpa policy `anon`/`authenticated`; backend membaca/menulis lewat connection string Postgres langsung.
-- **Dependency sistem PDF WeasyPrint:** `apps/api/app/services/pdf.py` meng-import `weasyprint` secara *lazy* di `render_pdf_bytes()`. Di Linux/Docker/CI, `libpango-1.0-0`, `libpangoft2-1.0-0`, `libharfbuzz-subset0` harus terpasang (`apps/api/Dockerfile`, `.github/workflows/ci.yml`). Di Windows tanpa GTK/Pango, endpoint PDF membalas `503 PDF_UNAVAILABLE` tanpa mematikan endpoint lain.
+- **Laporan HTML siap-cetak, bukan PDF server-side:** `GET /api/v1/reports/{jenis}.html` mengembalikan HTML A4 lengkap (peta & grafik Matplotlib sebagai PNG data-URI) dan browser pengguna yang menyimpan PDF lewat dialog cetak. Tidak ada WeasyPrint/Pango, jadi tidak ada dependensi pustaka native dan tidak ada `503 PDF_UNAVAILABLE`. Nomor halaman `Halaman X / Y` tidak tersedia karena margin box `@page` tidak didukung browser; footer teks diulang lewat `position: fixed`. Lihat `adr/0003-laporan-pdf-dicetak-browser.md`.
+- **Matplotlib lazy-import:** `services/pdf.py` meng-import `matplotlib` di dalam fungsi render, bukan di level modul, agar proses API tidak membayar ~80 MB RAM selama laporan belum diminta (penting di host 512 MB).
 - **Layer `kepadatan` (`409 LAYER_UNAVAILABLE`):** Selama `provinces.luas_km2` bernilai `NULL` semua, `GET /api/v1/map/layers?layer=kepadatan` membalas HTTP 409 agar UI menampilkan state terkendali.
 - **GeoJSON pada `react-leaflet`:** Komponen `<GeoJSON>` tidak otomatis me-render ulang style saat prop data berubah; `ProvinceLayer.tsx` memakai `key` atau pembaruan style eksplisit tanpa mengunduh ulang GeoJSON.
 - **Cache publik vs Preview Draft:** Middleware `cache_control_publik` (`app/main.py`) tidak memasang `Cache-Control: public, max-age=300` bila request membawa header `Authorization` agar preview draft admin tidak tersimpan di cache bersama.

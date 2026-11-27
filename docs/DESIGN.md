@@ -2,7 +2,7 @@
 scope: design
 canonical-for: ["token tema OKLCH", "komponen layout publik & admin", "komponen peta & grafik", "desain cetak PDF", "aksesibilitas & responsif"]
 sources: ["apps/web/src/styles/index.css", "apps/web/src/components/", "apps/web/src/features/reports/", "apps/api/app/templates/reports/laporan.html"]
-last-verified: 2026-11-26
+last-verified: 2026-11-27
 ---
 
 # Spesifikasi Desain UI RiceGuard
@@ -59,12 +59,12 @@ Tailwind CSS v4 dikonfigurasi dengan custom variant `@custom-variant dark (&:is(
 
 Memakai komponen shadcn/ui (Radix UI + Tailwind v4): `alert`, `alert-dialog`, `badge`, `button`, `card`, `dialog`, `dropdown-menu`, `input`, `label`, `progress`, `separator`, `sheet`, `skeleton`, `slider`, `sonner`, `switch`, `table`, `tabs`, `textarea`, `tooltip`.
 
-## 4. State UI Standar & Desain Cetak PDF
+## 4. State UI Standar & Desain Cetak Laporan
 
 - **Loading:** `Skeleton` berdimensi sesuai kartu, tabel, atau peta target.
 - **Error:** `Alert` (`variant="destructive"`) berisi pesan `ApiError` terstruktur + tombol `"Coba lagi"`.
 - **Kosong / Gating:** halaman `/tren` menampilkan pesan `"Butuh minimal 2 tahun data"` saat tahun published < 2; halaman `/prediksi` menampilkan `"Prediksi belum tersedia"` + alasan dari `details.alasan` saat `503` (tanpa angka pengganti).
-- **Cetak PDF A4 (`laporan.html` & `services/pdf.py`):** ukuran `@page { size: A4 portrait; margin: 12mm 12mm 18mm 12mm; }`, penomoran halaman `@bottom-right`, footer metadata persisten (versi dataset, tanggal cetak, sumber, batasan klaim), grafik/peta PNG Matplotlib `Agg` berarsir, dan laporan `nasional` dirancang ringkas `<= 4` halaman.
+- **Cetak laporan A4 (`laporan.html` & `services/pdf.py`):** ukuran `@page { size: A4 portrait; margin: 12mm 12mm 18mm 12mm; }`, toolbar `Cetak / Simpan PDF` yang disembunyikan saat `@media print`, footer teks persisten (versi dataset, tanggal cetak, batasan klaim) lewat `position: fixed`, grafik/peta PNG Matplotlib `Agg` berarsir, dan `window.print()` otomatis saat halaman dibuka. Nomor halaman `Halaman X / Y` tidak dipakai karena margin box `@page` tidak didukung browser.
 
 ## 5. Target Responsif, Performa & Aksesibilitas
 

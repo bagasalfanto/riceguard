@@ -2,7 +2,7 @@
 scope: tickets-index
 canonical-for: ["peta tiket per wave", "status wave & blocker"]
 sources: ["docs/tickets/", "docs/RiceGuard — PRD & Dokumen Teknis (FE + BE).md", "docs/INDEX.md"]
-last-verified: 2026-11-26
+last-verified: 2026-11-27
 ---
 
 # RiceGuard — Peta Tiket (12 Wave, 0–11)
@@ -66,7 +66,7 @@ Tiket ditulis lokal karena `gh` CLI belum terpasang di mesin dev. Kalau nanti `g
 | 6 | **Selesai** | T6.1–T6.5 lulus tes (`MatchParams` di `riceguard_calc`, `explain.py`, `/recommendations`, `/recommendations/simulate` < 1 s tanpa tulis DB, `RekomendasiPage.tsx`). |
 | 7 | **Selesai** | T7.1–T7.4 lulus tes (`/trends`, `/compare`, gating 2 tahun `200`, `TrenPage.tsx` dan menu `Header.tsx` tersembunyi saat 1 tahun). |
 | 8 | **Selesai** | T8.1–T8.5 lulus tes (`/validation`, ekspor CSV BOM & Excel 3 sheet, `/exports/raw/{nama_file}` allowlist anti-traversal, `DataPage.tsx` + `#batasan`). |
-| 9 | **Selesai** | T9.1–T9.4 lulus tes (ADR `docs/adr/0002-pdf-generation.md` Opsi B WeasyPrint + Jinja2 + Matplotlib `Agg` berarsir B&W, `/reports/{jenis}.pdf`, `LaporanPage.tsx`, Dockerfile & CI Pango). Pada Windows dev tanpa GTK/Pango, 2 tes real WeasyPrint di-skip dan endpoint membalas `503 PDF_UNAVAILABLE`. |
+| 9 | **Selesai** | T9.1–T9.4 lulus tes (ADR `docs/adr/0003-laporan-pdf-dicetak-browser.md`: `GET /reports/{jenis}.html` HTML siap-cetak + Jinja2 + Matplotlib `Agg` berarsir B&W, tombol `Cetak / Simpan PDF` di `LaporanPage.tsx`; WeasyPrint & Pango dihapus dari Docker dan CI). |
 | 10 | **Selesai** | T10.1–T10.9 lulus tes (JWKS/HS256 `security.py`, dry-run `/validate`, create draft + Storage upload, `PATCH` + `recompute`, `publish`/`rollback`/`duplicate`/`delete`, konten/sumber, audit log insert-only 9 aksi, `Admin*Page.tsx`). |
 | 11 | **Selesai (ter-gating di balik `AI_ENDPOINT_URL`)** | T11.1–T11.5 lulus tes (`GET /forecast` + `503 AI_UNAVAILABLE` saat kosong + `502 AI_UPSTREAM_ERROR` + `test_forecast_isolation.py`, `PrediksiPage.tsx` + banner non-resmi, `Header.tsx` gating). Menunggu URL endpoint model eksternal (`T11.0`) untuk aktivasi produksi. |
 

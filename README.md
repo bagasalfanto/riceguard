@@ -11,7 +11,7 @@ alokasi dari provinsi surplus ke provinsi defisit.
 
 ```text
 apps/web                  React 19 + Vite + TypeScript + Tailwind v4 + shadcn/ui + Leaflet
-apps/api                  FastAPI + SQLAlchemy 2 + WeasyPrint/Jinja2/Matplotlib
+apps/api                  FastAPI + SQLAlchemy 2 + Jinja2/Matplotlib
 packages/riceguard_calc   rumus + matching (pandas), dipakai api dan dataset
 dataset                   data mentah, dataset_v1.csv, rekomendasi, tes regresi
 supabase/migrations       skema SQL + RLS (tanpa Alembic)
@@ -43,7 +43,7 @@ npm install
 npm run dev:web            # http://localhost:5173
 ```
 
-Catatan: endpoint laporan PDF (`GET /api/v1/reports/{jenis}.pdf`) memakai WeasyPrint yang membutuhkan pustaka sistem Pango/HarfBuzz di Linux/Docker (`libpango-1.0-0`, `libpangoft2-1.0-0`, `libharfbuzz-subset0`; lihat `apps/api/Dockerfile`). Pada host Windows tanpa GTK/Pango, seluruh endpoint lain tetap berjalan normal dan endpoint PDF membalas `503 PDF_UNAVAILABLE`.
+Catatan: laporan (`GET /api/v1/reports/{jenis}.html`) dirender sebagai HTML A4 siap-cetak; simpan PDF lewat dialog cetak browser. Tidak ada dependensi pustaka native, jadi seluruh endpoint berjalan sama di Windows, Linux, maupun Docker.
 
 `scripts/db-local.ps1` juga punya subperintah `stop`, `status`, dan `reset`. Skrip ini tidak dipakai di CI dan tidak menyentuh Supabase.
 

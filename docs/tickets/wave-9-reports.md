@@ -1,31 +1,32 @@
 ---
 scope: tickets/wave-9
-canonical-for: ["spesifikasi tiket wave 9 laporan & ekspor PDF"]
-sources: ["docs/tickets/README.md", "docs/adr/0002-pdf-generation.md", "docs/RiceGuard — PRD & Dokumen Teknis (FE + BE).md"]
-last-verified: 2026-11-26
+canonical-for: ["spesifikasi tiket wave 9 laporan & ekspor cetak"]
+sources: ["docs/tickets/README.md", "docs/adr/0003-laporan-pdf-dicetak-browser.md", "docs/RiceGuard — PRD & Dokumen Teknis (FE + BE).md"]
+last-verified: 2026-11-27
 ---
 
 # Wave 9 — Fitur 9: Report & Export (`/laporan`)
 
-Kriteria selesai PRD §5.9: PDF A4 portrait, maksimal 4 halaman untuk laporan nasional,
-terbaca saat dicetak hitam-putih; angka di PDF sama dengan halaman web untuk versi yang sama.
+Kriteria selesai PRD §5.9: laporan A4 portrait, terbaca saat dicetak hitam-putih, angka di laporan
+sama dengan halaman web untuk versi yang sama.
 
-**Blocker:** PRD pertanyaan terbuka #5 (PDF dari FE vs BE) harus dijawab di T9.1.
+**Status:** selesai. Keputusan cetak berubah dari WeasyPrint (ADR `0002`) menjadi HTML siap-cetak
+browser (ADR `0003`); WeasyPrint dan pustaka Pango sudah dihapus dari repo.
 
 ---
 
-## T9.1 — ADR: opsi PDF (A: cetak dari FE, B: WeasyPrint di BE)
+## T9.1 — ADR: cara membuat laporan cetak
 
 **Blocked by:** —
 
 **Scope**
 - Tulis `docs/adr/0002-pdf-generation.md` (penomoran `0002` karena `0001` sudah dipakai ADR forecast) dengan format ADR (Status, Context, Decision, Consequences, Alternatives).
 - Isi trade-off persis PRD §12 tabel baris 858–861.
-- Keputusan final ADR memilih **Opsi B: WeasyPrint + Jinja2 + Matplotlib static PNGs** (disimpan di `docs/adr/0002-pdf-generation.md`, dengan dependency sistem `libpango-1.0-0`, `libpangoft2-1.0-0`, `libharfbuzz-subset0` di `apps/api/Dockerfile` dan `.github/workflows/ci.yml`).
+- Keputusan awal memilih Opsi B (WeasyPrint). **Dibatalkan oleh `docs/adr/0003-laporan-pdf-dicetak-browser.md`**: laporan kini HTML siap-cetak, tanpa dependensi native.
 
 **Acceptance**
 - ADR diterima (status `Accepted`) sebelum T9.3 dikerjakan.
-- Kalau Opsi B dipilih, catat dependency sistem (`libpango`) dan dampaknya ke Dockerfile.
+- ADR pengganti mencatat konsekuensi yang hilang (nomor halaman, paginasi browser).
 
 **Tes:** review dokumen.
 
@@ -41,7 +42,7 @@ terbaca saat dicetak hitam-putih; angka di PDF sama dengan halaman web untuk ver
   `laporan_rekomendasi(db, tahun)` — masing-masing mengembalikan satu struktur siap-render
   (KPI, daftar, ringkasan, `metadata: {versi, tanggal_cetak, sumber, batasan}`).
 - Tidak ada endpoint HTTP baru untuk Opsi A: FE merakit halaman cetak dari endpoint yang sudah ada.
-  Untuk Opsi B: `GET /reports/{jenis}.pdf?tahun=&kode_bps=` (dibuat di T9.3).
+  Implementasi akhir: `GET /reports/{jenis}.html?tahun=&kode_bps=` (dibuat di T9.3).
 - `metadata.batasan` = satu kalimat dari `site_content.limitations`.
 
 **Acceptance**
@@ -52,28 +53,26 @@ terbaca saat dicetak hitam-putih; angka di PDF sama dengan halaman web untuk ver
 
 ---
 
-## T9.3 — Implementasi PDF
+## T9.3 — Implementasi laporan cetak
 
 **Blocked by:** T9.1, T9.2
 
-**Scope (Opsi A — default)**
-- Route cetak `src/features/reports/print/`: `/laporan/cetak/nasional`, `/laporan/cetak/provinsi/:kode`,
-  `/laporan/cetak/surplus-defisit`, `/laporan/cetak/rekomendasi`.
-- `@media print` CSS: A4 portrait, margin 12 mm, peta & grafik skala cetak, hitam-putih terbaca
-  (garis & pola, bukan hanya warna), footer tiap halaman berisi versi/tanggal/sumber/batasan.
-- Tombol "Unduh PDF" → `window.print()`.
-
-**Scope (Opsi B — hanya kalau ADR memilih B)**
-- `GET /reports/{jenis}.pdf`, Jinja2 → WeasyPrint; peta dirender jadi PNG statis server-side
-  (matplotlib) dan grafik jadi PNG; `Dockerfile` menambah `libpango-1.0-0 libpangoft2-1.0-0`.
+**Scope (final — ADR 0003)**
+- `GET /reports/{jenis}.html`: Jinja2 merender HTML A4; peta & grafik jadi PNG statis server-side
+  (Matplotlib `Agg`, di-import lazy) sebagai data-URI.
+- `@media print` CSS: A4 portrait, margin 12 mm, footer teks berulang (`position: fixed`),
+  toolbar `Cetak / Simpan PDF` disembunyikan saat cetak, `window.print()` otomatis.
+- Tombol FE `Cetak / Simpan PDF` membuka endpoint di tab baru; browser yang menyimpan PDF.
+- `weasyprint` dan seluruh paket Pango tidak dipakai lagi (dihapus dari `pyproject.toml`,
+  `Dockerfile`, dan CI).
 
 **Acceptance**
-- Laporan nasional ≤ 4 halaman A4 portrait.
+- Keempat jenis laporan menghasilkan HTML A4 dengan metadata, peta, grafik, dan footer batasan.
 - Cetak hitam-putih: status masih bisa dibedakan (pola/label).
 - Angka = halaman web untuk versi & tahun yang sama.
-- Footer lengkap di setiap halaman.
+- Tidak ada `503 PDF_UNAVAILABLE`; endpoint tidak bergantung pustaka native.
 
-**Tes:** cetak manual ke PDF (Chrome), hitung halaman, cek grayscale.
+**Tes:** `test_reports_html.py` (render chart, template siap-cetak, validasi route) + cetak manual ke PDF (Chrome).
 
 ---
 
@@ -83,7 +82,7 @@ terbaca saat dicetak hitam-putih; angka di PDF sama dengan halaman web untuk ver
 
 **Scope**
 - `/laporan`: pilih jenis laporan (4), tahun, provinsi (hanya untuk laporan wilayah) →
-  tombol PDF/CSV/Excel sesuai matriks PRD §5.9.
+  tombol `Cetak / Simpan PDF`, `Unduh CSV`, `Unduh Excel` sesuai matriks PRD §5.9.
 - CSV/Excel memakai endpoint T8.2/T8.3 (jangan duplikasi logika).
 - Tampilkan versi dataset yang akan tercetak sebelum tombol aktif.
 

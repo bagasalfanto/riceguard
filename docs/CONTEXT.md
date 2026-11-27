@@ -33,7 +33,7 @@ Masalah utama yang dijawab aplikasi:
 
 > **Kanonik teks batasan:** `site_content` key `limitations` di `supabase/seed/0001_static.sql` (dapat disunting admin tanpa deploy ulang).
 
-Batasan berikut **wajib** tampil di UI (`LimitationBanner`) dan footer setiap laporan PDF/Excel:
+Batasan berikut **wajib** tampil di UI (`LimitationBanner`) dan footer setiap laporan cetak/Excel:
 
 - **Bukan stok aktual:** `rice_balance_ton` adalah selisih produksi dan estimasi konsumsi rumah tangga tahunan; stok Bulog, cadangan pangan, impor, dan perdagangan antarwilayah tidak dihitung.
 - **Bukan jarak jalan/laut:** Jarak antarprovinsi adalah **jarak garis lurus** (haversine antar-titik pusat provinsi), bukan jarak tempuh atau jalur logistik.

@@ -2,7 +2,7 @@
 scope: kamus-kosakata
 canonical-for: ["teks antarmuka", "navigasi & rute UI", "label status", "parameter URL", "header CSV", "larangan kata"]
 sources: ["GLOSSARY.md", "apps/web/src/components/layout/Header.tsx", "apps/web/src/components/layout/AdminLayout.tsx", "apps/web/src/router.tsx", "apps/web/src/lib/status.ts", "apps/web/src/lib/format.ts", "apps/api/app/services/exports.py", "apps/api/app/core/errors.py"]
-last-verified: 2026-11-26
+last-verified: 2026-11-27
 ---
 
 # Kamus Kosakata Baku RiceGuard
@@ -78,7 +78,7 @@ Dilarang memakai sinonim bergantian untuk entitas, aksi, atau status yang sama. 
 | `/rekomendasi/simulasi` | Tab `Simulasi skenario` | `RekomendasiPage` (tab `Simulasi skenario`) | `LimitationBanner` aktif |
 | `/tren` | `Historical Trends` | `TrenPage` | Menu disembunyikan jika tahun published < 2 |
 | `/data` | `Data & Methodology` | `DataPage` | Anchor `#versi`, `#validasi`, `#unduhan`, `#sumber`, `#metodologi`, `#batasan` |
-| `/laporan` | Tombol `Unduh laporan` | `LaporanPage` | 4 jenis laporan (PDF / CSV / Excel) |
+| `/laporan` | Tombol `Unduh laporan` | `LaporanPage` | 4 jenis laporan; tombol `Cetak / Simpan PDF`, `Unduh CSV`, `Unduh Excel` |
 | `/prediksi` | `Prediksi` | `PrediksiPage` | Menu dirender hanya jika `GET /forecast` = 200 |
 
 ### 3.2 Halaman Admin (`AdminLayout` + `/admin/login`)
@@ -156,4 +156,4 @@ CSV menggunakan encoding `UTF-8 BOM` (`\ufeff`), akhiran baris `\r\n`, desimal t
 ## 7. Aksi Audit Log & Kode Error API
 
 - **9 Aksi Audit Log Kanonik (`AUDIT_ACTIONS`):** `upload`, `edit_provinsi`, `recompute`, `publish`, `rollback`, `duplicate`, `hapus_draft`, `edit_konten`, `edit_sumber`.
-- **Kode Error API (`AppError`):** `INVALID_PARAMS` (400), `UNAUTHORIZED` (401), `FORBIDDEN` (403), `NOT_FOUND` (404), `NO_PUBLISHED_VERSION` (404), `VERSION_NOT_EDITABLE` (409), `LAYER_UNAVAILABLE` (409), `FILE_TOO_LARGE` (413), `VALIDATION_FAILED` (422), `AI_UPSTREAM_ERROR` (502), `AI_UNAVAILABLE` (503), `STORAGE_UNAVAILABLE` (503), `PDF_UNAVAILABLE` (503).
+- **Kode Error API (`AppError`):** `INVALID_PARAMS` (400), `UNAUTHORIZED` (401), `FORBIDDEN` (403), `NOT_FOUND` (404), `NO_PUBLISHED_VERSION` (404), `VERSION_NOT_EDITABLE` (409), `LAYER_UNAVAILABLE` (409), `FILE_TOO_LARGE` (413), `VALIDATION_FAILED` (422), `AI_UPSTREAM_ERROR` (502), `AI_UNAVAILABLE` (503), `STORAGE_UNAVAILABLE` (503).

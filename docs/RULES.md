@@ -2,7 +2,7 @@
 scope: rules
 canonical-for: ["perintah verifikasi & CI", "gaya kode Python & TypeScript", "pengujian", "git/PR", "larangan sentuh", "otomasi dokumentasi"]
 sources: ["package.json", "ruff.toml", "apps/api/pyproject.toml", "apps/web/package.json", ".github/workflows/ci.yml", "docs-map.json", "AGENTS.md"]
-last-verified: 2026-11-26
+last-verified: 2026-11-27
 ---
 
 # Aturan Kerja & Perintah RiceGuard
@@ -74,9 +74,9 @@ Gunakan `scripts/db-local.ps1` (`start`, `stop`, `status`, `reset`) untuk menjal
 
 - **GitHub Actions (`.github/workflows/ci.yml`):**
   - Job `calc`: `ruff check packages/riceguard_calc apps/api` + `pytest packages/riceguard_calc/tests dataset/tests -q`.
-  - Job `api`: Postgres 16 service container, install `postgresql-client libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0`, buat stub `auth.users`, jalankan `supabase/migrations/0001_init.sql` & `supabase/seed/0001_static.sql`, lalu `pytest apps/api/tests -q`.
+  - Job `api`: Postgres 16 service container, install `postgresql-client`, buat stub `auth.users`, jalankan `supabase/migrations/0001_init.sql` & `supabase/seed/0001_static.sql`, lalu `pytest apps/api/tests -q`.
   - Job `web`: `npm ci`, `npm run lint --workspace apps/web`, `npm run build --workspace apps/web`.
-- **Catatan test lokal Windows:** WeasyPrint membutuhkan pustaka native Pango/GObject; dua tes PDF real WeasyPrint di `test_reports_pdf.py` otomatis di-skip pada Windows saat DLL Pango tidak tersedia, dan berjalan penuh pada CI Ubuntu.
+- **Catatan test lokal Windows:** tidak ada dependensi pustaka native. Laporan dibuat sebagai HTML siap-cetak (`test_reports_html.py`) sehingga tes yang sama berjalan di Windows maupun CI Ubuntu.
 
 ## 5. Git & Pull Request
 

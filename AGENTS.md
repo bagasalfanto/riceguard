@@ -81,7 +81,7 @@ Bila lebih dari satu, ulangi barisnya. Bila tidak ada dokumen yang perlu diperba
 | Daftar endpoint publik (`/api/v1/*`) | `docs/api/endpoints-public.md` |
 | Daftar endpoint admin (`/api/v1/admin/*`) | `docs/api/endpoints-admin.md` |
 | Perintah lint/test/CI, gaya kode, larangan sentuh, harness docs | `docs/RULES.md` |
-| Keputusan arsitektur (forecast proxy, PDF WeasyPrint) | `docs/adr/0001-forecast-lewat-backend.md`, `docs/adr/0002-pdf-generation.md` |
+| Keputusan arsitektur (forecast proxy, laporan cetak browser) | `docs/adr/0001-forecast-lewat-backend.md`, `docs/adr/0003-laporan-pdf-dicetak-browser.md` |
 | Setup mesin & menjalankan lokal | `README.md` |
 
 Jika tugas menyentuh kode di `apps/api/` atau `apps/web/`, baca juga `AGENTS.md` terdekat di folder tersebut (`apps/api/AGENTS.md` atau `apps/web/AGENTS.md`).
@@ -110,7 +110,7 @@ Jika tugas menyentuh kode di `apps/api/` atau `apps/web/`, baca juga `AGENTS.md`
 
 ## 3. Stack & Arsitektur Ringkas
 
-FastAPI (Python >=3.11, CI 3.12) / SQLAlchemy 2 + psycopg 3 / pandas + openpyxl + WeasyPrint + Jinja2 + Matplotlib / Supabase (Postgres, Auth JWKS/HS256, Storage) + React 19 / Vite 7 / TypeScript 5.9 / Tailwind CSS v4 / shadcn/ui (Radix) / TanStack Query & Table / Recharts / Leaflet + react-leaflet 5. Detail lengkap: `docs/ARCHITECTURE.md`.
+FastAPI (Python >=3.11, CI 3.12) / SQLAlchemy 2 + psycopg 3 / pandas + openpyxl + Jinja2 + Matplotlib / Supabase (Postgres, Auth JWKS/HS256, Storage) + React 19 / Vite 7 / TypeScript 5.9 / Tailwind CSS v4 / shadcn/ui (Radix) / TanStack Query & Table / Recharts / Leaflet + react-leaflet 5. Detail lengkap: `docs/ARCHITECTURE.md`.
 
 ## 4. Verifikasi Sebelum Menutup Tugas
 

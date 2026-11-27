@@ -2,7 +2,7 @@
 scope: api/overview
 canonical-for: ["konvensi REST API", "autentikasi JWT backend", "format error seragam", "cache respons", "CORS & pembulatan"]
 sources: ["apps/api/app/main.py", "apps/api/app/core/security.py", "apps/api/app/core/errors.py", "apps/api/app/core/cache.py", "apps/api/app/core/rounding.py", "apps/api/app/services/versions.py"]
-last-verified: 2026-11-26
+last-verified: 2026-11-27
 ---
 
 # Konvensi REST API RiceGuard
@@ -60,7 +60,6 @@ Seluruh `AppError` maupun `RequestValidationError` (Pydantic) dinormalisasi menj
 | `502` | `AI_UPSTREAM_ERROR` | Endpoint model eksternal gagal merespons, timeout, non-200, atau JSON invalid |
 | `503` | `AI_UNAVAILABLE` | `AI_ENDPOINT_URL` kosong (fitur prediksi AI dimatikan aman) |
 | `503` | `STORAGE_UNAVAILABLE` | `SUPABASE_SERVICE_ROLE_KEY` belum terkonfigurasi atau gagal menghubungi Storage |
-| `503` | `PDF_UNAVAILABLE` | Pustaka native Pango/GObject tidak terpasang di host saat merender WeasyPrint PDF |
 
 ## 5. Cache, CORS & Pembulatan
 

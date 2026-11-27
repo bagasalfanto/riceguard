@@ -2,7 +2,7 @@
 scope: api/endpoints-public
 canonical-for: ["spesifikasi endpoint publik REST API"]
 sources: ["apps/api/app/main.py", "apps/api/app/routers/public/", "apps/api/app/schemas/"]
-last-verified: 2026-11-26
+last-verified: 2026-11-27
 ---
 
 # Endpoint Publik (`/api/v1/*`)
@@ -36,7 +36,7 @@ last-verified: 2026-11-26
 | `GET /api/v1/exports/provinces.xlsx` | `tahun?`, `version_id?` | Excel `.xlsx` (sheet aktif `Provinsi`) | `public/data_exports.py` |
 | `GET /api/v1/exports/recommendations.xlsx` | `tahun?`, `version_id?` | Excel `.xlsx` (sheet aktif `Rekomendasi`) | `public/data_exports.py` |
 | `GET /api/v1/exports/raw/{nama_file}` | `tahun?` (published only) | Binary raw file allowlisted | `public/data_exports.py` |
-| `GET /api/v1/reports/{jenis}.pdf` | `tahun?`, `kode_bps?`, `version_id?` | `application/pdf` A4 portrait | `public/reports.py` |
+| `GET /api/v1/reports/{jenis}.html` | `tahun?`, `kode_bps?`, `version_id?` | `text/html` A4 siap-cetak | `public/reports.py` |
 | `GET /api/v1/forecast` | `tahun?`, `version_id?` | `ForecastResponse` | `public/forecast.py` |
 
 ## 2. Meta, Ringkasan & Konten
@@ -112,12 +112,12 @@ Agregat nasional dari `dataset_versions.summary` (atau dihitung ulang otomatis b
 - **`GET /trends`:** query `metric` (`produksi|kebutuhan|balance|rasio`) dan `kode_bps` (maksimal 5 kode; mendukung `?kode_bps=32&kode_bps=31`, `?kode_bps[]=32`, atau koma). Jika tahun `published < 2`, tetap membalas `200` dengan `butuh_minimal_2_tahun: true`, `alasan: "butuh minimal 2 tahun data"`, `deret: []`.
 - **`GET /compare`:** query `tahun_a` dan `tahun_b` (`tahun_a < tahun_b`, wajib diisi keduanya atau dikosongkan keduanya bila tahun `published >= 2`). Bila tahun `published < 2` dan parameter kosong, membalas `200` gating (`butuh_minimal_2_tahun: true`).
 
-### `GET /api/v1/validation`, Ekspor & Laporan PDF
+### `GET /api/v1/validation`, Ekspor & Laporan Cetak
 
 - **`GET /validation`:** mengembalikan metadata versi (`tahun`, `version_no`, `version_id`, `published_at`, `published_by_nama`, `notes`), `lulus`, `diperiksa_pada`, 5 item `aturan`, serta `source_files`.
 - **CSV & Excel (`/exports/*`):** header CSV identik `dataset_v1.csv` / `rekomendasi_distribusi_v1.csv`; `.xlsx` memiliki 3 sheet (`Provinsi`, `Rekomendasi`, `Metadata`).
 - **Raw file (`/exports/raw/{nama_file}`):** hanya mengizinkan berkas milik versi `published` yang terdaftar pada allowlist `source_files` (menolak path traversal atau draft dengan `404 NOT_FOUND`). Membutuhkan `SUPABASE_SERVICE_ROLE_KEY` (`503 STORAGE_UNAVAILABLE` jika belum diatur).
-- **Laporan PDF (`/reports/{jenis}.pdf`):** `jenis` dalam `nasional | provinsi | surplus-defisit | rekomendasi`. `provinsi` mewajibkan `?kode_bps=`. Menghasilkan `application/pdf` A4 portrait dengan metadata versi/sumber/batasan/tanggal cetak dan pola ramah cetak hitam-putih, atau `503 PDF_UNAVAILABLE` bila Pango tidak terpasang di server.
+- **Laporan cetak (`/reports/{jenis}.html`):** `jenis` dalam `nasional | provinsi | surplus-defisit | rekomendasi`. `provinsi` mewajibkan `?kode_bps=`. Menghasilkan `text/html` A4 portrait berisi metadata versi/sumber/batasan, peta & grafik PNG data-URI, serta `window.print()` otomatis; browser pengguna yang menyimpan PDF lewat dialog cetak. `<title>` memuat `riceguard-laporan-{jenis}-{tahun}-v{version_no}` sebagai nama berkas bawaan.
 
 ### `GET /api/v1/forecast`
 

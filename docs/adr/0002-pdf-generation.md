@@ -2,10 +2,14 @@
 scope: adr
 canonical-for: ["keputusan arsitektur pembuatan PDF backend"]
 sources: ["apps/api/app/services/pdf.py", "apps/api/app/routers/public/reports.py", "apps/api/app/templates/reports/laporan.html", "apps/api/Dockerfile", ".github/workflows/ci.yml"]
-last-verified: 2026-11-26
+last-verified: 2026-11-27
+status: superseded
+superseded-by: docs/adr/0003-laporan-pdf-dicetak-browser.md
 ---
 
 # 0002 — Pembuatan Laporan PDF di Backend (WeasyPrint + Jinja2 + Matplotlib)
+
+> **Digantikan oleh:** `0003-laporan-pdf-dicetak-browser.md`. WeasyPrint dan pustaka Pango sudah dihapus dari repo; laporan kini berupa HTML siap-cetak yang disimpan PDF oleh browser. Dokumen ini disimpan sebagai catatan keputusan lama.
 
 ## Status
 
