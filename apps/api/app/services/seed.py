@@ -1,6 +1,7 @@
 """Seed versi 2025 v1 (published) dari dataset/ yang sudah ada.
 
 Idempoten: kalau tahun itu sudah punya versi published, tidak menulis apa pun.
+`paksa=True` menghapus versi published tahun itu lebih dulu lalu menulis ulang.
 """
 from __future__ import annotations
 
@@ -68,12 +69,20 @@ def _upsert_provinsi(db: Session, referensi: pd.DataFrame) -> None:
     db.execute(stmt)
 
 
-def seed(db: Session, tahun: int = TAHUN_SEED) -> dict:
+def seed(db: Session, tahun: int = TAHUN_SEED, *, paksa: bool = False) -> dict:
     sudah = db.scalars(
         select(DatasetVersion).where(DatasetVersion.tahun == tahun, DatasetVersion.status == "published")
     ).first()
     if sudah is not None:
-        return {"status": "dilewati", "alasan": f"tahun {tahun} sudah punya versi published", "version_id": str(sudah.id)}
+        if not paksa:
+            return {
+                "status": "dilewati",
+                "alasan": f"tahun {tahun} sudah punya versi published",
+                "version_id": str(sudah.id),
+            }
+        # Seed ulang: statistik & rekomendasi lama ikut terhapus lewat ON DELETE CASCADE.
+        db.delete(sudah)
+        db.commit()
 
     root = repo_root()
     raw = root / "dataset" / "raw"

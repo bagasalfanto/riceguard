@@ -31,6 +31,8 @@ powershell -ExecutionPolicy Bypass -File scripts/db-local.ps1 start
 #    supabase/migrations/0001_init.sql dan supabase/seed/0001_static.sql di SQL Editor.
 
 # 2. Data seed (versi 2025 v1 published)
+#    Seed idempoten; tambahkan --paksa untuk menghapus versi published tahun itu
+#    lalu menulis ulang (dipakai saat angka DB berbeda dari dataset_v1.csv).
 cd apps/api && python -m app.seed && cd ../..
 
 # 3. Backend
