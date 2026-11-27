@@ -387,15 +387,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/reports/{jenis}.pdf": {
+    "/api/v1/reports/{jenis}.html": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Download Report Pdf */
-        get: operations["download_report_pdf_api_v1_reports__jenis__pdf_get"];
+        /** Laporan Cetak */
+        get: operations["laporan_cetak_api_v1_reports__jenis__html_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2632,7 +2632,7 @@ export interface operations {
             };
         };
     };
-    download_report_pdf_api_v1_reports__jenis__pdf_get: {
+    laporan_cetak_api_v1_reports__jenis__html_get: {
         parameters: {
             query?: {
                 tahun?: number | null;
@@ -2655,7 +2655,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "text/html": string;
                 };
             };
             /** @description Validation Error */
