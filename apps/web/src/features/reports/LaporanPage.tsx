@@ -24,9 +24,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
+  bukaLaporanCetak,
   describeReportError,
   downloadExportFile,
-  downloadReportPdf,
   ENDPOINT_EKSPOR_LAPORAN,
   formatTanggalId,
   formatTanggalWaktuId,
@@ -466,24 +466,25 @@ function PanelUnduhan({
 
     try {
       const query: Record<string, string | number | undefined> = { tahun }
-      let namaFile = ""
 
       if (format === "pdf") {
         if (config.butuhProvinsi) query.kode_bps = kodeBps
-        const fallback = `riceguard-laporan-${config.jenis}-${tahun ?? "latest"}${versionSuffix}.pdf`
-        namaFile = await downloadReportPdf(config.jenis, query, fallback)
-      } else {
-        const endpointCfg =
-          config.jenis === "rekomendasi"
-            ? ENDPOINT_EKSPOR_LAPORAN.rekomendasi
-            : ENDPOINT_EKSPOR_LAPORAN["surplus-defisit"]
-        const path = format === "csv" ? endpointCfg.csv : endpointCfg.excel
-        const ext = format === "csv" ? "csv" : "xlsx"
-        const prefix =
-          format === "csv" ? endpointCfg.csvFallbackPrefix : endpointCfg.excelFallbackPrefix
-        const fallback = `${prefix}-${tahun ?? "latest"}${versionSuffix}.${ext}`
-        namaFile = await downloadExportFile(path, query, fallback)
+        const nama = `riceguard-laporan-${config.jenis}-${tahun ?? "latest"}${versionSuffix}.pdf`
+        bukaLaporanCetak(config.jenis, query)
+        toast.success(`Membuka pratinjau cetak ${nama} — pilih Save as PDF`)
+        return
       }
+
+      const endpointCfg =
+        config.jenis === "rekomendasi"
+          ? ENDPOINT_EKSPOR_LAPORAN.rekomendasi
+          : ENDPOINT_EKSPOR_LAPORAN["surplus-defisit"]
+      const path = format === "csv" ? endpointCfg.csv : endpointCfg.excel
+      const ext = format === "csv" ? "csv" : "xlsx"
+      const prefix =
+        format === "csv" ? endpointCfg.csvFallbackPrefix : endpointCfg.excelFallbackPrefix
+      const fallback = `${prefix}-${tahun ?? "latest"}${versionSuffix}.${ext}`
+      const namaFile = await downloadExportFile(path, query, fallback)
 
       toast.success(`Berhasil mengunduh ${namaFile}`)
     } catch (err) {
@@ -502,7 +503,7 @@ function PanelUnduhan({
           <Info className="size-4" />
           <AlertTitle>Pemilihan provinsi diperlukan</AlertTitle>
           <AlertDescription>
-            Pilih provinsi pada dropdown di atas sebelum mengunduh PDF Regional Analysis Report.
+            Pilih provinsi pada dropdown di atas sebelum mencetak Regional Analysis Report.
           </AlertDescription>
         </Alert>
       ) : null}
@@ -520,7 +521,7 @@ function PanelUnduhan({
           <TombolUnduh
             disabled={baseDisabled}
             icon={<FileText className="size-4" />}
-            label="Unduh PDF"
+            label="Cetak / Simpan PDF"
             onClick={() => void handleUnduh("pdf")}
             sedangUnduh={Boolean(pendingFormats.pdf)}
             variant="default"

@@ -15,7 +15,7 @@ import {
   useValidationReport,
   type ValidationResponse,
 } from "@/features/data/dataTransparencyData"
-import { ApiError, apiDownload, apiGet, unduhBlob, type Query } from "@/lib/api"
+import { ApiError, apiGet, apiUrl, type Query } from "@/lib/api"
 import type { ProvincesResponse } from "@/lib/tipe-api"
 
 export type { ValidationResponse }
@@ -136,24 +136,13 @@ export function useProvincesReport(tahun?: number) {
 export interface ReportDownloadErrorInfo {
   kode: string
   message: string
-  isPdfUnavailable: boolean
 }
 
 export function describeReportError(err: unknown): ReportDownloadErrorInfo {
   if (err instanceof ApiError) {
-    const isPdfUnavailable = err.code === "PDF_UNAVAILABLE" || err.status === 503
-    if (isPdfUnavailable) {
-      return {
-        kode: err.code,
-        isPdfUnavailable: true,
-        message:
-          "Layanan PDF tidak tersedia di server saat ini (503 PDF_UNAVAILABLE: dependensi Pango belum terpasang). Untuk laporan Surplus–Defisit atau Rekomendasi, Anda tetap dapat mengunduh format CSV atau Excel.",
-      }
-    }
     if (err.code === "NO_PUBLISHED_VERSION" || err.code === "NOT_FOUND" || err.status === 404) {
       return {
         kode: err.code,
-        isPdfUnavailable: false,
         message:
           err.message ||
           "Data laporan atau versi published untuk tahun/provinsi tersebut tidak ditemukan.",
@@ -162,40 +151,38 @@ export function describeReportError(err: unknown): ReportDownloadErrorInfo {
     if (err.code === "INVALID_PARAMS" || err.status === 400) {
       return {
         kode: err.code,
-        isPdfUnavailable: false,
         message: err.message || "Parameter laporan tidak valid (400 INVALID_PARAMS).",
       }
     }
     return {
       kode: err.code,
-      isPdfUnavailable: false,
-      message: err.message || `Gagal mengunduh laporan (${err.status}).`,
+      message: err.message || `Gagal membuka laporan (${err.status}).`,
     }
   }
   if (err instanceof Error) {
     return {
       kode: "UNKNOWN",
-      isPdfUnavailable: false,
-      message: err.message || "Gagal mengunduh laporan.",
+      message: err.message || "Gagal membuka laporan.",
     }
   }
   return {
     kode: "UNKNOWN",
-    isPdfUnavailable: false,
-    message: "Terjadi kesalahan saat mengunduh laporan.",
+    message: "Terjadi kesalahan saat membuka laporan.",
   }
 }
 
 /**
- * Mengunduh PDF laporan dari `GET /api/v1/reports/{jenis}.pdf`.
+ * Membuka laporan HTML siap-cetak (`GET /api/v1/reports/{jenis}.html`) di tab baru.
+ * Browser yang menyimpan PDF lewat dialog cetak, jadi tidak ada PDF yang dirender server.
+ *
+ * shortcut: tidak mengirim token admin, sehingga pratinjau draft `?version_id=` tidak
+ * didukung; ganti ke fetch + blob bila suatu saat halaman ini perlu pratinjau draft.
  */
-export async function downloadReportPdf(
-  jenis: JenisLaporan,
-  query: Query,
-  fallbackFilename: string,
-): Promise<string> {
-  const { blob, filename } = await apiDownload(`/reports/${jenis}.pdf`, query)
-  const resolved = filename || fallbackFilename
-  unduhBlob(blob, resolved)
-  return resolved
+export function bukaLaporanCetak(jenis: JenisLaporan, query: Query): void {
+  const jendela = window.open(apiUrl(`/reports/${jenis}.html`, query), "_blank", "noopener")
+  if (!jendela) {
+    throw new Error(
+      "Tab baru diblokir browser. Izinkan popup untuk situs ini lalu coba lagi.",
+    )
+  }
 }
