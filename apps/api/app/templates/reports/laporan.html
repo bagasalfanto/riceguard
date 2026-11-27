@@ -732,6 +732,11 @@
     RiceGuard {{ data.metadata.versi }} ({{ data.metadata.tahun }}) · Cetak {{ data.metadata.tanggal_cetak[:10] }} · Bukan stok aktual/rencana logistik
   </div>
 
-  <script>window.print()</script>
+  <script>
+    // Tunggu PNG peta/grafik selesai di-decode supaya dialog cetak tidak menampilkan gambar kosong.
+    window.addEventListener("load", function () {
+      window.print();
+    });
+  </script>
 </body>
 </html>
