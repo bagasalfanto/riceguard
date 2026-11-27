@@ -1,15 +1,10 @@
-"""Tes rendering chart/peta Matplotlib, template HTML A4, validasi route, dan WeasyPrint PDF (T9.3)."""
+"""Tes chart/peta Matplotlib, template HTML A4 siap-cetak browser, dan route laporan (T9.3)."""
 from __future__ import annotations
 
-import builtins
 import json
 from pathlib import Path
-from types import SimpleNamespace
 
-import pytest
-from app.core.errors import AppError
 from app.services.pdf import (
-    render_pdf_bytes,
     render_peta_png,
     render_report_html,
     render_status_distribusi_png,
@@ -247,8 +242,6 @@ def test_render_html_semua_jenis_a4_footer_dan_marker_bw():
         html = render_report_html(report)
         assert "size: A4 portrait;" in html
         assert "margin: 12mm 12mm 18mm 12mm;" in html
-        assert "counter(page)" in html
-        assert "counter(pages)" in html
         assert "data:image/png;base64," in html
         assert "Dataset v1" in html
         assert "2025" in html
@@ -258,61 +251,28 @@ def test_render_html_semua_jenis_a4_footer_dan_marker_bw():
         assert "34.691.234,56" in html or "5.600.000,00" in html or "400.000,00" in html
 
 
-def test_render_pdf_bytes_native_missing_raises_503(monkeypatch):
-    real_import = builtins.__import__
-
-    def fake_import(name, *args, **kwargs):
-        if name == "weasyprint":
-            raise OSError("cannot load library 'libgobject-2.0-0'")
-        return real_import(name, *args, **kwargs)
-
-    monkeypatch.setattr(builtins, "__import__", fake_import)
-    with pytest.raises(AppError) as exc_info:
-        render_pdf_bytes("<html><body>halo</body></html>")
-    assert exc_info.value.status_code == 503
-    assert exc_info.value.code == "PDF_UNAVAILABLE"
-
-
-def test_weasyprint_real_nasional_fit_max_4_halaman():
-    html = render_report_html(_sample_nasional_data())
-    try:
-        import weasyprint
-    except OSError as exc:
-        pytest.skip(f"Pango/GObject native library tidak tersedia di host ini: {exc}")
-
-    doc = weasyprint.HTML(string=html).render()
-    assert 1 <= len(doc.pages) <= 4
-    pdf_bytes = doc.write_pdf()
-    assert pdf_bytes.startswith(b"%PDF-")
+def test_render_html_siap_cetak_browser():
+    """Footer berulang & tombol cetak menggantikan margin box @page yang tidak didukung browser."""
+    for report in _sample_all_reports():
+        html = render_report_html(report)
+        assert 'class="footer-cetak"' in html
+        assert 'class="cetak-bar"' in html
+        assert "window.print()" in html
+        assert "@media print" in html
+        assert "@media screen" in html
+        # Margin box @page hanya didukung WeasyPrint/Prince, bukan Chrome/Firefox.
+        assert "@bottom-right" not in html
+        assert "counter(pages)" not in html
 
 
-def test_reports_route_validasi_parameter(client):
-    r_bad_jenis = client.get("/api/v1/reports/tidak-valid.pdf")
-    assert r_bad_jenis.status_code == 400
-    assert r_bad_jenis.json()["error"]["code"] == "INVALID_PARAMS"
-
-    r_no_kode = client.get("/api/v1/reports/provinsi.pdf", params={"tahun": 2025})
-    assert r_no_kode.status_code == 400
-    assert r_no_kode.json()["error"]["code"] == "INVALID_PARAMS"
-
-    r_unknown_kode = client.get("/api/v1/reports/provinsi.pdf", params={"tahun": 2025, "kode_bps": "99"})
-    assert r_unknown_kode.status_code == 404
-    assert r_unknown_kode.json()["error"]["code"] == "NOT_FOUND"
-
-    r_no_year = client.get("/api/v1/reports/nasional.pdf", params={"tahun": 2019})
-    assert r_no_year.status_code == 404
-    assert r_no_year.json()["error"]["code"] == "NO_PUBLISHED_VERSION"
+def test_render_html_title_memuat_nama_berkas():
+    for report in _sample_all_reports():
+        html = render_report_html(report)
+        nama = f"riceguard-laporan-{report['jenis']}-2025-v1"
+        assert f"<title>{nama}</title>" in html
 
 
-def test_reports_endpoint_semua_jenis_dengan_mock_weasyprint(client, monkeypatch):
-    captured: list[str] = []
-
-    def fake_write_pdf(self):
-        captured.append("called")
-        return b"%PDF-1.4\n%mock-riceguard\n"
-
-    monkeypatch.setattr("app.routers.public.reports.render_pdf_bytes", lambda html: fake_write_pdf(SimpleNamespace(html=html)))
-
+def test_reports_route_html_semua_jenis(client):
     cases = [
         ("nasional", {}),
         ("provinsi", {"kode_bps": "35"}),
@@ -320,23 +280,33 @@ def test_reports_endpoint_semua_jenis_dengan_mock_weasyprint(client, monkeypatch
         ("rekomendasi", {}),
     ]
     for jenis, extra_params in cases:
-        r = client.get(f"/api/v1/reports/{jenis}.pdf", params={"tahun": 2025, **extra_params})
+        r = client.get(f"/api/v1/reports/{jenis}.html", params={"tahun": 2025, **extra_params})
         assert r.status_code == 200
-        assert r.headers["content-type"] == "application/pdf"
-        assert r.headers["content-disposition"] == f'attachment; filename="riceguard-laporan-{jenis}-2025-v1.pdf"'
-        assert r.content.startswith(b"%PDF-")
+        assert r.headers["content-type"].startswith("text/html")
+        # Laporan publik ikut kebijakan cache publik standar (middleware Cache-Control).
+        assert "max-age=300" in r.headers["cache-control"]
+        assert 'class="footer-cetak"' in r.text
+        assert f"<title>riceguard-laporan-{jenis}-2025-v1</title>" in r.text
 
-    assert len(captured) == 4
+
+def test_reports_route_html_validasi_parameter(client):
+    r_bad_jenis = client.get("/api/v1/reports/tidak-valid.html")
+    assert r_bad_jenis.status_code == 400
+    assert r_bad_jenis.json()["error"]["code"] == "INVALID_PARAMS"
+
+    r_no_kode = client.get("/api/v1/reports/provinsi.html", params={"tahun": 2025})
+    assert r_no_kode.status_code == 400
+    assert r_no_kode.json()["error"]["code"] == "INVALID_PARAMS"
+
+    r_unknown_kode = client.get("/api/v1/reports/provinsi.html", params={"tahun": 2025, "kode_bps": "99"})
+    assert r_unknown_kode.status_code == 404
+    assert r_unknown_kode.json()["error"]["code"] == "NOT_FOUND"
+
+    r_no_year = client.get("/api/v1/reports/nasional.html", params={"tahun": 2019})
+    assert r_no_year.status_code == 404
+    assert r_no_year.json()["error"]["code"] == "NO_PUBLISHED_VERSION"
 
 
-def test_reports_endpoint_real_weasyprint_nasional_live_db(client):
-    try:
-        import weasyprint  # noqa: F401
-    except OSError as exc:
-        pytest.skip(f"Pango/GObject native library tidak tersedia di host ini: {exc}")
-
+def test_reports_route_pdf_sudah_tidak_ada(client):
     r = client.get("/api/v1/reports/nasional.pdf", params={"tahun": 2025})
-    assert r.status_code == 200
-    assert r.headers["content-type"] == "application/pdf"
-    assert r.headers["content-disposition"] == 'attachment; filename="riceguard-laporan-nasional-2025-v1.pdf"'
-    assert r.content.startswith(b"%PDF-")
+    assert r.status_code == 404
