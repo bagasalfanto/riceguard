@@ -2,7 +2,7 @@
 scope: project-context
 canonical-for: ["gambaran umum proyek", "masalah & tujuan", "batasan klaim", "cakupan produk"]
 sources: ["AGENTS.md", "dataset/dataset_v1.csv", "dataset/rekomendasi_distribusi_v1.csv", "supabase/seed/0001_static.sql"]
-last-verified: 2026-11-26
+last-verified: 2026-11-27
 ---
 
 # Konteks Proyek RiceGuard
@@ -40,6 +40,7 @@ Batasan berikut **wajib** tampil di UI (`LimitationBanner`) dan footer setiap la
 - **Bukan rencana logistik:** Rekomendasi distribusi bersifat potensial berbasis data tahunan; biaya angkut, moda transportasi, kapasitas pelabuhan, dan kebijakan tidak diperhitungkan.
 - **Konsumsi rumah tangga saja:** Kebutuhan dihitung dari penduduk dikali konsumsi rumah tangga per kapita (Bapanas), tidak mencakup industri, hotel/restoran, maupun susut pascapanen.
 - **Prediksi AI terisolasi:** Fitur opsional `/prediksi` (`GET /api/v1/forecast`) berasal dari model eksternal di luar dataset resmi dan tidak pernah dipakai untuk menghitung status provinsi atau rekomendasi distribusi.
+- **Data aktual 2025, proyeksi belum ada:** dataset resmi hanya memuat tahun 2025 sebagai data aktual; proyeksi produksi dan kebutuhan 2026 ke atas belum tersedia dan masih rencana fitur, tanpa pelatihan model di repo ini.
 
 **Di luar cakupan produk:** data tingkat kabupaten/kota, stok gudang real-time, harga eceran/grosir beras, dan akun pengguna publik (publik membaca tanpa login; hanya admin yang diautentikasi).
 
