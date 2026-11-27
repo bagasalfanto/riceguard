@@ -2,23 +2,11 @@
 <html lang="id">
 <head>
   <meta charset="utf-8" />
-  <title>{{ data.judul }} — RiceGuard {{ data.metadata.versi }}</title>
+  <title>riceguard-laporan-{{ data.jenis }}-{{ data.metadata.tahun }}-v{{ data.metadata.version_no }}</title>
   <style>
     @page {
       size: A4 portrait;
       margin: 12mm 12mm 18mm 12mm;
-      @bottom-left {
-        content: "RiceGuard {{ data.metadata.versi }} ({{ data.metadata.tahun }}) · Cetak {{ data.metadata.tanggal_cetak[:10] }} · Bukan stok aktual/rencana logistik";
-        font-family: "DejaVu Sans", Arial, sans-serif;
-        font-size: 7.5pt;
-        color: #334155;
-      }
-      @bottom-right {
-        content: "Halaman " counter(page) " / " counter(pages);
-        font-family: "DejaVu Sans", Arial, sans-serif;
-        font-size: 7.5pt;
-        color: #334155;
-      }
     }
 
     * {
@@ -251,9 +239,69 @@
       margin: 2pt 0 4pt 14pt;
       padding: 0;
     }
+
+    .cetak-bar {
+      display: flex;
+      align-items: center;
+      gap: 10pt;
+      border: 1pt solid #0f172a;
+      background: #f1f5f9;
+      padding: 6pt 8pt;
+      margin-bottom: 8pt;
+      font-size: 8pt;
+    }
+
+    .cetak-bar button {
+      font: inherit;
+      font-weight: 700;
+      border: 1pt solid #0f172a;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 4pt 10pt;
+      border-radius: 2pt;
+      cursor: pointer;
+    }
+
+    .footer-cetak {
+      margin-top: 8pt;
+      padding-top: 3pt;
+      border-top: 0.75pt solid #cbd5e1;
+      font-size: 7.5pt;
+      color: #334155;
+    }
+
+    @media screen {
+      .footer-cetak {
+        display: none;
+      }
+    }
+
+    @media print {
+      .cetak-bar {
+        display: none;
+      }
+      body {
+        padding-bottom: 14mm;
+      }
+      /* position: fixed diulang browser pada setiap halaman cetak, pengganti margin box @page. */
+      .footer-cetak {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: 0;
+        padding-top: 2pt;
+        border-top: 0.75pt solid #cbd5e1;
+        background: #ffffff;
+      }
+    }
   </style>
 </head>
 <body>
+  <div class="cetak-bar">
+    <button type="button" onclick="window.print()">Cetak / Simpan PDF</button>
+    <span>Pilih <strong>Save as PDF</strong> pada dialog cetak browser untuk menyimpan laporan ini.</span>
+  </div>
   <header class="header">
     <div>
       <div class="brand">RiceGuard · Ketahanan Beras Indonesia</div>
@@ -679,5 +727,11 @@
     </ul>
     <p><strong>Batasan Klaim:</strong> {{ data.metadata.batasan }}</p>
   </footer>
+
+  <div class="footer-cetak">
+    RiceGuard {{ data.metadata.versi }} ({{ data.metadata.tahun }}) · Cetak {{ data.metadata.tanggal_cetak[:10] }} · Bukan stok aktual/rencana logistik
+  </div>
+
+  <script>window.print()</script>
 </body>
 </html>

@@ -1,4 +1,8 @@
-"""Rendering peta/grafik Matplotlib (Agg), template Jinja2 A4, dan PDF WeasyPrint (T9.3)."""
+"""Rendering peta/grafik Matplotlib (Agg) dan template HTML A4 siap-cetak browser (T9.3).
+
+Matplotlib di-import di dalam fungsi: host kecil (512 MB) tidak membayar ~80 MB RAM
+selama laporan belum diminta.
+"""
 from __future__ import annotations
 
 import base64
@@ -7,20 +11,12 @@ import json
 from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
-from typing import Any
-
-import matplotlib
-
-matplotlib.use("Agg")
+from typing import TYPE_CHECKING, Any
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from matplotlib.backends.backend_agg import FigureCanvasAgg
-from matplotlib.figure import Figure
-from matplotlib.lines import Line2D
-from matplotlib.patches import FancyArrowPatch, Patch
-from matplotlib.patches import Polygon as MplPolygon
 
-from app.core.errors import AppError
+if TYPE_CHECKING:
+    from matplotlib.figure import Figure
 
 _TEMPLATE_DIR = Path(__file__).resolve().parents[1] / "templates" / "reports"
 
@@ -67,6 +63,8 @@ def _load_geojson() -> dict[str, Any]:
 
 
 def _figure_to_png_bytes(fig: Figure, *, dpi: int = 160) -> bytes:
+    from matplotlib.backends.backend_agg import FigureCanvasAgg
+
     FigureCanvasAgg(fig)
     buf = io.BytesIO()
     fig.savefig(buf, format="png", dpi=dpi, bbox_inches="tight", pad_inches=0.08, facecolor="white")
@@ -129,6 +127,11 @@ def render_peta_png(
     title: str = "Peta Status Ketahanan Beras (38 Provinsi)",
 ) -> bytes:
     """Render peta Indonesia dari GeoJSON dengan warna & pola arsiran ramah cetak hitam-putih."""
+    from matplotlib.figure import Figure
+    from matplotlib.lines import Line2D
+    from matplotlib.patches import FancyArrowPatch, Patch
+    from matplotlib.patches import Polygon as MplPolygon
+
     geo = _load_geojson()
 
     fig = Figure(figsize=(8.6, 3.55), dpi=160)
@@ -279,6 +282,9 @@ def render_top_surplus_defisit_png(
     top_defisit: list[dict[str, Any]],
 ) -> bytes:
     """Render grafik batang horizontal Top-5 Surplus vs Top-5 Defisit (ramah grayscale)."""
+    from matplotlib.figure import Figure
+    from matplotlib.patches import Patch
+
     rows = list(reversed(top_defisit[:5])) + list(reversed(top_surplus[:5]))
     if not rows:
         rows = [{"provinsi": "Tidak ada data", "nilai": 0.0}]
@@ -347,6 +353,8 @@ def render_top_surplus_defisit_png(
 
 def render_status_distribusi_png(ringkasan_status: dict[str, int]) -> bytes:
     """Render diagram batang distribusi jumlah provinsi per status."""
+    from matplotlib.figure import Figure
+
     keys = ("surplus", "balanced", "defisit")
     labels = [f"{_STATUS_STYLE[k]['symbol']} {_STATUS_STYLE[k]['label']}" for k in keys]
     counts = [int(ringkasan_status.get(k, 0)) for k in keys]
@@ -441,22 +449,7 @@ def _build_chart_uris(data: dict[str, Any]) -> dict[str, str]:
 
 
 def render_report_html(data: dict[str, Any]) -> str:
-    """Render struktur data laporan (T9.2) menjadi HTML A4 siap-cetak WeasyPrint."""
+    """Render struktur data laporan (T9.2) menjadi HTML A4 siap-cetak browser."""
     charts = _build_chart_uris(data)
     template = _jinja_env().get_template("laporan.html")
     return template.render(data=data, charts=charts)
-
-
-def render_pdf_bytes(html: str) -> bytes:
-    """Konversi HTML ke PDF bytes via lazy-imported WeasyPrint."""
-    try:
-        import weasyprint
-
-        return weasyprint.HTML(string=html).write_pdf()
-    except OSError as exc:
-        raise AppError(
-            "PDF_UNAVAILABLE",
-            503,
-            "Generator PDF membutuhkan library sistem Pango/GObject",
-            {"alasan": str(exc)},
-        ) from exc

@@ -1,9 +1,10 @@
-"""GET /api/v1/reports/{jenis}.pdf — unduh laporan PDF A4 portrait (T9.3)."""
+"""GET /api/v1/reports/{jenis}.html — laporan A4 siap-cetak browser (T9.3)."""
 from __future__ import annotations
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, Response
+from fastapi import APIRouter, Depends, Query
+from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 
 from app.core.errors import AppError
@@ -15,22 +16,21 @@ from app.services.exports import (
     laporan_rekomendasi,
     laporan_surplus_defisit,
 )
-from app.services.pdf import render_pdf_bytes, render_report_html
+from app.services.pdf import render_report_html
 
 router = APIRouter(tags=["reports"])
 
 JENIS_VALID = {"nasional", "provinsi", "surplus-defisit", "rekomendasi"}
 
 
-@router.get("/reports/{jenis}.pdf")
-def download_report_pdf(
+def _susun_data(
+    db: Session,
     jenis: str,
-    db: Annotated[Session, Depends(get_db)],
-    admin: Annotated[object, Depends(optional_admin)],
-    tahun: Annotated[int | None, Query()] = None,
-    kode_bps: Annotated[str | None, Query()] = None,
-    version_id: Annotated[str | None, Query()] = None,
-) -> Response:
+    tahun: int | None,
+    kode_bps: str | None,
+    version_id: str | None,
+    admin: object,
+) -> dict:
     if jenis not in JENIS_VALID:
         raise AppError(
             "INVALID_PARAMS",
@@ -47,21 +47,22 @@ def download_report_pdf(
                 "Parameter kode_bps wajib diisi untuk laporan provinsi",
                 {"jenis": jenis},
             )
-        data = laporan_provinsi(db, tahun, kode_bps.strip(), version_id=version_id, admin=admin)
-    elif jenis == "nasional":
-        data = laporan_nasional(db, tahun, version_id=version_id, admin=admin)
-    elif jenis == "surplus-defisit":
-        data = laporan_surplus_defisit(db, tahun, version_id=version_id, admin=admin)
-    else:
-        data = laporan_rekomendasi(db, tahun, version_id=version_id, admin=admin)
+        return laporan_provinsi(db, tahun, kode_bps.strip(), version_id=version_id, admin=admin)
+    if jenis == "nasional":
+        return laporan_nasional(db, tahun, version_id=version_id, admin=admin)
+    if jenis == "surplus-defisit":
+        return laporan_surplus_defisit(db, tahun, version_id=version_id, admin=admin)
+    return laporan_rekomendasi(db, tahun, version_id=version_id, admin=admin)
 
-    html = render_report_html(data)
-    pdf_bytes = render_pdf_bytes(html)
 
-    meta = data["metadata"]
-    filename = f"riceguard-laporan-{jenis}-{meta['tahun']}-v{meta['version_no']}.pdf"
-    return Response(
-        content=pdf_bytes,
-        media_type="application/pdf",
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
-    )
+@router.get("/reports/{jenis}.html", response_class=HTMLResponse)
+def laporan_cetak(
+    jenis: str,
+    db: Annotated[Session, Depends(get_db)],
+    admin: Annotated[object, Depends(optional_admin)],
+    tahun: Annotated[int | None, Query()] = None,
+    kode_bps: Annotated[str | None, Query()] = None,
+    version_id: Annotated[str | None, Query()] = None,
+) -> HTMLResponse:
+    data = _susun_data(db, jenis, tahun, kode_bps, version_id, admin)
+    return HTMLResponse(render_report_html(data))
