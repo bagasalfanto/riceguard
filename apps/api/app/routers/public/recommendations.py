@@ -1,14 +1,22 @@
-"""GET /recommendations — rekomendasi distribusi resmi satu versi (T6.3)."""
+"""GET /recommendations dan POST /recommendations/simulate (T6.3 & T6.4)."""
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Body, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.core.cache import cache
 from app.core.security import optional_admin
 from app.db.session import get_db
-from app.schemas.recommendations import RecommendationsResponse
-from app.services.recommendations import bangun_rekomendasi
+from app.schemas.recommendations import (
+    RecommendationsResponse,
+    SimulationRequest,
+    SimulationResponse,
+)
+from app.services.recommendations import (
+    bangun_rekomendasi,
+    simulasi_rekomendasi,
+    validasi_mode_simulasi,
+)
 from app.services.versions import resolve_for_read
 
 router = APIRouter(tags=["recommendations"])
@@ -33,3 +41,17 @@ def recommendations(
     hasil = bangun_rekomendasi(db, versi, dari_kode=dari_kode, ke_kode=ke_kode)
     cache.set(kunci, hasil)
     return hasil
+
+
+@router.post("/recommendations/simulate", response_model=SimulationResponse)
+def simulate_recommendations(
+    db: Annotated[Session, Depends(get_db)],
+    admin: Annotated[object, Depends(optional_admin)],
+    req: Annotated[SimulationRequest | None, Body()] = None,
+    version_id: Annotated[str | None, Query()] = None,
+) -> SimulationResponse:
+    """Simulasi skenario distribusi on-the-fly; tidak menulis DB maupun cache."""
+    payload = req or SimulationRequest()
+    validasi_mode_simulasi(payload.mode)
+    versi = resolve_for_read(db, tahun=payload.tahun, version_id=version_id, admin=admin)
+    return simulasi_rekomendasi(db, versi, payload)

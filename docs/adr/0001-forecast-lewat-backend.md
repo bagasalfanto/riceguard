@@ -1,3 +1,10 @@
+---
+scope: adr
+canonical-for: ["keputusan arsitektur proxy forecast AI"]
+sources: ["apps/api/app/routers/public/forecast.py", "apps/api/app/services/forecast.py", "apps/api/app/core/config.py"]
+last-verified: 2026-11-26
+---
+
 # Prediksi AI dipanggil lewat backend, bukan dari frontend
 
 Model prediksi produksi dilatih dan di-deploy di Hugging Face Space oleh pemilik model, di luar repo ini. Frontend memanggil `GET /api/v1/forecast` di backend, dan backend yang meneruskan permintaan ke endpoint model.

@@ -1,3 +1,10 @@
+---
+scope: tickets/wave-2
+canonical-for: ["spesifikasi tiket wave 2 dashboard"]
+sources: ["docs/tickets/README.md", "docs/RiceGuard — PRD & Dokumen Teknis (FE + BE).md"]
+last-verified: 2026-11-26
+---
+
 # Wave 2 — Fitur 2: Main Dashboard (`/dashboard`)
 
 Kriteria selesai PRD §5.2: total kartu = jumlah 38 baris (≤ 1 ton selisih); Kalimantan Barat

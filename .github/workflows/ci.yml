@@ -44,13 +44,14 @@ jobs:
       - run: pip install -e packages/riceguard_calc -e apps/api pytest httpx
       - name: Terapkan migrasi dan seed
         run: |
-          sudo apt-get update && sudo apt-get install -y postgresql-client
-          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 <<'SQL'
+          sudo apt-get update && sudo apt-get install -y postgresql-client libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0
+          PSQL_URL="${DATABASE_URL/+psycopg/}"
+          psql "$PSQL_URL" -v ON_ERROR_STOP=1 <<'SQL'
           create schema if not exists auth;
           create table if not exists auth.users (id uuid primary key);
           SQL
-          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/0001_init.sql
-          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/seed/0001_static.sql
+          psql "$PSQL_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/0001_init.sql
+          psql "$PSQL_URL" -v ON_ERROR_STOP=1 -f supabase/seed/0001_static.sql
       - run: python -m pytest apps/api/tests -q
 
   web:

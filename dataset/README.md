@@ -9,6 +9,7 @@ pip install pandas pytest
 python scripts/build_dataset.py      # -> dataset_v1.csv, data/provinces.json
 python scripts/matching.py           # -> rekomendasi_distribusi_v1.csv, data/distribution.json
 python -m pytest tests -q            # 4 kasus uji algoritma
+python scripts/validate.py           # spot-check 5 provinsi + 11 aturan rekomendasi (opsional: pip install pyproj)
 ```
 
 ## File
@@ -18,8 +19,10 @@ python -m pytest tests -q            # 4 kasus uji algoritma
 | `dataset_v1.csv` | Per provinsi: penduduk, konsumsi/kapita, produksi, lat/lng, kebutuhan, balance, rasio, status |
 | `rekomendasi_distribusi_v1.csv` | Rekomendasi kiriman: dari, ke, ton, jarak_km |
 | `data/provinces.json`, `data/distribution.json` | Isi yang sama dalam JSON, siap dibaca frontend |
+| `data/metrics.json` | Label, tooltip, penjelasan, rumus, sumber tiap metrik + template ringkasan per status (halaman Analisis Wilayah) |
 | `scripts/build_dataset.py` | Hitung kebutuhan, rice balance, klasifikasi (pandas) |
 | `scripts/matching.py` | Fungsi `rekomendasi_distribusi()` + `haversine_km()` |
+| `scripts/validate.py` | Validasi: spot-check 5 provinsi ke angka sumber + cek aturan rekomendasi |
 | `tests/test_matching.py` | 4 kasus uji |
 | `raw/` | Data mentah dari sumber |
 

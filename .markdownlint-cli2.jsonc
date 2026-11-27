@@ -1,0 +1,30 @@
+{
+  "$comment": "Konfigurasi markdownlint-cli2 untuk dokumentasi RiceGuard. Disetel permisif: dokumen ini padat tabel dan rujukan gaya backtick, jadi aturan yang menuntut prosa mengalir dimatikan. Yang benar-benar ditegakkan adalah struktur: satu H1 per berkas, heading berurutan, tanpa spasi ganda, tanpa spasi di ujung baris.",
+  "config": {
+    "default": true,
+    "MD003": { "style": "atx" },
+    "MD004": false,
+    "MD012": { "maximum": 2 },
+    "MD013": false,
+    "MD024": { "siblings_only": true },
+    "MD026": false,
+    "MD028": false,
+    "MD029": { "style": "ordered" },
+    "MD031": false,
+    "MD032": false,
+    "MD033": false,
+    "MD034": false,
+    "MD036": false,
+    "MD037": true,
+    "MD038": true,
+    "MD040": false,
+    "MD041": true,
+    "MD046": { "style": "fenced" },
+    "MD048": { "style": "backtick" },
+    "MD049": false,
+    "MD050": { "style": "asterisk" },
+    "MD060": false
+  },
+  "globs": ["docs/**/*.md", "AGENTS.md", "CLAUDE.md", "README.md"],
+  "ignores": ["node_modules/**", ".venv/**", ".cache/**", "apps/**"]
+}

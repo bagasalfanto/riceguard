@@ -11,7 +11,9 @@
     "api:types": "openapi-typescript http://127.0.0.1:8000/openapi.json -o src/lib/api-types.ts"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.119.2",
     "@tanstack/react-query": "^5.62.0",
+    "@tanstack/react-table": "^8.21.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "leaflet": "^1.9.4",

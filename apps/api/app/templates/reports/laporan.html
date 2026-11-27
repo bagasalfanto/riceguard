@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <title>{{ data.judul }} — RiceGuard {{ data.metadata.versi }}</title>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 12mm 12mm 18mm 12mm;
+      @bottom-left {
+        content: "RiceGuard {{ data.metadata.versi }} ({{ data.metadata.tahun }}) · Cetak {{ data.metadata.tanggal_cetak[:10] }} · Bukan stok aktual/rencana logistik";
+        font-family: "DejaVu Sans", Arial, sans-serif;
+        font-size: 7.5pt;
+        color: #334155;
+      }
+      @bottom-right {
+        content: "Halaman " counter(page) " / " counter(pages);
+        font-family: "DejaVu Sans", Arial, sans-serif;
+        font-size: 7.5pt;
+        color: #334155;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "DejaVu Sans", Arial, sans-serif;
+      font-size: 8.4pt;
+      line-height: 1.38;
+      color: #0f172a;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header {
+      border-bottom: 1.5pt solid #0f172a;
+      padding-bottom: 6pt;
+      margin-bottom: 8pt;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .brand {
+      font-size: 8pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6pt;
+      color: #334155;
+    }
+
+    h1 {
+      font-size: 14pt;
+      margin: 2pt 0 1pt 0;
+      color: #0f172a;
+    }
+
+    .subjudul {
+      font-size: 9pt;
+      color: #475569;
+      margin: 0;
+    }
+
+    .header-meta {
+      text-align: right;
+      font-size: 7.8pt;
+      color: #334155;
+    }
+
+    .version-pill {
+      display: inline-block;
+      border: 1pt solid #0f172a;
+      padding: 1.5pt 5pt;
+      font-weight: 700;
+      font-size: 7.8pt;
+      border-radius: 2pt;
+      background: #f1f5f9;
+    }
+
+    .section {
+      margin-bottom: 8pt;
+    }
+
+    h2 {
+      font-size: 9.8pt;
+      margin: 0 0 4pt 0;
+      padding-bottom: 2pt;
+      border-bottom: 0.75pt solid #cbd5e1;
+      color: #0f172a;
+    }
+
+    .kpi-grid {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+      border-spacing: 5pt 0;
+      margin: 0 -5pt 7pt -5pt;
+    }
+
+    .kpi-card {
+      display: table-cell;
+      border: 0.9pt solid #475569;
+      border-radius: 3pt;
+      padding: 5pt 6pt;
+      background: #f8fafc;
+      vertical-align: top;
+    }
+
+    .kpi-label {
+      font-size: 7.2pt;
+      text-transform: uppercase;
+      color: #475569;
+      margin-bottom: 2pt;
+    }
+
+    .kpi-value {
+      font-size: 10.5pt;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .kpi-sub {
+      font-size: 7.2pt;
+      color: #334155;
+      margin-top: 2pt;
+    }
+
+    .two-col {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+      border-spacing: 6pt 0;
+      margin: 0 -6pt;
+    }
+
+    .col {
+      display: table-cell;
+      vertical-align: top;
+    }
+
+    .chart-box {
+      border: 0.75pt solid #cbd5e1;
+      padding: 4pt;
+      border-radius: 3pt;
+      background: #ffffff;
+      text-align: center;
+      margin-bottom: 6pt;
+      break-inside: avoid;
+    }
+
+    .chart-box img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .chart-map img {
+      max-height: 66mm;
+      object-fit: contain;
+      margin: 0 auto;
+    }
+
+    .chart-bar img {
+      max-height: 52mm;
+      object-fit: contain;
+      margin: 0 auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 7.6pt;
+      margin-bottom: 6pt;
+    }
+
+    th, td {
+      border: 0.6pt solid #94a3b8;
+      padding: 3pt 4pt;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #e2e8f0;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    tr {
+      break-inside: avoid;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 1pt 4pt;
+      font-size: 7.2pt;
+      font-weight: 700;
+      border-radius: 2pt;
+      white-space: nowrap;
+    }
+
+    .badge-surplus {
+      background: #dcfce7;
+      border: 0.9pt solid #14532d;
+      color: #14532d;
+    }
+
+    .badge-balanced {
+      background: #fef9c3;
+      border: 0.9pt dashed #713f12;
+      color: #713f12;
+    }
+
+    .badge-defisit {
+      background: #fee2e2;
+      border: 0.9pt double #7f1d1d;
+      color: #7f1d1d;
+    }
+
+    .note-box {
+      border: 0.8pt solid #64748b;
+      background: #f8fafc;
+      padding: 5pt 7pt;
+      font-size: 7.8pt;
+      margin-bottom: 6pt;
+      break-inside: avoid;
+    }
+
+    .metadata-footer {
+      margin-top: 8pt;
+      border-top: 1.2pt solid #0f172a;
+      padding-top: 5pt;
+      font-size: 7.2pt;
+      color: #334155;
+      break-inside: avoid;
+    }
+
+    .metadata-footer p {
+      margin: 2pt 0;
+    }
+
+    .source-list {
+      margin: 2pt 0 4pt 14pt;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div>
+      <div class="brand">RiceGuard · Ketahanan Beras Indonesia</div>
+      <h1>{{ data.judul }}</h1>
+      <p class="subjudul">{{ data.subjudul }} — Tahun {{ data.tahun }}</p>
+    </div>
+    <div class="header-meta">
+      <div><span class="version-pill">Dataset {{ data.metadata.versi }} · {{ data.tahun }}</span></div>
+      <div style="margin-top: 3pt;">Tanggal cetak: {{ data.metadata.tanggal_cetak | fmt_tanggal }}</div>
+    </div>
+  </header>
+
+  {% if data.jenis == "nasional" %}
+  <section class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Produksi Beras Nasional</div>
+      <div class="kpi-value">{{ data.kpi.produksi_beras_ton | fmt_id(2) }} ton</div>
+      <div class="kpi-sub">38 provinsi teragregasi</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Kebutuhan Beras Nasional</div>
+      <div class="kpi-value">{{ data.kpi.kebutuhan_beras_ton | fmt_id(2) }} ton</div>
+      <div class="kpi-sub">Konsumsi rumah tangga</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Rice Balance Nasional</div>
+      <div class="kpi-value">{{ data.kpi.rice_balance_ton | fmt_id(2) }} ton</div>
+      <div class="kpi-sub">Rasio swasembada: {{ data.kpi.rasio_swasembada | fmt_id(4) }}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Status Provinsi &amp; Alokasi</div>
+      <div class="kpi-value">
+        <span class="badge badge-surplus">[+] {{ data.ringkasan_status.surplus }}</span>
+        <span class="badge badge-balanced">[=] {{ data.ringkasan_status.balanced }}</span>
+        <span class="badge badge-defisit">[-] {{ data.ringkasan_status.defisit }}</span>
+      </div>
+      <div class="kpi-sub">Dialokasikan: {{ data.kpi.total_dialokasikan_ton | fmt_id(2) }} ton</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="chart-box chart-map">
+      <img src="{{ charts.peta }}" alt="Peta Status Ketahanan Beras Nasional" />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="chart-box chart-bar">
+      <img src="{{ charts.top_bar }}" alt="Grafik Top-5 Surplus vs Defisit" />
+    </div>
+  </section>
+
+  <section class="section two-col">
+    <div class="col">
+      <h2>Top-5 Provinsi Surplus (Rice Balance)</h2>
+      <table>
+        <thead>
+          <tr><th>#</th><th>Provinsi</th><th class="num">Balance (ton)</th></tr>
+        </thead>
+        <tbody>
+          {% for r in data.top_surplus %}
+          <tr>
+            <td>{{ r.peringkat }}</td>
+            <td>{{ r.provinsi }}</td>
+            <td class="num">{{ r.nilai | fmt_id(2) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="col">
+      <h2>Top-5 Provinsi Defisit (Rice Balance)</h2>
+      <table>
+        <thead>
+          <tr><th>#</th><th>Provinsi</th><th class="num">Balance (ton)</th></tr>
+        </thead>
+        <tbody>
+          {% for r in data.top_defisit %}
+          <tr>
+            <td>{{ r.peringkat }}</td>
+            <td>{{ r.provinsi }}</td>
+            <td class="num">{{ r.nilai | fmt_id(2) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section two-col">
+    <div class="col">
+      <h2>Top-5 Produksi Beras</h2>
+      <table>
+        <thead>
+          <tr><th>#</th><th>Provinsi</th><th class="num">Produksi (ton)</th></tr>
+        </thead>
+        <tbody>
+          {% for r in data.top_produksi %}
+          <tr>
+            <td>{{ r.peringkat }}</td>
+            <td>{{ r.provinsi }}</td>
+            <td class="num">{{ r.nilai | fmt_id(2) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="col">
+      <h2>Top-5 Kebutuhan Beras</h2>
+      <table>
+        <thead>
+          <tr><th>#</th><th>Provinsi</th><th class="num">Kebutuhan (ton)</th></tr>
+        </thead>
+        <tbody>
+          {% for r in data.top_kebutuhan %}
+          <tr>
+            <td>{{ r.peringkat }}</td>
+            <td>{{ r.provinsi }}</td>
+            <td class="num">{{ r.nilai | fmt_id(2) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  {% if data.pulau_breakdown %}
+  <section class="section">
+    <h2>Ringkasan per Pulau / Wilayah</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Pulau</th>
+          <th class="num">Prov.</th>
+          <th class="num">Produksi (ton)</th>
+          <th class="num">Kebutuhan (ton)</th>
+          <th class="num">Porsi Prod.</th>
+          <th class="num">Porsi Keb.</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in data.pulau_breakdown %}
+        <tr>
+          <td>{{ p.pulau }}</td>
+          <td class="num">{{ p.jumlah_provinsi }}</td>
+          <td class="num">{{ p.produksi_beras_ton | fmt_id(2) }}</td>
+          <td class="num">{{ p.kebutuhan_beras_ton | fmt_id(2) }}</td>
+          <td class="num">{{ (p.porsi_produksi * 100) | fmt_id(1) }}%</td>
+          <td class="num">{{ (p.porsi_kebutuhan * 100) | fmt_id(1) }}%</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  {% endif %}
+
+  {% elif data.jenis == "provinsi" %}
+  {% set p = data.provinsi %}
+  <section class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Wilayah &amp; Status</div>
+      <div class="kpi-value">{{ p.provinsi }}</div>
+      <div class="kpi-sub">
+        BPS {{ p.kode_bps }} · {{ p.pulau }} ·
+        <span class="badge badge-{{ p.status }}">{{ p.status | status_symbol }} {{ p.status | status_label }}</span>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Produksi Beras</div>
+      <div class="kpi-value">{{ p.produksi_beras_ton | fmt_id(2) }} ton</div>
+      <div class="kpi-sub">GKG: {{ p.produksi_padi_ton_gkg | fmt_id(2) }} ton</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Kebutuhan Beras</div>
+      <div class="kpi-value">{{ p.kebutuhan_beras_ton | fmt_id(2) }} ton</div>
+      <div class="kpi-sub">{{ p.penduduk_jiwa | fmt_int }} jiwa · {{ p.konsumsi_kg_kapita_tahun | fmt_id(2) }} kg/kapita</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Rice Balance &amp; Rasio</div>
+      <div class="kpi-value">{{ p.rice_balance_ton | fmt_id(2) }} ton</div>
+      <div class="kpi-sub">Rasio swasembada: {{ p.rasio_swasembada | fmt_id(4) }}</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="chart-box chart-map">
+      <img src="{{ charts.peta }}" alt="Peta Provinsi {{ p.provinsi }}" />
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Langkah Perhitungan (Rumus Terisi)</h2>
+    <table>
+      <thead>
+        <tr><th>Langkah</th><th>Rumus / Kriteria</th><th class="num">Hasil</th></tr>
+      </thead>
+      <tbody>
+        {% for step in data.perhitungan %}
+        <tr>
+          <td><strong>{{ step.langkah }}</strong></td>
+          <td>{{ step.rumus }}</td>
+          <td class="num">
+            {% if step.hasil is number %}
+              {% if step.langkah == "rasio" %}{{ step.hasil | fmt_id(4) }}{% else %}{{ step.hasil | fmt_id(2) }}{% endif %}
+            {% else %}
+              <span class="badge badge-{{ step.hasil }}">{{ step.hasil | status_symbol }} {{ step.hasil | status_label }}</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="section">
+    <h2>Rekomendasi Distribusi Terkait</h2>
+    {% if data.catatan %}
+      <div class="note-box">{{ data.catatan }}</div>
+    {% elif data.rekomendasi_terkait %}
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Dari</th>
+            <th>Ke</th>
+            <th class="num">Alokasi (ton)</th>
+            <th class="num">Jarak (km)</th>
+            <th>Penjelasan</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in data.rekomendasi_terkait %}
+          <tr>
+            <td>{{ r.urutan }}</td>
+            <td>{{ r.dari }}</td>
+            <td>{{ r.ke }}</td>
+            <td class="num">{{ r.ton | fmt_id(2) }}</td>
+            <td class="num">{{ r.jarak_km | fmt_id(1) }}</td>
+            <td>{{ r.explanation }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="note-box">Tidak ada pasangan distribusi untuk provinsi ini pada versi {{ data.metadata.versi }}.</div>
+    {% endif %}
+  </section>
+
+  {% if data.riwayat %}
+  <section class="section">
+    <h2>Riwayat Antar Tahun (Published)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Tahun</th>
+          <th>Status</th>
+          <th class="num">Produksi (ton)</th>
+          <th class="num">Kebutuhan (ton)</th>
+          <th class="num">Balance (ton)</th>
+          <th class="num">Rasio</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for h in data.riwayat %}
+        <tr>
+          <td>{{ h.tahun }}</td>
+          <td><span class="badge badge-{{ h.status }}">{{ h.status | status_symbol }} {{ h.status | status_label }}</span></td>
+          <td class="num">{{ h.produksi_beras_ton | fmt_id(2) }}</td>
+          <td class="num">{{ h.kebutuhan_beras_ton | fmt_id(2) }}</td>
+          <td class="num">{{ h.rice_balance_ton | fmt_id(2) }}</td>
+          <td class="num">{{ h.rasio_swasembada | fmt_id(4) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  {% endif %}
+
+  {% elif data.jenis == "surplus-defisit" %}
+  <section class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Provinsi Surplus</div>
+      <div class="kpi-value"><span class="badge badge-surplus">[+] {{ data.kelompok.surplus | length }}</span></div>
+      <div class="kpi-sub">Rasio &gt; 1,00</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Provinsi Balanced</div>
+      <div class="kpi-value"><span class="badge badge-balanced">[=] {{ data.kelompok.balanced | length }}</span></div>
+      <div class="kpi-sub">Rasio 0,90 – 1,00</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Provinsi Defisit</div>
+      <div class="kpi-value"><span class="badge badge-defisit">[-] {{ data.kelompok.defisit | length }}</span></div>
+      <div class="kpi-sub">Rasio &lt; 0,90</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Balance Nasional</div>
+      <div class="kpi-value">{{ data.ringkasan.rice_balance_ton | fmt_id(2) }} ton</div>
+      <div class="kpi-sub">Rasio: {{ data.ringkasan.rasio_swasembada | fmt_id(4) }}</div>
+    </div>
+  </section>
+
+  <section class="section two-col">
+    <div class="col" style="width: 62%;">
+      <div class="chart-box chart-map">
+        <img src="{{ charts.peta }}" alt="Peta Status 38 Provinsi" />
+      </div>
+    </div>
+    <div class="col" style="width: 38%;">
+      <div class="chart-box">
+        <img src="{{ charts.status_bar }}" alt="Distribusi Status Provinsi" />
+      </div>
+    </div>
+  </section>
+
+  {% for status_key in ["surplus", "balanced", "defisit"] %}
+  {% set grup = data.kelompok[status_key] %}
+  <section class="section">
+    <h2>
+      <span class="badge badge-{{ status_key }}">{{ status_key | status_symbol }} {{ status_key | status_label }}</span>
+      ({{ grup | length }} Provinsi)
+    </h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Kode</th>
+          <th>Provinsi</th>
+          <th>Pulau</th>
+          <th class="num">Produksi (ton)</th>
+          <th class="num">Kebutuhan (ton)</th>
+          <th class="num">Balance (ton)</th>
+          <th class="num">Rasio</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in grup %}
+        <tr>
+          <td>{{ item.kode_bps }}</td>
+          <td>{{ item.provinsi }}</td>
+          <td>{{ item.pulau }}</td>
+          <td class="num">{{ item.produksi_beras_ton | fmt_id(2) }}</td>
+          <td class="num">{{ item.kebutuhan_beras_ton | fmt_id(2) }}</td>
+          <td class="num">{{ item.rice_balance_ton | fmt_id(2) }}</td>
+          <td class="num">{{ item.rasio_swasembada | fmt_id(4) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  {% endfor %}
+
+  {% elif data.jenis == "rekomendasi" %}
+  <section class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Total Dialokasikan</div>
+      <div class="kpi-value">{{ data.ringkasan.total_dialokasikan_ton | fmt_id(2) }} ton</div>
+      <div class="kpi-sub">{{ data.ringkasan.jumlah_pasangan }} pasangan distribusi</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Defisit Tertutup</div>
+      <div class="kpi-value">{{ data.ringkasan.persen_defisit_tertutup | fmt_id(2) }}%</div>
+      <div class="kpi-sub">Dari total defisit provinsi</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Rata-rata Jarak Tertimbang</div>
+      <div class="kpi-value">{{ data.ringkasan.rata_jarak_tertimbang_ton | fmt_id(2) }} km</div>
+      <div class="kpi-sub">Haversine antar-pusat provinsi</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Total Beban Ton-km</div>
+      <div class="kpi-value">{{ data.ringkasan.total_ton_km | fmt_id(2) }}</div>
+      <div class="kpi-sub">Akumulasi ton × jarak</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="chart-box chart-map">
+      <img src="{{ charts.peta }}" alt="Peta Alur Rekomendasi Distribusi" />
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Daftar Rekomendasi Distribusi ({{ data["items"] | length }} Pasangan)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th><span class="badge badge-surplus">[+]</span> Pemasok (Surplus)</th>
+          <th><span class="badge badge-defisit">[-]</span> Penerima (Defisit)</th>
+          <th class="num">Alokasi (ton)</th>
+          <th class="num">Jarak (km)</th>
+          <th>Penjelasan</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in data["items"] %}
+        <tr>
+          <td>{{ r.urutan }}</td>
+          <td>{{ r.dari }}</td>
+          <td>{{ r.ke }}</td>
+          <td class="num">{{ r.ton | fmt_id(2) }}</td>
+          <td class="num">{{ r.jarak_km | fmt_id(1) }}</td>
+          <td>{{ r.explanation }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  {% endif %}
+
+  <footer class="metadata-footer">
+    <p>
+      <strong>Metadata Laporan:</strong>
+      Versi Dataset {{ data.metadata.versi }} (Tahun {{ data.metadata.tahun }}, ID: {{ data.metadata.version_id }})
+      · Diterbitkan oleh: {{ data.metadata.published_by }}
+      · Tanggal Cetak: {{ data.metadata.tanggal_cetak | fmt_tanggal }}
+    </p>
+    <p><strong>Sumber Data:</strong></p>
+    <ul class="source-list">
+      {% for s in data.metadata.sumber %}
+      <li>{{ s.nama }} — {{ s.instansi }}{% if s.tabel_resmi %} ({{ s.tabel_resmi }}){% endif %}{% if s.tahun %}, {{ s.tahun }}{% endif %}</li>
+      {% endfor %}
+    </ul>
+    <p><strong>Batasan Klaim:</strong> {{ data.metadata.batasan }}</p>
+  </footer>
+</body>
+</html>

@@ -1,4 +1,14 @@
+---
+scope: historical-prd
+canonical-for: ["spesifikasi produk awal (arsip historis)", "checklist kriteria PRD"]
+sources: ["docs/INDEX.md"]
+last-verified: 2026-11-26
+max-lines: "1100"
+---
+
 # RiceGuard — PRD & Dokumen Teknis (FE + BE)
+
+> **Catatan historis:** Dokumen ini adalah spesifikasi produk dan perancangan awal sebelum implementasi modular selesai. Untuk dokumentasi teknis kanonik yang selalu diselaraskan dengan kode aktual, lihat `INDEX.md`.
 
 Nov 25, 2026 · @Bagas
 
@@ -218,8 +228,8 @@ Tujuan: pengunjung paham RiceGuard dan masalahnya dalam ± 1 menit, lalu masuk k
 
 Kriteria selesai:
 
-- [ ] 3 angka hero sama persis dengan Dashboard untuk tahun yang sama.
-- [ ] Semua teks berasal dari `site_content`, jadi bisa diubah admin tanpa deploy.
+- [x] 3 angka hero sama persis dengan Dashboard untuk tahun yang sama.
+- [x] Semua teks berasal dari `site_content`, jadi bisa diubah admin tanpa deploy.
 - [ ] Lighthouse mobile: Performance ≥ 85, Accessibility ≥ 90.
 
 ### 5.2 Main Dashboard — `/dashboard`
@@ -249,9 +259,9 @@ Jika ada ≥ 2 tahun, tiap kartu menampilkan perubahan (%) dibanding tahun sebel
 
 Kriteria selesai:
 
-- [ ] Total di kartu sama dengan jumlah 38 baris versi published (selisih pembulatan ≤ 1 ton).
-- [ ] Kalimantan Barat tampil sebagai balanced (bukan defisit) di semua grafik.
-- [ ] Grafik bisa dibaca di lebar 375 px.
+- [x] Total di kartu sama dengan jumlah 38 baris versi published (selisih pembulatan ≤ 1 ton).
+- [x] Kalimantan Barat tampil sebagai balanced (bukan defisit) di semua grafik.
+- [ ] Grafik bisa dibaca di lebar 375 px. *(Cek visual manual 3 lebar pada lingkungan deploy akhir.)*
 
 ### 5.3 Interactive Rice Map (WebGIS) — `/peta`
 
@@ -275,10 +285,10 @@ Kepadatan penduduk butuh luas wilayah (km²), yang **belum ada di dataset**. Lih
 
 Kriteria selesai:
 
-- [ ] 38 poligon terwarnai; tidak ada provinsi abu-abu karena kode tidak cocok.
-- [ ] Ganti layer < 200 ms (tanpa request ulang GeoJSON).
-- [ ] Peta bisa dipakai dengan keyboard: search lalu Enter membuka panel provinsi.
-- [ ] Warna punya pola/label teks juga, tidak hanya warna (aksesibilitas buta warna).
+- [x] 38 poligon terwarnai; tidak ada provinsi abu-abu karena kode tidak cocok.
+- [x] Ganti layer < 200 ms (tanpa request ulang GeoJSON).
+- [x] Peta bisa dipakai dengan keyboard: search lalu Enter membuka panel provinsi.
+- [x] Warna punya pola/label teks juga, tidak hanya warna (aksesibilitas buta warna).
 
 ### 5.4 Regional Analysis — `/analisis` dan `/analisis/:kode`
 
@@ -299,8 +309,8 @@ Kriteria selesai:
 
 Kriteria selesai:
 
-- [ ] Angka di rumus terisi sama dengan kolom dataset (kebutuhan dibulatkan ke ton).
-- [ ] Kode tidak valid → halaman 404 dengan link kembali ke daftar.
+- [x] Angka di rumus terisi sama dengan kolom dataset (kebutuhan dibulatkan ke ton).
+- [x] Kode tidak valid → halaman 404 dengan link kembali ke daftar.
 
 ### 5.5 Supply & Distribution Analysis — `/distribusi`
 
@@ -319,8 +329,8 @@ Tujuan: memperlihatkan siapa calon pemasok dan siapa yang butuh, sebelum masuk k
 
 Kriteria selesai:
 
-- [ ] Jumlah garis di peta = jumlah baris rekomendasi resmi (27 untuk 2025).
-- [ ] Jarak di matriks sama dengan `jarak_km` hasil `haversine_km` P5 (1 desimal).
+- [x] Jumlah garis di peta = jumlah baris rekomendasi resmi (27 untuk 2025).
+- [x] Jarak di matriks sama dengan `jarak_km` hasil `haversine_km` P5 (1 desimal).
 
 ### 5.6 Smart Distribution Recommendation — `/rekomendasi` dan `/rekomendasi/simulasi`
 
@@ -358,10 +368,10 @@ Hasil simulasi: tabel dan peta yang sama dengan tab resmi, ditambah kartu **perb
 
 Kriteria selesai:
 
-- [ ] Simulasi dengan parameter default menghasilkan hasil **identik** dengan rekomendasi resmi (uji otomatis).
-- [ ] Respons simulasi < 1 detik untuk 38 provinsi.
-- [ ] Hasil tidak pernah melebihi sisa surplus maupun defisit (4 tes P5 tetap lulus).
-- [ ] Label "rekomendasi potensial, bukan rencana logistik" selalu tampil di atas hasil.
+- [x] Simulasi dengan parameter default menghasilkan hasil **identik** dengan rekomendasi resmi (uji otomatis).
+- [x] Respons simulasi < 1 detik untuk 38 provinsi.
+- [x] Hasil tidak pernah melebihi sisa surplus maupun defisit (4 tes P5 tetap lulus).
+- [x] Label "rekomendasi potensial, bukan rencana logistik" selalu tampil di atas hasil.
 
 ### 5.7 Historical Data & Trend Monitoring — `/tren`
 
@@ -376,7 +386,7 @@ Status: halaman dibuat, tetapi **menu dan route hanya aktif jika jumlah tahun pu
 
 Kriteria selesai:
 
-- [ ] Diuji dengan data dummy 2 tahun di lingkungan dev (seed khusus), lalu dimatikan otomatis di produksi bila hanya 1 tahun.
+- [x] Diuji dengan data dummy 2 tahun di lingkungan dev (seed khusus), lalu dimatikan otomatis di produksi bila hanya 1 tahun.
 
 ### 5.8 Data Management & Transparency — `/data`
 
@@ -391,8 +401,8 @@ Kriteria selesai:
 
 Kriteria selesai:
 
-- [ ] File unduhan sama persis kolomnya dengan `dataset_v1.csv` (urutan dan nama kolom).
-- [ ] Excel berisi 3 sheet: Provinsi, Rekomendasi, Metadata (versi, sumber, tanggal).
+- [x] File unduhan sama persis kolomnya dengan `dataset_v1.csv` (urutan dan nama kolom).
+- [x] Excel berisi 3 sheet: Provinsi, Rekomendasi, Metadata (versi, sumber, tanggal).
 
 ### 5.9 Report & Export — `/laporan`
 
@@ -409,8 +419,8 @@ Setiap laporan mencantumkan versi dataset, tanggal cetak, sumber, dan batasan kl
 
 Kriteria selesai:
 
-- [ ] PDF A4 portrait, maksimal 4 halaman untuk laporan nasional, terbaca saat dicetak hitam-putih.
-- [ ] Angka di PDF sama dengan halaman web untuk versi yang sama.
+- [x] PDF A4 portrait, maksimal 4 halaman untuk laporan nasional, terbaca saat dicetak hitam-putih.
+- [x] Angka di PDF sama dengan halaman web untuk versi yang sama.
 
 ### 5.10 Prediksi Produksi (AI) — `/prediksi` (tambahan, opsional)
 
@@ -469,9 +479,9 @@ Respons 200:
 
 Kriteria selesai:
 
-- [ ] 38 `kode_bps` pada respons model, atau BE menandai kode yang hilang di `details.kode_tanpa_prediksi`.
-- [ ] `AI_ENDPOINT_URL` kosong → 503 `AI_UNAVAILABLE`; halaman tetap bisa dibuka.
-- [ ] Angka di Dashboard, Peta, Rekomendasi, dan laporan **tidak berubah** karena fitur ini.
+- [ ] 38 `kode_bps` pada respons model, atau BE menandai kode yang hilang di `details.kode_tanpa_prediksi`. *(BE & unit mock lulus; menunggu endpoint model eksternal `T11.0`.)*
+- [x] `AI_ENDPOINT_URL` kosong → 503 `AI_UNAVAILABLE`; halaman tetap bisa dibuka.
+- [x] Angka di Dashboard, Peta, Rekomendasi, dan laporan **tidak berubah** karena fitur ini.
 
 Belum diputuskan (dijawab pemilik model, jangan diasumsikan):
 
@@ -534,10 +544,10 @@ Tabel: waktu, admin, aksi (upload, edit\_provinsi, recompute, publish, rollback,
 
 Kriteria selesai panel admin:
 
-- [ ] Pengguna tanpa login yang membuka `/admin/*` diarahkan ke login; token non-admin mendapat 403 dari API.
-- [ ] Upload file contoh di `dataset/raw/` menghasilkan angka identik dengan `dataset_v1.csv` dan rekomendasi identik dengan `rekomendasi_distribusi_v1.csv`.
-- [ ] Versi published/archived tidak bisa diedit (UI dan API sama-sama menolak).
-- [ ] Rollback mengubah tampilan publik dalam < 5 detik tanpa deploy ulang.
+- [x] Pengguna tanpa login yang membuka `/admin/*` diarahkan ke login; token non-admin mendapat 403 dari API.
+- [x] Upload file contoh di `dataset/raw/` menghasilkan angka identik dengan `dataset_v1.csv` dan rekomendasi identik dengan `rekomendasi_distribusi_v1.csv`.
+- [x] Versi published/archived tidak bisa diedit (UI dan API sama-sama menolak).
+- [x] Rollback mengubah tampilan publik dalam < 5 detik tanpa deploy ulang.
 
 ## 7. Kebutuhan non-fungsional
 

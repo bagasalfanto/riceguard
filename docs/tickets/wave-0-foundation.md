@@ -1,3 +1,10 @@
+---
+scope: tickets/wave-0
+canonical-for: ["spesifikasi tiket wave 0 fondasi"]
+sources: ["docs/tickets/README.md", "docs/RiceGuard — PRD & Dokumen Teknis (FE + BE).md"]
+last-verified: 2026-11-26
+---
+
 # Wave 0 — Fondasi
 
 Selesai kalau: `uvicorn` melayani `GET /api/v1/health` dan `GET /api/v1/meta/years` dari DB hasil
@@ -38,24 +45,26 @@ Tidak ada fitur produk di wave ini. Tidak ada endpoint fitur selain `health` dan
 **Blocked by:** T0.1
 
 **Scope**
-- Salin folder skill dari `C:\Users\bagas\.agents\skills\` ke `.agent/skills/<nama>/SKILL.md`
+- Salin folder skill dari lokasi lokal ke `.agent/skills/*/SKILL.md`
   (salin utuh termasuk `references/`, `agents/`, `scripts/` bila ada):
   `ponytail`, `ponytail-review`, `ponytail-audit`, `frontend-design`, `anti-ui-slop`, `ui-design`,
   `ui-slop-score`, `accessibility`, `tailwind-4-docs`, `vercel-react-best-practices`, `tdd`,
   `grilling`, `domain-modeling`, `code-review`, `diagnosing-bugs`.
 - `opencode.json` di root:
+
   ```json
   { "$schema": "https://opencode.ai/config.json",
     "skills": { "paths": [".agent/skills"] } }
   ```
+
 - `.agent/README.md` (≤ 15 baris): cara menambah skill, aturan nama folder = `name` di frontmatter.
 
 **Acceptance**
-- Tiap folder punya `SKILL.md` dengan frontmatter `name` = nama folder dan `description` terisi.
+- Tiap folder punya berkas `"SKILL.md"` dengan frontmatter `name` = nama folder dan `description` terisi.
 - `opencode.json` valid terhadap `https://opencode.ai/config.json`.
 - Setelah restart opencode, skill muncul di daftar skill.
 
-**Tes:** skrip cek: untuk tiap folder di `.agent/skills`, `SKILL.md` ada dan baris `name:` cocok.
+**Tes:** skrip cek: untuk tiap folder di `.agent/skills`, berkas `"SKILL.md"` ada dan baris `name:` cocok.
 
 ---
 
@@ -69,8 +78,7 @@ Tidak ada fitur produk di wave ini. Tidak ada endpoint fitur selain `health` dan
 - `build.build(ref, produksi, penduduk, konsumsi, tahun, ambang=0.90) -> DataFrame`:
   fungsi murni menerima DataFrame, **bukan path**. Rumus & urutan kolom sama persis
   `dataset/scripts/build_dataset.py` baris 52–85.
-- `matching.match(provinsi, params=None) -> list[dict]`: pindahkan `rekomendasi_distribusi`
-  + `haversine_km` apa adanya. `params` ditambahkan di T6.1, untuk sekarang `None` = perilaku v1.
+- `matching.match(provinsi, params=None) -> list[dict]`: pindahkan `rekomendasi_distribusi` + `haversine_km` apa adanya. `params` ditambahkan di T6.1, untuk sekarang `None` = perilaku v1.
 - `ingest.parse_produksi/parse_penduduk/parse_konsumsi/parse_referensi(bytes|str) -> DataFrame`:
   parser format Indonesia (`1.615.200,00`), alias `DI Yogyakarta`, join konsumsi lewat `kode_kemendagri`.
   Pindahkan `angka_id` dan `baca_tabel_pipa` dari `build_dataset.py`.

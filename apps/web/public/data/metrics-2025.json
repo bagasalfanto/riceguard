@@ -1,0 +1,86 @@
+{
+  "tahun": 2025,
+  "catatan_umum": "Semua angka adalah estimasi tahunan 2025 dari data resmi BPS dan Bapanas, bukan stok gudang atau distribusi fisik yang sedang berjalan.",
+  "metrik": [
+    {
+      "field": "penduduk_jiwa",
+      "label": "Jumlah Penduduk",
+      "satuan": "jiwa",
+      "tooltip": "Jumlah penduduk provinsi tahun 2025 hasil Survei Penduduk Antar Sensus (SUPAS) 2025.",
+      "penjelasan": "Penduduk menjadi dasar estimasi kebutuhan beras. Makin banyak penduduk, makin besar beras yang dibutuhkan provinsi itu.",
+      "sumber": "BPS, Jumlah Penduduk menurut Provinsi dan Jenis Kelamin, 2025 (hasil SUPAS 2025)"
+    },
+    {
+      "field": "konsumsi_kg_kapita_tahun",
+      "label": "Konsumsi Beras per Kapita",
+      "satuan": "kg/orang/tahun",
+      "tooltip": "Rata-rata beras yang dikonsumsi satu orang dalam setahun di provinsi ini.",
+      "penjelasan": "Pola makan tiap daerah berbeda. Provinsi dengan konsumsi per kapita tinggi membutuhkan lebih banyak beras walau penduduknya sama.",
+      "sumber": "Bapanas, Rata-rata Konsumsi per Jenis Pangan Penduduk Indonesia Provinsi Update Tahun 2025 (komoditas Beras)"
+    },
+    {
+      "field": "produksi_beras_ton",
+      "label": "Produksi Beras",
+      "satuan": "ton",
+      "tooltip": "Beras yang dihasilkan provinsi sepanjang 2025, setelah gabah dikonversi ke beras untuk konsumsi pangan.",
+      "penjelasan": "BPS menghitungnya dari produksi gabah kering giling (GKG) dikali faktor konversi ke beras, lalu dikurangi susut/tercecer dan penggunaan non-pangan.",
+      "sumber": "BPS, Produksi Padi dan Beras Menurut Provinsi, 2025 (Survei KSA & Ubinan)"
+    },
+    {
+      "field": "kebutuhan_beras_ton",
+      "label": "Estimasi Kebutuhan Beras",
+      "satuan": "ton",
+      "tooltip": "Perkiraan beras yang dibutuhkan penduduk provinsi dalam setahun.",
+      "penjelasan": "Dihitung dari jumlah penduduk dikali konsumsi beras per kapita, lalu dibagi 1.000 agar menjadi ton.",
+      "rumus": "Kebutuhan = Penduduk × Konsumsi per kapita ÷ 1.000",
+      "sumber": "Dihitung RiceGuard dari data BPS dan Bapanas"
+    },
+    {
+      "field": "rice_balance_ton",
+      "label": "Rice Balance",
+      "satuan": "ton",
+      "tooltip": "Selisih produksi beras dengan estimasi kebutuhan. Positif berarti kelebihan, negatif berarti kekurangan.",
+      "penjelasan": "Angka positif menunjukkan provinsi memproduksi lebih banyak dari yang dibutuhkan penduduknya. Angka negatif menunjukkan provinsi bergantung pada pasokan dari luar.",
+      "rumus": "Rice Balance = Produksi Beras − Estimasi Kebutuhan",
+      "sumber": "Dihitung RiceGuard; cara hitung sama dengan perhitungan surplus beras nasional oleh BPS"
+    },
+    {
+      "field": "rasio_swasembada",
+      "label": "Rasio Swasembada",
+      "satuan": "%",
+      "format": "kalikan 100 dan tampilkan sebagai persen, misal 0,9001 → 90,0%",
+      "tooltip": "Seberapa besar kebutuhan beras provinsi yang bisa dipenuhi dari produksinya sendiri.",
+      "penjelasan": "100% berarti produksi tepat sama dengan kebutuhan. Di atas 100% berarti ada kelebihan; di bawah 90% berarti provinsi belum swasembada menurut kriteria FAO.",
+      "rumus": "Rasio = Produksi Beras ÷ Estimasi Kebutuhan",
+      "sumber": "Konsep self-sufficiency ratio FAO; batas 90% dari kriteria swasembada FAO (1999)"
+    },
+    {
+      "field": "status",
+      "label": "Status",
+      "tooltip": "Klasifikasi provinsi berdasarkan rasio swasembada.",
+      "nilai": {
+        "surplus": {
+          "label": "Surplus",
+          "syarat": "Rasio di atas 100%",
+          "penjelasan": "Produksi melebihi kebutuhan. Kelebihannya berpotensi memasok provinsi defisit."
+        },
+        "balanced": {
+          "label": "Seimbang",
+          "syarat": "Rasio 90%–100%",
+          "penjelasan": "Produksi memenuhi minimal 90% kebutuhan (kriteria swasembada FAO), tetapi belum berlebih. Tidak dijadikan pemasok maupun penerima."
+        },
+        "defisit": {
+          "label": "Defisit",
+          "syarat": "Rasio di bawah 90%",
+          "penjelasan": "Produksi belum memenuhi 90% kebutuhan, sehingga provinsi bergantung pada pasokan dari luar."
+        }
+      }
+    }
+  ],
+  "template_ringkasan": {
+    "surplus": "Pada 2025, {provinsi} memproduksi {produksi_beras_ton} ton beras, sementara estimasi kebutuhan penduduknya {kebutuhan_beras_ton} ton. Provinsi ini surplus {rice_balance_ton_abs} ton dan berpotensi menjadi pemasok bagi provinsi defisit.",
+    "balanced": "Pada 2025, {provinsi} memproduksi {produksi_beras_ton} ton beras dari estimasi kebutuhan {kebutuhan_beras_ton} ton ({rasio_persen} terpenuhi). Provinsi ini tergolong seimbang: sudah memenuhi kriteria swasembada 90%, tetapi belum memiliki kelebihan untuk dipasok ke daerah lain.",
+    "defisit": "Pada 2025, {provinsi} memproduksi {produksi_beras_ton} ton beras, sedangkan estimasi kebutuhan penduduknya {kebutuhan_beras_ton} ton. Produksinya hanya memenuhi {rasio_persen} kebutuhan, sehingga terdapat kekurangan {rice_balance_ton_abs} ton yang perlu dipasok dari provinsi surplus."
+  },
+  "catatan_jarak": "Jarak pada rekomendasi distribusi adalah garis lurus antar-titik tengah provinsi, bukan rute atau jarak tempuh jalan."
+}

@@ -1,0 +1,35 @@
+{
+  "$comment": "Hook Antigravity. PreInvocation menyuntik peta dokumen; PreToolUse menolak aksi tulis saat drift dokumen terdeteksi; Stop menahan penghentian (maksimum 3 kali) agar agen menyelesaikan dokumen dulu.",
+  "protokol-dokumen-preflight": {
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "python scripts/docs-hook.py preflight --agent=antigravity",
+        "timeout": 10
+      }
+    ]
+  },
+  "protokol-dokumen-gate": {
+    "PreToolUse": [
+      {
+        "matcher": "write_to_file|replace_file_content|multi_replace_file_content|write_file|edit_file|run_command|invoke_subagent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/docs-hook.py gate --agent=antigravity",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "protokol-dokumen-stop": {
+    "Stop": [
+      {
+        "type": "command",
+        "command": "python scripts/docs-hook.py stop --agent=antigravity",
+        "timeout": 15
+      }
+    ]
+  }
+}

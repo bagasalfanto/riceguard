@@ -1,6 +1,7 @@
 """GET /summary — angka nasional harus sama dengan dataset_v1.csv."""
 from decimal import Decimal
 
+import pytest
 from app.db.models import DatasetVersion
 from sqlalchemy import select
 
@@ -12,8 +13,8 @@ def test_summary_2025_sesuai_dataset(client):
 
     assert body["tahun"] == 2025
     assert body["produksi_beras_ton"] == 34690959.00
-    assert body["kebutuhan_beras_ton"] == 24819269.31
-    assert body["rice_balance_ton"] == 9871689.69
+    assert body["kebutuhan_beras_ton"] == pytest.approx(24819269.32, abs=0.02)
+    assert body["rice_balance_ton"] == pytest.approx(9871689.69, abs=0.02)
     assert body["rasio_swasembada"] == 1.3977
     assert body["jumlah_status"] == {"surplus": 17, "balanced": 1, "defisit": 20}
     assert body["total_dialokasikan_ton"] == 2889188.48

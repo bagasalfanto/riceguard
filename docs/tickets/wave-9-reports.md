@@ -1,3 +1,10 @@
+---
+scope: tickets/wave-9
+canonical-for: ["spesifikasi tiket wave 9 laporan & ekspor PDF"]
+sources: ["docs/tickets/README.md", "docs/adr/0002-pdf-generation.md", "docs/RiceGuard — PRD & Dokumen Teknis (FE + BE).md"]
+last-verified: 2026-11-26
+---
+
 # Wave 9 — Fitur 9: Report & Export (`/laporan`)
 
 Kriteria selesai PRD §5.9: PDF A4 portrait, maksimal 4 halaman untuk laporan nasional,
@@ -12,11 +19,9 @@ terbaca saat dicetak hitam-putih; angka di PDF sama dengan halaman web untuk ver
 **Blocked by:** —
 
 **Scope**
-- Tulis `docs/adr/0001-pdf-generation.md` dengan format ADR (Status, Context, Decision,
-  Consequences, Alternatives).
+- Tulis `docs/adr/0002-pdf-generation.md` (penomoran `0002` karena `0001` sudah dipakai ADR forecast) dengan format ADR (Status, Context, Decision, Consequences, Alternatives).
 - Isi trade-off persis PRD §12 tabel baris 858–861.
-- Rekomendasi default: **Opsi A** — tidak butuh Pango di Docker, peta Leaflet & Recharts ikut
-  tercetak, satu-satunya kekurangan adalah dialog cetak pengguna. Relevan karena target waktu 6 hari.
+- Keputusan final ADR memilih **Opsi B: WeasyPrint + Jinja2 + Matplotlib static PNGs** (disimpan di `docs/adr/0002-pdf-generation.md`, dengan dependency sistem `libpango-1.0-0`, `libpangoft2-1.0-0`, `libharfbuzz-subset0` di `apps/api/Dockerfile` dan `.github/workflows/ci.yml`).
 
 **Acceptance**
 - ADR diterima (status `Accepted`) sebelum T9.3 dikerjakan.

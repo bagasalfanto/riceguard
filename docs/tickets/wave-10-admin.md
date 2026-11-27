@@ -1,3 +1,10 @@
+---
+scope: tickets/wave-10
+canonical-for: ["spesifikasi tiket wave 10 panel admin"]
+sources: ["docs/tickets/README.md", "docs/RiceGuard — PRD & Dokumen Teknis (FE + BE).md"]
+last-verified: 2026-11-26
+---
+
 # Wave 10 — Panel admin (§6) — di luar 9 fitur, tapi wajib untuk mengubah data
 
 Kriteria selesai PRD §6: `/admin/*` tanpa login → login; token non-admin → 403;
@@ -99,8 +106,7 @@ versi published/archived tidak bisa diedit (UI dan API); rollback mengubah tampi
 **Blocked by:** T10.4
 
 **Scope**
-- Body: subset `{penduduk_jiwa, konsumsi_kg_kapita_tahun, produksi_padi_ton_gkg, produksi_beras_ton}`
-  + `reason` (wajib).
+- Body: subset `{penduduk_jiwa, konsumsi_kg_kapita_tahun, produksi_padi_ton_gkg, produksi_beras_ton}` + `reason` (wajib).
 - Hanya `status='draft'`; selain itu → 409 `VERSION_NOT_EDITABLE`.
 - Tulis `province_stat_edits` (field, old, new, reason, actor) dan set `is_edited=true`.
 - Jalankan ulang **penuh** `build()`+`match()` untuk 38 baris (matching global, PRD §12),

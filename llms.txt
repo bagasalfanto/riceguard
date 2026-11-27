@@ -1,0 +1,40 @@
+# RiceGuard
+
+> Aplikasi WebGIS + analitik keseimbangan produksi–kebutuhan beras 38 provinsi Indonesia dan rekomendasi alokasi surplus ke defisit — FastAPI (Python) + `packages/riceguard_calc` + Supabase (Postgres, Auth, Storage) + React 19 + Vite + TypeScript + Tailwind CSS v4 + Leaflet.
+
+Dokumentasi di bawah dioptimalkan untuk AI coding agent: modular per domain, satu fakta hidup di satu berkas kanonik. Baca peta tugas lebih dulu, lalu buka hanya berkas yang relevan.
+
+## Mulai dari sini
+
+- AGENTS.md: aturan selalu-aktif (bahasa, kosakata, `riceguard_calc` sebagai sumber rumus tunggal, Supabase/RLS, commit discipline, verifikasi) + peta dokumen.
+- CLAUDE.md: impor `AGENTS.md` dan ringkasan penegakan hook Claude Code.
+- docs/INDEX.md: peta tugas ke berkas + tabel metadata kanonik seluruh dokumentasi.
+- docs/CONTEXT.md: ringkasan proyek, batasan klaim, ruang lingkup, dan ubiquitous language.
+
+## Aturan & Konvensi
+
+- docs/RULES.md: perintah lint/type/test/CI (`npm run ci:check`), gaya kode Python & TS/React, pengujian, git/PR, dan otomasi dokumentasi.
+- docs/KAMUS_KOSAKATA.md: sumber tunggal kebenaran seluruh teks antarmuka, navigasi, status, parameter URL, dan header CSV.
+- docs/DESIGN.md: spesifikasi desain UI publik & admin, token OKLCH terang/gelap, komponen peta & grafik, responsif, dan aksesibilitas.
+
+## Arsitektur & Domain
+
+- docs/ARCHITECTURE.md: stack terverifikasi, struktur folder monorepo, alur request & hitung, gotchas teknis, dan perilaku cascade delete.
+- docs/DOMAIN_MODEL.md: entitas database, kolom, relasi, enum, struktur JSONB, ERD, storage bucket, dan seed awal.
+- docs/ROLES_WORKFLOW.md: peran publik vs admin, autentikasi Supabase JWT, siklus versi dataset, wizard upload, simulasi, prediksi AI, dan audit log.
+
+## API
+
+- docs/api/README.md: konvensi REST API `/api/v1`, autentikasi admin, format error seragam, cache in-memory, CORS, dan pembulatan.
+- docs/api/endpoints-public.md: spesifikasi seluruh endpoint publik (`/meta/years`, `/summary`, `/provinces`, `/map/layers`, `/distribution/*`, `/recommendations*`, `/rice-balance`, `/trends`, `/compare`, `/validation`, `/exports/*`, `/reports/*.pdf`, `/forecast`).
+- docs/api/endpoints-admin.md: spesifikasi seluruh endpoint panel admin (`/admin/me`, `/admin/versions*`, `/admin/content*`, `/admin/sources/{id}`, `/admin/audit-log`).
+
+## Konvensi Kode per Folder
+
+- apps/api/AGENTS.md: konvensi backend FastAPI, SQLAlchemy, dan `riceguard_calc`.
+- apps/web/AGENTS.md: konvensi frontend React, TypeScript, dan integrasi kosakata.
+
+## Optional
+
+- README.md: panduan setup lokal dan menjalankan aplikasi untuk manusia.
+- GLOSSARY.md: ringkasan istilah domain tunggal.

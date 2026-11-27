@@ -4,6 +4,8 @@ Fungsi murni: menerima DataFrame, bukan path, supaya bisa dipakai API dengan fil
 """
 from __future__ import annotations
 
+from decimal import ROUND_HALF_UP, Decimal
+
 import pandas as pd
 
 # Batas swasembada FAO (1999): produksi >= 90% kebutuhan
@@ -64,9 +66,22 @@ def build(
     if not kosong.empty:
         raise ValueError(f"Data tidak lengkap untuk: {kosong['provinsi'].tolist()}")
 
-    df["kebutuhan_beras_ton"] = df["penduduk_jiwa"] * df["konsumsi_kg_kapita_tahun"] / 1000
-    df["rice_balance_ton"] = df["produksi_beras_ton"] - df["kebutuhan_beras_ton"]
-    df["rasio_swasembada"] = df["produksi_beras_ton"] / df["kebutuhan_beras_ton"]
+    keb_exact = [
+        Decimal(str(p)) * Decimal(str(k)) / Decimal(1000)
+        for p, k in zip(df["penduduk_jiwa"], df["konsumsi_kg_kapita_tahun"], strict=True)
+    ]
+    df["kebutuhan_beras_ton"] = [
+        float(k.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
+        for k in keb_exact
+    ]
+    df["rice_balance_ton"] = [
+        float((Decimal(str(pb)) - k).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
+        for pb, k in zip(df["produksi_beras_ton"], keb_exact, strict=True)
+    ]
+    df["rasio_swasembada"] = [
+        float((Decimal(str(pb)) / k).quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP))
+        for pb, k in zip(df["produksi_beras_ton"], keb_exact, strict=True)
+    ]
     df["status"] = [
         klasifikasi(r, b, ambang)
         for r, b in zip(df["rasio_swasembada"], df["rice_balance_ton"], strict=True)
@@ -74,8 +89,7 @@ def build(
     df.insert(0, "tahun", tahun)
 
     df["penduduk_jiwa"] = df["penduduk_jiwa"].round().astype("int64")
-    for k in _KOLOM_TON:
+    for k in ["produksi_padi_ton_gkg", "produksi_beras_ton"]:
         df[k] = df[k].round(2)
-    df["rasio_swasembada"] = df["rasio_swasembada"].round(4)
 
     return df[KOLOM]

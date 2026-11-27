@@ -9,14 +9,16 @@ from riceguard_calc.ingest import (
     parse_referensi,
     total_indonesia,
 )
-from riceguard_calc.matching import haversine_km, match
+from riceguard_calc.matching import MatchParams, haversine_km, match, match_detail
 
 __all__ = [
     "KOLOM",
+    "MatchParams",
     "build",
     "klasifikasi",
     "haversine_km",
     "match",
+    "match_detail",
     "ALIAS_NAMA_BPS",
     "parse_konsumsi",
     "parse_penduduk",

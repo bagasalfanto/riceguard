@@ -1,0 +1,94 @@
+# =============================================================================
+# Ketebasan Dokumentasi — RiceGuard
+# =============================================================================
+# Menjalankan pemindaian ketebasan pada jadwal. Mengubah ketebasan atau
+# dokumen usang menjadi issue pelacak tunggal, bukan satu issue per berkas.
+# =============================================================================
+
+name: docs-stale
+
+on:
+  schedule:
+    - cron: '0 2 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  ketebasan:
+    name: Deteksi Dokumen Basi
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Checkout kode
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Laporan ketebasan ke job summary
+        run: python scripts/docs-guard.py --stale --max-age=90 >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Tautan mati keluar (lychee)
+        uses: lycheeverse/lychee-action@v2
+        continue-on-error: true
+        with:
+          args: >-
+            --no-progress --include-fragments --max-retries 3
+            "docs/**/*.md" AGENTS.md CLAUDE.md README.md
+
+      - name: Buat atau perbarui issue pelacak
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          JUDUL="Dokumentasi basi: perlu verifikasi ulang"
+          LABEL="docs"
+
+          if ! command -v gh >/dev/null 2>&1; then
+            echo "gh CLI tidak ditemukan; issue ketebasan dilewati." >&2
+            exit 0
+          fi
+
+          LAPORAN="$(python scripts/docs-guard.py --stale --max-age=90 --json --quiet || true)"
+          JUMLAH="$(python scripts/docs-guard.py --stale --max-age=90 --count --quiet || true)"
+          JUMLAH="$(printf '%s' "$JUMLAH" | tr -dc '0-9')"
+
+          if [ "${JUMLAH:-0}" = "0" ]; then
+            echo "Tidak ada dokumen basi; tidak ada issue yang dibuat."
+            exit 0
+          fi
+
+          BADAN=$(cat <<BADAN_SELESAI
+          Pemindaian terjadwal menemukan **$JUMLAH** dokumen yang sumber kodenya berubah setelah
+          tanggal \`last-verified\`-nya. Ini berarti dokumen tersebut mungkin sudah tidak akurat.
+
+          Perbaiki dengan membaca kode terkini, menyelaraskan isi dokumen, lalu memperbarui
+          \`last-verified\` pada frontmatter ke tanggal hari ini.
+
+          \`\`\`json
+          $LAPORAN
+          \`\`\`
+
+          Dibuat otomatis oleh \`.github/workflows/docs-stale.yml\` (\`scripts/docs-guard.py --stale\`).
+          BADAN_SELESAI
+          )
+
+          NOMOR="$(gh issue list --state open --search "$JUDUL" --json number --jq '.[0].number' 2>/dev/null || true)"
+
+          if [ -n "${NOMOR:-}" ]; then
+            gh issue comment "$NOMOR" --body "$BADAN"
+            echo "Issue #$NOMOR diperbarui."
+          else
+            gh issue create --title "$JUDUL" --label "$LABEL" --body "$BADAN" \
+              || gh issue create --title "$JUDUL" --body "$BADAN"
+            echo "Issue ketebasan dibuat."
+          fi

@@ -1,3 +1,10 @@
+---
+scope: tickets/wave-6
+canonical-for: ["spesifikasi tiket wave 6 rekomendasi & simulasi"]
+sources: ["docs/tickets/README.md", "docs/RiceGuard — PRD & Dokumen Teknis (FE + BE).md"]
+last-verified: 2026-11-26
+---
+
 # Wave 6 — Fitur 6: Smart Distribution Recommendation + Simulasi
 
 Kriteria selesai PRD §5.6: simulasi default **identik** dengan rekomendasi resmi; respons < 1 s;
