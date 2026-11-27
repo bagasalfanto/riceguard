@@ -11,6 +11,7 @@ import json
 from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
+from types import ModuleType
 from typing import TYPE_CHECKING, Any
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -60,6 +61,23 @@ def _load_geojson() -> dict[str, Any]:
         if path.is_file():
             return json.loads(path.read_text(encoding="utf-8"))
     raise FileNotFoundError("File GeoJSON provinsi-38.min.geojson tidak ditemukan")
+
+
+@lru_cache(maxsize=1)
+def _mpl() -> ModuleType:
+    """Import Matplotlib sekali dan paksa backend non-GUI (Agg) untuk host tanpa display."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    return matplotlib
+
+
+def _figure(*args: Any, **kwargs: Any) -> Figure:
+    """Buat `Figure` tanpa pyplot; Matplotlib di-import lazy agar RAM dasar tetap kecil."""
+    _mpl()
+    from matplotlib.figure import Figure
+
+    return Figure(*args, **kwargs)
 
 
 def _figure_to_png_bytes(fig: Figure, *, dpi: int = 160) -> bytes:
@@ -127,14 +145,13 @@ def render_peta_png(
     title: str = "Peta Status Ketahanan Beras (38 Provinsi)",
 ) -> bytes:
     """Render peta Indonesia dari GeoJSON dengan warna & pola arsiran ramah cetak hitam-putih."""
-    from matplotlib.figure import Figure
     from matplotlib.lines import Line2D
     from matplotlib.patches import FancyArrowPatch, Patch
     from matplotlib.patches import Polygon as MplPolygon
 
     geo = _load_geojson()
 
-    fig = Figure(figsize=(8.6, 3.55), dpi=160)
+    fig = _figure(figsize=(8.6, 3.55), dpi=160)
     ax = fig.add_subplot(111)
     ax.set_facecolor("#f8fafc")
 
@@ -282,7 +299,6 @@ def render_top_surplus_defisit_png(
     top_defisit: list[dict[str, Any]],
 ) -> bytes:
     """Render grafik batang horizontal Top-5 Surplus vs Top-5 Defisit (ramah grayscale)."""
-    from matplotlib.figure import Figure
     from matplotlib.patches import Patch
 
     rows = list(reversed(top_defisit[:5])) + list(reversed(top_surplus[:5]))
@@ -292,7 +308,7 @@ def render_top_surplus_defisit_png(
     labels = [str(r["provinsi"]) for r in rows]
     values = [float(r["nilai"]) / 1_000.0 for r in rows]  # ribu ton agar ringkas
 
-    fig = Figure(figsize=(8.2, 2.85), dpi=160)
+    fig = _figure(figsize=(8.2, 2.85), dpi=160)
     ax = fig.add_subplot(111)
 
     y_pos = list(range(len(rows)))
@@ -353,13 +369,11 @@ def render_top_surplus_defisit_png(
 
 def render_status_distribusi_png(ringkasan_status: dict[str, int]) -> bytes:
     """Render diagram batang distribusi jumlah provinsi per status."""
-    from matplotlib.figure import Figure
-
     keys = ("surplus", "balanced", "defisit")
     labels = [f"{_STATUS_STYLE[k]['symbol']} {_STATUS_STYLE[k]['label']}" for k in keys]
     counts = [int(ringkasan_status.get(k, 0)) for k in keys]
 
-    fig = Figure(figsize=(5.6, 2.0), dpi=160)
+    fig = _figure(figsize=(5.6, 2.0), dpi=160)
     ax = fig.add_subplot(111)
 
     for idx, (k, count) in enumerate(zip(keys, counts, strict=True)):
