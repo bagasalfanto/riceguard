@@ -179,10 +179,13 @@ export function describeReportError(err: unknown): ReportDownloadErrorInfo {
  * didukung; ganti ke fetch + blob bila suatu saat halaman ini perlu pratinjau draft.
  */
 export function bukaLaporanCetak(jenis: JenisLaporan, query: Query): void {
-  const jendela = window.open(apiUrl(`/reports/${jenis}.html`, query), "_blank", "noopener")
+  // `noopener` tidak dipakai di features: dengan itu window.open() mengembalikan null
+  // walau tab berhasil dibuka, sehingga cek popup-blocked jadi selalu gagal.
+  const jendela = window.open(apiUrl(`/reports/${jenis}.html`, query), "_blank")
   if (!jendela) {
     throw new Error(
       "Tab baru diblokir browser. Izinkan popup untuk situs ini lalu coba lagi.",
     )
   }
+  jendela.opener = null
 }

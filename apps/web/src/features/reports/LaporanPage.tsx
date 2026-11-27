@@ -511,7 +511,11 @@ function PanelUnduhan({
       {errorInfo ? (
         <Alert variant="destructive">
           <AlertCircle className="size-4" />
-          <AlertTitle>Gagal mengunduh {FORMAT_LABEL[errorInfo.format]}</AlertTitle>
+          <AlertTitle>
+            {errorInfo.format === "pdf"
+              ? "Gagal membuka laporan cetak"
+              : `Gagal mengunduh ${FORMAT_LABEL[errorInfo.format]}`}
+          </AlertTitle>
           <AlertDescription>{errorInfo.pesan}</AlertDescription>
         </Alert>
       ) : null}
@@ -546,6 +550,13 @@ function PanelUnduhan({
           />
         ) : null}
       </div>
+
+      {config.formatTersedia.includes("pdf") ? (
+        <p className="text-xs text-muted-foreground">
+          Cetak membuka laporan di tab baru, lalu pilih <strong>Save as PDF</strong> pada
+          dialog cetak browser.
+        </p>
+      ) : null}
     </div>
   )
 }
@@ -635,7 +646,8 @@ function KartuPreviewLaporan({
         <div className="flex items-start gap-2 rounded-lg border border-dashed px-3 py-2.5 text-xs text-muted-foreground">
           <Printer aria-hidden="true" className="mt-0.5 size-3.5 shrink-0 text-foreground" />
           <p className="leading-relaxed">
-            Output PDF diformat A4 portrait dan menggunakan{" "}
+            Output laporan dibuka di tab baru sebagai halaman A4 portrait; simpan sebagai PDF
+            lewat dialog cetak browser. Halaman memakai{" "}
             <strong className="font-medium text-foreground">
               pola garis, label status, serta kontras hitam-putih
             </strong>{" "}
