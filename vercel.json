@@ -5,7 +5,7 @@
       "root": "apps/api",
       "framework": "fastapi",
       "entrypoint": "app.main:app",
-      "buildCommand": "mkdir -p dataset/geo && cp ../../dataset/geo/provinsi-38.min.geojson dataset/geo/"
+      "buildCommand": "mkdir -p dataset/geo && { cp ../../dataset/geo/provinsi-38.min.geojson dataset/geo/ 2>/dev/null || true; } && test -f dataset/geo/provinsi-38.min.geojson"
     },
     "web": {
       "root": "apps/web",

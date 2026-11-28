@@ -97,5 +97,5 @@ FK `province_stats.kode_bps`, `province_stat_edits.kode_bps`, serta `distributio
 
 - **Tanpa service binding:** `web` adalah SPA statis yang memanggil `/api/v1` same-origin (default `BASE_URL` di `src/lib/api.ts`); tidak ada panggilan server-ke-server sehingga tidak ada URL internal yang perlu di-inject.
 - **`packages/riceguard_calc` bukan service:** ia dependensi path `apps/api` lewat `[tool.uv.sources]`, sehingga installer uv Vercel ikut memasangnya. Instalasi lokal/CI tetap menyebut kedua editable sekaligus.
-- **GeoJSON laporan:** `buildCommand` service `api` menyalin `dataset/geo/provinsi-38.min.geojson` ke `apps/api/dataset/geo/` karena file itu berada di luar root service; `services/pdf.py` menemukannya lewat fallback `Path.cwd()`.
+- **GeoJSON laporan:** `buildCommand` service `api` menyalin `dataset/geo/provinsi-38.min.geojson` ke `apps/api/dataset/geo/` karena file itu berada di luar root service, lalu gagal build bila salinan tidak ada; `services/pdf.py` menemukannya lewat fallback `Path.cwd()`.
 - **Variabel lingkungan wajib di Vercel:** `DATABASE_URL` (pooler Supabase), `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`, `CORS_ORIGINS`. `AI_ENDPOINT_URL` opsional (kosong = `/forecast` membalas `503 AI_UNAVAILABLE`).
