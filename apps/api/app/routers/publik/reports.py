@@ -66,23 +66,3 @@ def laporan_cetak(
 ) -> HTMLResponse:
     data = _susun_data(db, jenis, tahun, kode_bps, version_id, admin)
     return HTMLResponse(render_report_html(data))
-
-
-@router.get("/_diag/render", response_class=HTMLResponse)
-def diag_render(
-    db: Annotated[Session, Depends(get_db)],
-    tahun: Annotated[int | None, Query()] = None,
-) -> HTMLResponse:
-    import traceback
-
-    import matplotlib
-
-    jejak = [f"data_path={matplotlib.get_data_path()}"]
-    try:
-        data = laporan_nasional(db, tahun)
-        html = render_report_html(data)
-        jejak.append(f"render ok: {len(html)} char")
-        return HTMLResponse("<pre>" + "\n".join(jejak) + "</pre>")
-    except Exception:
-        jejak.append(traceback.format_exc())
-        return HTMLResponse("<pre>" + "\n".join(jejak) + "</pre>", status_code=500)
