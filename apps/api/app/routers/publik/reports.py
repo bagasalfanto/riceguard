@@ -73,64 +73,12 @@ def diag_render(
     db: Annotated[Session, Depends(get_db)],
     tahun: Annotated[int | None, Query()] = None,
 ) -> HTMLResponse:
-    import os
-    import traceback
-    from pathlib import Path as _Path
-
-    akar = _Path(__file__).resolve().parents[2]
-    jejak = [f"cwd={os.getcwd()}", f"akar={akar}"]
-    for rel in ("assets/fonts", "templates/reports"):
-        p = akar / rel
-        jejak.append(f"{rel}: {sorted(os.listdir(p)) if p.is_dir() else 'TIDAK ADA'}")
-    try:
-        data = laporan_nasional(db, tahun)
-        html = render_report_html(data)
-        jejak.append(f"render ok: {len(html)} char")
-        return HTMLResponse("<pre>" + "\n".join(jejak) + "</pre>")
-    except Exception:
-        jejak.append(traceback.format_exc())
-        return HTMLResponse("<pre>" + "\n".join(jejak) + "</pre>", status_code=500)
-
-
-@router.get("/_diag/report", response_class=HTMLResponse)
-def diag_report(
-    db: Annotated[Session, Depends(get_db)],
-    tahun: Annotated[int | None, Query()] = None,
-) -> HTMLResponse:
     import traceback
 
+    import matplotlib
+
+    jejak = [f"data_path={matplotlib.get_data_path()}"]
     try:
-        data = laporan_nasional(db, tahun)
-        return HTMLResponse(f"<pre>data ok: {sorted(data)}</pre>")
-    except Exception:
-        return HTMLResponse(f"<pre>{traceback.format_exc()}</pre>", status_code=500)
-
-
-@router.get("/_diag/render", response_class=HTMLResponse)
-def diag_render(
-    db: Annotated[Session, Depends(get_db)],
-    tahun: Annotated[int | None, Query()] = None,
-) -> HTMLResponse:
-    import os
-    import traceback
-
-    jejak: list[str] = [f"MPLCONFIGDIR={os.environ.get('MPLCONFIGDIR')}", f"cwd={os.getcwd()}"]
-    try:
-        import matplotlib
-        from matplotlib import font_manager
-
-        data_dir = matplotlib.get_data_path()
-        ttf = os.path.join(data_dir, "fonts", "ttf")
-        jejak.append(f"data_path={data_dir}")
-        jejak.append(f"ttf_exists={os.path.isdir(ttf)}")
-        jejak.append(f"ttf_files={sorted(os.listdir(ttf))[:12] if os.path.isdir(ttf) else 'NA'}")
-        cfg = os.environ.get("MPLCONFIGDIR") or ""
-        jejak.append(f"cfg_list={sorted(os.listdir(cfg)) if cfg and os.path.isdir(cfg) else 'NA'}")
-        jejak.append(f"fonts_terdaftar={len(font_manager.fontManager.ttflist)}")
-        from app.services.pdf import _load_geojson, _mpl
-
-        jejak.append(f"mpl={_mpl().__version__}")
-        jejak.append(f"geojson={len(_load_geojson().get('features', []))} fitur")
         data = laporan_nasional(db, tahun)
         html = render_report_html(data)
         jejak.append(f"render ok: {len(html)} char")
