@@ -2,7 +2,7 @@
 scope: rules
 canonical-for: ["perintah verifikasi & CI", "gaya kode Python & TypeScript", "pengujian", "git/PR", "larangan sentuh", "otomasi dokumentasi"]
 sources: ["package.json", "ruff.toml", "apps/api/pyproject.toml", "apps/web/package.json", ".github/workflows/ci.yml", "docs-map.json", "AGENTS.md"]
-last-verified: 2026-11-27
+last-verified: 2026-11-28
 ---
 
 # Aturan Kerja & Perintah RiceGuard
@@ -44,6 +44,14 @@ npm run ci:check
 ### Postgres 16 Lokal (Windows Dev)
 
 Gunakan `scripts/db-local.ps1` (`start`, `stop`, `status`, `reset`) untuk menjalankan `npm run test:api` tanpa menyentuh database Supabase. Sebelum menjalankan tes lokal yang memodifikasi `apps/api/.env`, cadangkan berkas `.env` dan pulihkan setelah `stop`.
+
+### Deployment Vercel
+
+`vercel.json` di akar berisi dua service (`api` + `web`). `apps/api/pyproject.toml` mendeklarasikan `riceguard_calc` sebagai dependensi dengan `[tool.uv.sources]` (`path = "../../packages/riceguard_calc"`); karena itu instalasi lokal/CI wajib menyebut kedua editable sekaligus:
+
+```bash
+pip install -e packages/riceguard_calc -e apps/api
+```
 
 ## 3. Gaya Kode & Penamaan
 

@@ -1,7 +1,7 @@
 /**
  * Satu-satunya jalan FE ke data. Semua angka berasal dari API, tidak ada rumus di sini.
  */
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000/api/v1"
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "/api/v1"
 
 export type ApiErrorBody = {
   error: { code: string; message: string; details: unknown }

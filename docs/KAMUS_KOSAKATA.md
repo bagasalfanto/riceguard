@@ -1,8 +1,8 @@
 ---
 scope: kamus-kosakata
 canonical-for: ["teks antarmuka", "navigasi & rute UI", "label status", "parameter URL", "header CSV", "larangan kata"]
-sources: ["GLOSSARY.md", "apps/web/src/components/layout/Header.tsx", "apps/web/src/components/layout/AdminLayout.tsx", "apps/web/src/router.tsx", "apps/web/src/lib/status.ts", "apps/web/src/lib/format.ts", "apps/api/app/services/exports.py", "apps/api/app/core/errors.py"]
-last-verified: 2026-11-27
+sources: ["GLOSSARY.md", "apps/web/src/components/layout/Header.tsx", "apps/web/src/components/layout/AdminLayout.tsx", "apps/web/src/router.tsx", "apps/web/src/lib/api.ts", "apps/web/src/lib/status.ts", "apps/web/src/lib/format.ts", "apps/api/app/services/exports.py", "apps/api/app/core/errors.py"]
+last-verified: 2026-11-28
 ---
 
 # Kamus Kosakata Baku RiceGuard
@@ -35,6 +35,7 @@ Dilarang memakai sinonim bergantian untuk entitas, aksi, atau status yang sama. 
 - **Label menu utama publik:** mengikuti desain navigasi produk (`Dashboard`, `Rice Map`, `Regional Analysis`, `Distribution Analysis`, `Recommendations`, `Historical Trends`, `Data & Methodology`), ditambah tombol `Unduh laporan` (`/laporan`) dan menu gated `Prediksi` (`/prediksi`).
 - **Kamus menuntun teks antarmuka, bukan mengubah nama kolom DB/API:** identifier teknis `snake_case` (`rice_balance_ton`, `kode_bps`, `kebutuhan_beras_ton`) tetap dipakai pada API, CSV, dan Excel.
 - **Angka & font:** angka bisnis memakai `tabular-nums` (`Intl.NumberFormat("id-ID")`); `font-mono` hanya untuk identifier teknis (`kode_bps`, UUID, JSON detail audit).
+- **Base URL API:** relatif same-origin `/api/v1` (`apps/web/src/lib/api.ts`). Host/port backend tidak pernah tampil ke pengguna; `vite dev` mem-proxy `/api` ke `127.0.0.1:8000`.
 
 ---
 

@@ -2,7 +2,7 @@
 scope: architecture
 canonical-for: ["stack & versi", "struktur folder", "alur request", "logika bisnis", "gotchas", "cascade delete"]
 sources: ["apps/api/pyproject.toml", "apps/web/package.json", "packages/riceguard_calc/", "apps/api/app/services/", "apps/api/Dockerfile"]
-last-verified: 2026-11-27
+last-verified: 2026-11-28
 ---
 
 # Arsitektur & Gotchas RiceGuard
@@ -85,3 +85,17 @@ last-verified: 2026-11-27
 | `auth.users` (Supabase) | `admins` |
 
 FK `province_stats.kode_bps`, `province_stat_edits.kode_bps`, serta `distribution_recommendations.{dari_kode,ke_kode}` merujuk `provinces.kode_bps` tanpa cascade delete agar referensi provinsi terlindungi dari penghapusan tak sengaja.
+
+## 6. Deployment (Vercel)
+
+`vercel.json` di akar mendefinisikan satu project dengan dua service:
+
+| Service | Root | Framework | Peran publik |
+|---|---|---|---|
+| `api` | `apps/api` | `fastapi` (`entrypoint: app.main:app`) | `/api/(.*)` dan `/health` |
+| `web` | `apps/web` | `vite` | sisanya, dengan SPA fallback `/(.*)` → `/index.html` |
+
+- **Tanpa service binding:** `web` adalah SPA statis yang memanggil `/api/v1` same-origin (default `BASE_URL` di `src/lib/api.ts`); tidak ada panggilan server-ke-server sehingga tidak ada URL internal yang perlu di-inject.
+- **`packages/riceguard_calc` bukan service:** ia dependensi path `apps/api` lewat `[tool.uv.sources]`, sehingga installer uv Vercel ikut memasangnya. Instalasi lokal/CI tetap menyebut kedua editable sekaligus.
+- **GeoJSON laporan:** `buildCommand` service `api` menyalin `dataset/geo/provinsi-38.min.geojson` ke `apps/api/dataset/geo/` karena file itu berada di luar root service; `services/pdf.py` menemukannya lewat fallback `Path.cwd()`.
+- **Variabel lingkungan wajib di Vercel:** `DATABASE_URL` (pooler Supabase), `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`, `CORS_ORIGINS`. `AI_ENDPOINT_URL` opsional (kosong = `/forecast` membalas `503 AI_UNAVAILABLE`).
