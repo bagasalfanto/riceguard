@@ -1,0 +1,118 @@
+{
+  "$comment": "Peta kode -> dokumen. Sumber mesin untuk drift detection (scripts/docs-guard.py). Ubah berkas ini ketika arsitektur berubah. Aturan manusia-nya ada di AGENTS.md bagian 0.3.",
+  "version": 1,
+  "harness": [
+    ".agents/hooks.json",
+    ".claude/settings.json",
+    ".codex/hooks.json",
+    ".opencode/plugins/docs-enforcer.ts"
+  ],
+  "rules": [
+    {
+      "id": "api-endpoints",
+      "when": [
+        "apps/api/app/routers/**/*.py",
+        "apps/api/app/schemas/**/*.py"
+      ],
+      "require": [
+        "docs/api/endpoints-*.md",
+        "docs/api/README.md"
+      ],
+      "untracked": true
+    },
+    {
+      "id": "domain-model",
+      "when": [
+        "apps/api/app/db/**/*.py",
+        "supabase/migrations/**/*.sql"
+      ],
+      "require": [
+        "docs/DOMAIN_MODEL.md"
+      ],
+      "untracked": true
+    },
+    {
+      "id": "roles-workflow",
+      "when": [
+        "apps/api/app/core/security.py",
+        "apps/api/app/services/audit.py",
+        "apps/api/app/services/versions.py",
+        "apps/api/app/services/ingest.py"
+      ],
+      "require": [
+        "docs/ROLES_WORKFLOW.md"
+      ]
+    },
+    {
+      "id": "architecture-calc",
+      "when": [
+        "packages/riceguard_calc/**/*.py",
+        "apps/api/app/core/config.py",
+        "apps/api/app/core/cache.py",
+        "apps/api/app/services/compute.py",
+        "apps/api/app/services/pdf.py",
+        "apps/api/app/services/forecast.py",
+        "apps/api/app/services/exports.py",
+        "apps/api/app/services/trends.py",
+        "apps/api/app/services/recommendations.py",
+        "apps/api/Dockerfile",
+        ".env.example",
+        "apps/api/.env.example",
+        "apps/web/.env.example"
+      ],
+      "require": [
+        "docs/ARCHITECTURE.md"
+      ]
+    },
+    {
+      "id": "kosakata",
+      "when": [
+        "apps/web/src/components/**/*.tsx",
+        "apps/web/src/features/**/*.tsx",
+        "apps/web/src/features/**/*.ts",
+        "apps/web/src/lib/*.ts"
+      ],
+      "require": [
+        "docs/KAMUS_KOSAKATA.md"
+      ]
+    },
+    {
+      "id": "tooling",
+      "when": [
+        "package.json",
+        "apps/web/package.json",
+        "apps/api/pyproject.toml",
+        "ruff.toml",
+        ".github/workflows/*.yml",
+        "scripts/docs-*.py",
+        "scripts/ci-check.py"
+      ],
+      "require": [
+        "docs/RULES.md"
+      ]
+    },
+    {
+      "id": "docs-topology",
+      "when": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "llms.txt",
+        "opencode.json",
+        "docs-map.json",
+        ".agents/**",
+        ".claude/**",
+        ".codex/**",
+        ".opencode/**"
+      ],
+      "require": [
+        "docs/INDEX.md"
+      ],
+      "untracked": true
+    }
+  ],
+  "escape": {
+    "label": "docs-exempt",
+    "trailer": "Docs-Exempt:",
+    "require_reason": true
+  }
+}

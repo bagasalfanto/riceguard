@@ -1,3 +1,10 @@
+---
+scope: tickets/wave-3
+canonical-for: ["spesifikasi tiket wave 3 peta interaktif"]
+sources: ["docs/tickets/README.md", "docs/RiceGuard — PRD & Dokumen Teknis (FE + BE).md"]
+last-verified: 2026-11-26
+---
+
 # Wave 3 — Fitur 3: Interactive Rice Map (`/peta`)
 
 Kriteria selesai PRD §5.3: 38 poligon terwarnai tanpa abu-abu; ganti layer < 200 ms tanpa

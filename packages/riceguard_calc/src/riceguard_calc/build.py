@@ -4,7 +4,8 @@ Fungsi murni: menerima DataFrame, bukan path, supaya bisa dipakai API dengan fil
 """
 from __future__ import annotations
 
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import ROUND_HALF_UP, Decimal
+
 import pandas as pd
 
 # Batas swasembada FAO (1999): produksi >= 90% kebutuhan

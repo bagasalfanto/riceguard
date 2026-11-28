@@ -1,3 +1,10 @@
+---
+scope: tickets/wave-8
+canonical-for: ["spesifikasi tiket wave 8 manajemen data & transparansi"]
+sources: ["docs/tickets/README.md", "docs/RiceGuard — PRD & Dokumen Teknis (FE + BE).md"]
+last-verified: 2026-11-26
+---
+
 # Wave 8 — Fitur 8: Data Management & Transparency (`/data`)
 
 Kriteria selesai PRD §5.8: file unduhan sama persis kolomnya dengan `dataset_v1.csv`

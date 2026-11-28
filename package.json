@@ -9,9 +9,14 @@
     "dev:api": "python -m uvicorn app.main:app --reload --app-dir apps/api",
     "build:web": "npm run build --workspace apps/web",
     "lint:web": "npm run lint --workspace apps/web",
+    "lint:py": "python scripts/ci-check.py --ruff-only",
     "api:types": "npm run api:types --workspace apps/web",
     "test:calc": "python -m pytest packages/riceguard_calc/tests dataset/tests -q",
     "test:api": "python -m pytest apps/api/tests -q",
-    "test": "npm run test:calc && npm run test:api"
+    "test": "npm run test:calc && npm run test:api",
+    "docs:guard": "python scripts/docs-guard.py --check-links --check-refs --check-readability --check-harness",
+    "docs:drift": "python scripts/docs-guard.py --drift --pending",
+    "docs:check": "npm run docs:guard && npm run docs:drift",
+    "ci:check": "python scripts/ci-check.py"
   }
 }

@@ -1,3 +1,10 @@
+---
+scope: tickets/wave-2
+canonical-for: ["spesifikasi tiket wave 2 dashboard"]
+sources: ["docs/tickets/README.md", "docs/RiceGuard — PRD & Dokumen Teknis (FE + BE).md"]
+last-verified: 2026-11-26
+---
+
 # Wave 2 — Fitur 2: Main Dashboard (`/dashboard`)
 
 Kriteria selesai PRD §5.2: total kartu = jumlah 38 baris (≤ 1 ton selisih); Kalimantan Barat
@@ -43,7 +50,7 @@ tampil `balanced`; grafik terbaca di 375 px.
 - `?status=defisit` → 20 baris; `?status=balanced` → 1 (Kalimantan Barat, `rice_balance_ton` negatif).
 - `?pulau=Papua` → 6 baris.
 - `?q=jakarta` → DKI Jakarta.
-- `?sort=balance&order=desc` → baris pertama Jawa Barat.
+- `?sort=balance&order=desc` → baris pertama Jawa Timur (2.426.819,33 — dicek ke `dataset_v1.csv`).
 
 **Tes:** `test_provinces_list.py` (filter, sort, q, 400 untuk sort invalid, pagination).
 
@@ -60,8 +67,8 @@ tampil `balanced`; grafik terbaca di 375 px.
 - Respons: `{by, tahun, items: [{peringkat, kode_bps, provinsi, nilai}]}`.
 
 **Acceptance**
-- `by=produksi&limit=5` → Jawa Barat, Jawa Timur, Jawa Tengah, Sulawesi Selatan, Sumatera Utara
-  (urut turun, dicek terhadap `dataset_v1.csv`).
+- `by=produksi&limit=5` → Jawa Timur, Jawa Barat, Jawa Tengah, Sulawesi Selatan,
+  Sumatera Selatan (urut turun, dicek terhadap `dataset_v1.csv`).
 - `limit` > 38 dipotong jadi 38, tidak error.
 
 **Tes:** `test_rankings.py`.

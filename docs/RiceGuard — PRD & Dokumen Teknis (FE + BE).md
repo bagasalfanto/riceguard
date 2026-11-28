@@ -1,4 +1,14 @@
+---
+scope: historical-prd
+canonical-for: ["spesifikasi produk awal (arsip historis)", "checklist kriteria PRD"]
+sources: ["docs/INDEX.md"]
+last-verified: 2026-11-26
+max-lines: "1100"
+---
+
 # RiceGuard — PRD & Dokumen Teknis (FE + BE)
+
+> **Catatan historis:** Dokumen ini adalah spesifikasi produk dan perancangan awal sebelum implementasi modular selesai. Untuk dokumentasi teknis kanonik yang selalu diselaraskan dengan kode aktual, lihat `INDEX.md`.
 
 Nov 25, 2026 · @Bagas
 
@@ -57,7 +67,7 @@ Angka dari `dataset_v1.csv` (tahun 2025):
 - Rekomendasi = **rekomendasi potensial berbasis data tahunan**, bukan rencana logistik. Biaya angkut, moda, dan kebijakan belum dihitung.
 - Kebutuhan memakai konsumsi rumah tangga per kapita (Bapanas), jadi kebutuhan industri, hotel/restoran, dan susut tidak termasuk.
 
-**Di luar cakupan:** data kabupaten/kota, data stok, prediksi produksi (ML), harga beras, akun pengguna publik.
+**Di luar cakupan:** data kabupaten/kota, data stok, harga beras, akun pengguna publik. Prediksi produksi (ML) **bukan** bagian dari dataset resmi: kalau ditampilkan, ia berdiri sebagai fitur terpisah di atas model eksternal (lihat §5.10) dan tidak pernah mengubah angka resmi, rekomendasi, atau laporan.
 
 ## 2. Role & hak akses
 
@@ -218,8 +228,8 @@ Tujuan: pengunjung paham RiceGuard dan masalahnya dalam ± 1 menit, lalu masuk k
 
 Kriteria selesai:
 
-- [ ] 3 angka hero sama persis dengan Dashboard untuk tahun yang sama.
-- [ ] Semua teks berasal dari `site_content`, jadi bisa diubah admin tanpa deploy.
+- [x] 3 angka hero sama persis dengan Dashboard untuk tahun yang sama.
+- [x] Semua teks berasal dari `site_content`, jadi bisa diubah admin tanpa deploy.
 - [ ] Lighthouse mobile: Performance ≥ 85, Accessibility ≥ 90.
 
 ### 5.2 Main Dashboard — `/dashboard`
@@ -249,9 +259,9 @@ Jika ada ≥ 2 tahun, tiap kartu menampilkan perubahan (%) dibanding tahun sebel
 
 Kriteria selesai:
 
-- [ ] Total di kartu sama dengan jumlah 38 baris versi published (selisih pembulatan ≤ 1 ton).
-- [ ] Kalimantan Barat tampil sebagai balanced (bukan defisit) di semua grafik.
-- [ ] Grafik bisa dibaca di lebar 375 px.
+- [x] Total di kartu sama dengan jumlah 38 baris versi published (selisih pembulatan ≤ 1 ton).
+- [x] Kalimantan Barat tampil sebagai balanced (bukan defisit) di semua grafik.
+- [ ] Grafik bisa dibaca di lebar 375 px. *(Cek visual manual 3 lebar pada lingkungan deploy akhir.)*
 
 ### 5.3 Interactive Rice Map (WebGIS) — `/peta`
 
@@ -275,10 +285,10 @@ Kepadatan penduduk butuh luas wilayah (km²), yang **belum ada di dataset**. Lih
 
 Kriteria selesai:
 
-- [ ] 38 poligon terwarnai; tidak ada provinsi abu-abu karena kode tidak cocok.
-- [ ] Ganti layer < 200 ms (tanpa request ulang GeoJSON).
-- [ ] Peta bisa dipakai dengan keyboard: search lalu Enter membuka panel provinsi.
-- [ ] Warna punya pola/label teks juga, tidak hanya warna (aksesibilitas buta warna).
+- [x] 38 poligon terwarnai; tidak ada provinsi abu-abu karena kode tidak cocok.
+- [x] Ganti layer < 200 ms (tanpa request ulang GeoJSON).
+- [x] Peta bisa dipakai dengan keyboard: search lalu Enter membuka panel provinsi.
+- [x] Warna punya pola/label teks juga, tidak hanya warna (aksesibilitas buta warna).
 
 ### 5.4 Regional Analysis — `/analisis` dan `/analisis/:kode`
 
@@ -299,8 +309,8 @@ Kriteria selesai:
 
 Kriteria selesai:
 
-- [ ] Angka di rumus terisi sama dengan kolom dataset (kebutuhan dibulatkan ke ton).
-- [ ] Kode tidak valid → halaman 404 dengan link kembali ke daftar.
+- [x] Angka di rumus terisi sama dengan kolom dataset (kebutuhan dibulatkan ke ton).
+- [x] Kode tidak valid → halaman 404 dengan link kembali ke daftar.
 
 ### 5.5 Supply & Distribution Analysis — `/distribusi`
 
@@ -319,8 +329,8 @@ Tujuan: memperlihatkan siapa calon pemasok dan siapa yang butuh, sebelum masuk k
 
 Kriteria selesai:
 
-- [ ] Jumlah garis di peta = jumlah baris rekomendasi resmi (27 untuk 2025).
-- [ ] Jarak di matriks sama dengan `jarak_km` hasil `haversine_km` P5 (1 desimal).
+- [x] Jumlah garis di peta = jumlah baris rekomendasi resmi (27 untuk 2025).
+- [x] Jarak di matriks sama dengan `jarak_km` hasil `haversine_km` P5 (1 desimal).
 
 ### 5.6 Smart Distribution Recommendation — `/rekomendasi` dan `/rekomendasi/simulasi`
 
@@ -358,10 +368,10 @@ Hasil simulasi: tabel dan peta yang sama dengan tab resmi, ditambah kartu **perb
 
 Kriteria selesai:
 
-- [ ] Simulasi dengan parameter default menghasilkan hasil **identik** dengan rekomendasi resmi (uji otomatis).
-- [ ] Respons simulasi < 1 detik untuk 38 provinsi.
-- [ ] Hasil tidak pernah melebihi sisa surplus maupun defisit (4 tes P5 tetap lulus).
-- [ ] Label "rekomendasi potensial, bukan rencana logistik" selalu tampil di atas hasil.
+- [x] Simulasi dengan parameter default menghasilkan hasil **identik** dengan rekomendasi resmi (uji otomatis).
+- [x] Respons simulasi < 1 detik untuk 38 provinsi.
+- [x] Hasil tidak pernah melebihi sisa surplus maupun defisit (4 tes P5 tetap lulus).
+- [x] Label "rekomendasi potensial, bukan rencana logistik" selalu tampil di atas hasil.
 
 ### 5.7 Historical Data & Trend Monitoring — `/tren`
 
@@ -376,7 +386,7 @@ Status: halaman dibuat, tetapi **menu dan route hanya aktif jika jumlah tahun pu
 
 Kriteria selesai:
 
-- [ ] Diuji dengan data dummy 2 tahun di lingkungan dev (seed khusus), lalu dimatikan otomatis di produksi bila hanya 1 tahun.
+- [x] Diuji dengan data dummy 2 tahun di lingkungan dev (seed khusus), lalu dimatikan otomatis di produksi bila hanya 1 tahun.
 
 ### 5.8 Data Management & Transparency — `/data`
 
@@ -391,8 +401,8 @@ Kriteria selesai:
 
 Kriteria selesai:
 
-- [ ] File unduhan sama persis kolomnya dengan `dataset_v1.csv` (urutan dan nama kolom).
-- [ ] Excel berisi 3 sheet: Provinsi, Rekomendasi, Metadata (versi, sumber, tanggal).
+- [x] File unduhan sama persis kolomnya dengan `dataset_v1.csv` (urutan dan nama kolom).
+- [x] Excel berisi 3 sheet: Provinsi, Rekomendasi, Metadata (versi, sumber, tanggal).
 
 ### 5.9 Report & Export — `/laporan`
 
@@ -409,8 +419,76 @@ Setiap laporan mencantumkan versi dataset, tanggal cetak, sumber, dan batasan kl
 
 Kriteria selesai:
 
-- [ ] PDF A4 portrait, maksimal 4 halaman untuk laporan nasional, terbaca saat dicetak hitam-putih.
-- [ ] Angka di PDF sama dengan halaman web untuk versi yang sama.
+- [x] PDF A4 portrait, maksimal 4 halaman untuk laporan nasional, terbaca saat dicetak hitam-putih.
+- [x] Angka di PDF sama dengan halaman web untuk versi yang sama.
+
+### 5.10 Prediksi Produksi (AI) — `/prediksi` (tambahan, opsional)
+
+Status: **di luar 9 fitur inti**. Hanya dikerjakan kalau endpoint model sudah hidup. Kalau tidak, fitur ini tidak dirilis dan tidak ada menu yang mengarah ke halaman kosong.
+
+**Pemilik model.** Model dilatih dan di-deploy oleh anggota tim terpisah di Hugging Face Space. Repo ini **tidak** memuat kode training, bobot, atau dataset latih; yang disimpan hanya URL endpoint dan token opsional.
+
+**Alur.** FE → BE (`GET /api/v1/forecast`) → endpoint HF. FE tidak pernah memanggil HF langsung, karena token Space tidak boleh masuk bundle FE, CORS HF tidak diandalkan, dan BE perlu menyeragamkan bentuk respons dengan endpoint lain.
+
+**Halaman `/prediksi`.**
+- Menampilkan prediksi per provinsi untuk tahun target, terpisah dari data resmi.
+- Banner tetap di atas konten: "Angka prediksi berasal dari model eksternal, bukan bagian dataset resmi, dan tidak dipakai untuk rekomendasi distribusi."
+- `AI_ENDPOINT_URL` kosong atau model membalas error → halaman menampilkan "Prediksi belum tersedia", **tidak** menampilkan angka pengganti.
+- Menu "Prediksi" hanya dirender kalau `GET /forecast` membalas 200.
+
+**Kontrak yang dibutuhkan dari model** (usulan; harus disetujui pemilik model sebelum BE ditulis).
+
+Request `POST {AI_ENDPOINT_URL}`:
+
+```json
+{
+  "tahun": 2026,
+  "provinsi": [
+    {
+      "kode_bps": "11",
+      "provinsi": "Aceh",
+      "penduduk_jiwa": 5631760,
+      "konsumsi_kg_kapita_tahun": 93.9,
+      "produksi_beras_ton": 930489.0,
+      "kebutuhan_beras_ton": 528822.26
+    }
+  ]
+}
+```
+
+Respons 200:
+
+```json
+{
+  "tahun": 2026,
+  "satuan": "ton",
+  "items": [
+    {
+      "kode_bps": "11",
+      "provinsi": "Aceh",
+      "nilai": 950000.0,
+      "interval_bawah": 900000.0,
+      "interval_atas": 1000000.0
+    }
+  ],
+  "model": {"nama": "nama-model", "versi": "1.0.0"}
+}
+```
+
+`nilai` wajib; `interval_bawah`, `interval_atas`, dan `model` opsional.
+
+Kriteria selesai:
+
+- [ ] 38 `kode_bps` pada respons model, atau BE menandai kode yang hilang di `details.kode_tanpa_prediksi`. *(BE & unit mock lulus; menunggu endpoint model eksternal `T11.0`.)*
+- [x] `AI_ENDPOINT_URL` kosong → 503 `AI_UNAVAILABLE`; halaman tetap bisa dibuka.
+- [x] Angka di Dashboard, Peta, Rekomendasi, dan laporan **tidak berubah** karena fitur ini.
+
+Belum diputuskan (dijawab pemilik model, jangan diasumsikan):
+
+1. Tahun target yang didukung model.
+2. Fitur masukan tambahan yang dibutuhkan model (harga, luas panen, cuaca).
+3. Space publik atau privat (menentukan perlu `AI_API_TOKEN` atau tidak).
+4. Apakah model melaporkan interval keyakinan, dan bagaimana cara membacanya.
 
 ## 6. Panel admin
 
@@ -466,10 +544,10 @@ Tabel: waktu, admin, aksi (upload, edit\_provinsi, recompute, publish, rollback,
 
 Kriteria selesai panel admin:
 
-- [ ] Pengguna tanpa login yang membuka `/admin/*` diarahkan ke login; token non-admin mendapat 403 dari API.
-- [ ] Upload file contoh di `dataset/raw/` menghasilkan angka identik dengan `dataset_v1.csv` dan rekomendasi identik dengan `rekomendasi_distribusi_v1.csv`.
-- [ ] Versi published/archived tidak bisa diedit (UI dan API sama-sama menolak).
-- [ ] Rollback mengubah tampilan publik dalam < 5 detik tanpa deploy ulang.
+- [x] Pengguna tanpa login yang membuka `/admin/*` diarahkan ke login; token non-admin mendapat 403 dari API.
+- [x] Upload file contoh di `dataset/raw/` menghasilkan angka identik dengan `dataset_v1.csv` dan rekomendasi identik dengan `rekomendasi_distribusi_v1.csv`.
+- [x] Versi published/archived tidak bisa diedit (UI dan API sama-sama menolak).
+- [x] Rollback mengubah tampilan publik dalam < 5 detik tanpa deploy ulang.
 
 ## 7. Kebutuhan non-fungsional
 
@@ -614,6 +692,7 @@ Base URL `/api/v1`. Nama field mengikuti kolom dataset P5 (snake\_case Bahasa In
 | `GET /compare` | tahun\_a, tahun\_b | Δ per provinsi + provinsi yang berubah status | Tren, peta banding |
 | `GET /sources` | — | Daftar sumber data | Landing, Data |
 | `GET /content` | keys\[\] (opsional) | Blok konten Markdown | Landing, Data |
+| `GET /forecast` | tahun | Prediksi produksi dari model eksternal (§5.10). 503 `AI_UNAVAILABLE` kalau endpoint model belum diisi | Prediksi |
 | `GET /validation` | tahun | Hasil validasi versi published | Data |
 | `GET /exports/provinces.{csv\|xlsx}` | tahun | File unduhan | Data, Laporan |
 | `GET /exports/recommendations.{csv\|xlsx}` | tahun | File unduhan | Rekomendasi, Laporan |
@@ -841,7 +920,7 @@ Edit per provinsi memakai jalur yang sama: ambil 38 baris input versi draft, gan
 
 Langkah 3–5 butuh parameter baru di fungsi matching P5 (ambang, persen, jarak maks, daftar kecuali). Nilai default harus menghasilkan output identik dengan v1 (uji regresi). Mode "Optimal" (minimasi total ton-km dengan program linear, misal `scipy.optimize.linprog`) hanya dikerjakan jika tim setuju dan waktu cukup.
 
-**Kalimat penjelasan (`explain.py`)** — template dari data, tanpa AI:
+**Kalimat penjelasan (`explain.py`)** — template dari data, **tanpa** LLM atau model apa pun. Ini berbeda dari §5.10: prediksi AI tidak pernah menulis kalimat rekomendasi.
 
 > "{dari} dipilih untuk {ke} karena merupakan provinsi surplus ke-{n} terdekat ({jarak} km) dengan sisa surplus {sisa} ton saat giliran {ke}. Alokasi {ton} ton menutup {persen}% defisit {ke}."
 
@@ -870,6 +949,9 @@ Langkah 3–5 butuh parameter baru di fungsi matching P5 (ambang, persen, jarak 
 | `SUPABASE_JWT_SECRET` | Hanya jika project masih legacy HS256 |
 | `CORS_ORIGINS` | Domain FE, dipisah koma |
 | `MAX_UPLOAD_MB` | 2 |
+| `AI_ENDPOINT_URL` | URL endpoint model di Hugging Face Space. Kosong = `/forecast` 503 |
+| `AI_API_TOKEN` | Token Space kalau privat. Hanya di server |
+| `AI_TIMEOUT_DETIK` | Batas tunggu panggilan model, default 20 |
 
 **Testing**
 
@@ -886,6 +968,7 @@ Langkah 3–5 butuh parameter baru di fungsi matching P5 (ambang, persen, jarak 
 | FE (build statis Vite) | Belum dipilih (misal Vercel / Netlify / Cloudflare Pages) | Perlu rewrite SPA: semua path → `index.html` |
 | BE (FastAPI, Docker) | Belum dipilih | Lihat risiko cold start di bawah |
 | DB, Auth, Storage | Supabase | Migrasi dari `supabase/migrations` |
+| Model prediksi (opsional) | Hugging Face Space, dikelola pemilik model | Dipanggil BE lewat `AI_ENDPOINT_URL`. Tidak memuat kode di repo ini (§5.10) |
 
 Catatan hosting BE: web service gratis di Render dimatikan setelah 15 menit tanpa trafik, dan request pertama sesudahnya bisa tertunda sekitar 30 detik atau lebih ([Render](https://render.com/docs/free)). Untuk penjurian, pilih hosting yang tidak tidur atau siapkan cara membangunkan server sebelum juri membuka web.
 
@@ -911,6 +994,8 @@ Pembagian mengikuti tabel tugas tim (P1 PM & full-stack, P2 FE Dashboard, P3 FE 
 | Sen 30 Nov | Freeze, checklist pra-demo, submit | Perbaikan akhir | Perbaikan akhir | Perbaikan akhir | Perbaikan akhir |
 
 Catatan: 30 November 2026 jatuh pada hari Senin. Jam batas pengumpulan belum diketahui.
+
+Fitur prediksi (§5.10) tidak masuk tabel ini karena pemiliknya di luar P1–P5: model dilatih dan di-deploy sendiri di Hugging Face. Integrasinya hanya dikerjakan setelah endpoint model hidup dan kontraknya disetujui; kalau tidak selesai sebelum freeze, fitur tidak dirilis.
 
 ### 13.3 Risiko
 
@@ -938,3 +1023,4 @@ Catatan: 30 November 2026 jatuh pada hari Senin. Jam batas pengumpulan belum dik
 11. **Supabase**: project sudah memakai JWT signing keys (asimetris) atau masih JWT secret lama?
 12. **Navigasi**: Laporan cukup lewat tombol di header, atau jadi menu ke-8?
 13. **Nama anggota P1–P5**, untuk diisi di tabel rencana kerja.
+14. **Prediksi AI (§5.10)**: tahun target, fitur masukan, Space publik/privat, dan apakah interval keyakinan dilaporkan. Dijawab pemilik model sebelum BE `/forecast` ditulis.

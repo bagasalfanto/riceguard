@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from "react"
+import { useEffect, useRef, type ReactNode } from "react"
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 import { RotateCcw } from "lucide-react"
@@ -51,6 +51,12 @@ export interface MapFocusTarget {
   nonce: number
 }
 
+export interface MapViewState {
+  lat: number
+  lng: number
+  zoom: number
+}
+
 function MapAutoResize() {
   const map = useMap()
 
@@ -75,6 +81,60 @@ function MapFlyController({ focusTarget }: { focusTarget: MapFocusTarget | null 
       duration: 0.85,
     })
   }, [map, focusTarget])
+
+  return null
+}
+
+function MapSyncController({
+  syncView,
+  onViewChange,
+}: {
+  syncView?: MapViewState | null
+  onViewChange?: (view: MapViewState) => void
+}) {
+  const map = useMap()
+  const isSyncingRef = useRef(false)
+  const onViewChangeRef = useRef(onViewChange)
+  onViewChangeRef.current = onViewChange
+
+  useEffect(() => {
+    const emitView = () => {
+      if (isSyncingRef.current) return
+      const cb = onViewChangeRef.current
+      if (!cb) return
+      const center = map.getCenter()
+      cb({
+        lat: center.lat,
+        lng: center.lng,
+        zoom: map.getZoom(),
+      })
+    }
+
+    map.on("move", emitView)
+    map.on("zoomend", emitView)
+    return () => {
+      map.off("move", emitView)
+      map.off("zoomend", emitView)
+    }
+  }, [map])
+
+  useEffect(() => {
+    if (!syncView) return
+    const center = map.getCenter()
+    const zoom = map.getZoom()
+    const sameCenter =
+      Math.abs(center.lat - syncView.lat) < 1e-6 &&
+      Math.abs(center.lng - syncView.lng) < 1e-6
+    const sameZoom = Math.abs(zoom - syncView.zoom) < 1e-6
+    if (sameCenter && sameZoom) return
+
+    isSyncingRef.current = true
+    try {
+      map.setView([syncView.lat, syncView.lng], syncView.zoom, { animate: false })
+    } finally {
+      isSyncingRef.current = false
+    }
+  }, [map, syncView])
 
   return null
 }
@@ -105,6 +165,8 @@ function ResetViewControl({ onReset }: { onReset?: () => void }) {
 export interface BaseMapProps {
   basemap?: BasemapId
   focusTarget?: MapFocusTarget | null
+  syncView?: MapViewState | null
+  onViewChange?: (view: MapViewState) => void
   ariaLabel?: string
   className?: string
   overlay?: ReactNode
@@ -115,6 +177,8 @@ export interface BaseMapProps {
 export function BaseMap({
   basemap = "satellite",
   focusTarget = null,
+  syncView = null,
+  onViewChange,
   ariaLabel = "Peta interaktif keseimbangan beras 38 provinsi Indonesia",
   className = "h-[520px] w-full",
   overlay,
@@ -157,6 +221,7 @@ export function BaseMap({
         <ZoomControl position="bottomright" />
         <MapAutoResize />
         <MapFlyController focusTarget={focusTarget} />
+        <MapSyncController onViewChange={onViewChange} syncView={syncView} />
         <ResetViewControl onReset={onResetView} />
         {children}
       </MapContainer>
