@@ -8,7 +8,7 @@ from contextlib import contextmanager
 import httpx
 from app.core.config import Settings, get_settings
 from app.main import app
-from app.routers.public.forecast import get_forecast_transport
+from app.routers.publik.forecast import get_forecast_transport
 
 
 @contextmanager

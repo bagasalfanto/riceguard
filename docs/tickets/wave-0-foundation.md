@@ -179,7 +179,7 @@ Tidak ada fitur produk di wave ini. Tidak ada endpoint fitur selain `health` dan
   `SUPABASE_JWT_SECRET` (opsional), `CORS_ORIGINS`, `MAX_UPLOAD_MB=2`.
 - `app/core/errors.py`: `AppError(code, status_code, message, details)` → body PRD §10.
 - `app/core/security.py`: placeholder `require_admin` yang selalu 401 sampai T10.1.
-- `app/routers/public/meta.py`: `GET /meta/years`.
+- `app/routers/publik/meta.py`: `GET /meta/years`.
 - `GET /health` (di luar `/api/v1`) → `{"status": "ok"}`.
 - `apps/api/pyproject.toml`: fastapi, uvicorn[standard], sqlalchemy, psycopg[binary], pydantic-settings,
   pyjwt[crypto], pandas, openpyxl, httpx, pytest, pytest-cov.

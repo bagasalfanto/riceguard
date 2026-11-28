@@ -2,7 +2,7 @@
 scope: docs-index
 canonical-for: ["peta dokumentasi", "routing dokumen per tugas", "daftar berkas harness"]
 sources: ["AGENTS.md", "docs-map.json", "docs/"]
-last-verified: 2026-11-27
+last-verified: 2026-11-28
 ---
 
 # Indeks Dokumentasi RiceGuard
@@ -57,11 +57,11 @@ Jika tugas menyentuh kode di `apps/api/` atau `apps/web/`, baca juga `AGENTS.md`
 | `docs/DESIGN.md` | spesifikasi desain | token OKLCH terang/gelap, layout, peta, grafik, PDF, a11y | `apps/web/src/styles/index.css`, `apps/web/src/components/` | 2026-11-26 |
 | `docs/RULES.md` | aturan kerja | perintah CI, gaya kode Python/TS, tes, git, harness docs | `package.json`, `ruff.toml`, `.github/workflows/ci.yml` | 2026-11-26 |
 | `docs/api/README.md` | ikhtisar API | konvensi `/api/v1`, auth, error format, cache, CORS | `apps/api/app/main.py`, `apps/api/app/core/` | 2026-11-26 |
-| `docs/api/endpoints-public.md` | endpoint publik | spesifikasi seluruh rute API publik `/api/v1/*` | `apps/api/app/routers/public/`, `apps/api/app/schemas/` | 2026-11-26 |
+| `docs/api/endpoints-public.md` | endpoint publik | spesifikasi seluruh rute API publik `/api/v1/*` | `apps/api/app/routers/publik/`, `apps/api/app/schemas/` | 2026-11-26 |
 | `docs/api/endpoints-admin.md` | endpoint admin | spesifikasi seluruh rute admin `/api/v1/admin/*` | `apps/api/app/routers/admin/`, `apps/api/app/schemas/admin.py` | 2026-11-26 |
-| `docs/adr/0001-forecast-lewat-backend.md` | ADR forecast AI | alasan proxy `/forecast` melalui backend & off-switch | `apps/api/app/routers/public/forecast.py`, `apps/api/app/services/forecast.py` | 2026-11-26 |
+| `docs/adr/0001-forecast-lewat-backend.md` | ADR forecast AI | alasan proxy `/forecast` melalui backend & off-switch | `apps/api/app/routers/publik/forecast.py`, `apps/api/app/services/forecast.py` | 2026-11-26 |
 | `docs/adr/0002-pdf-generation.md` | ADR laporan PDF (digantikan) | catatan keputusan lama WeasyPrint; kanonik di ADR 0003 | `docs/adr/0003-laporan-pdf-dicetak-browser.md` | 2026-11-27 |
-| `docs/adr/0003-laporan-pdf-dicetak-browser.md` | ADR laporan cetak | laporan HTML siap-cetak, penghapusan WeasyPrint/Pango | `apps/api/app/routers/public/reports.py`, `apps/api/app/services/pdf.py`, `apps/web/src/features/reports/reportsData.ts` | 2026-11-27 |
+| `docs/adr/0003-laporan-pdf-dicetak-browser.md` | ADR laporan cetak | laporan HTML siap-cetak, penghapusan WeasyPrint/Pango | `apps/api/app/routers/publik/reports.py`, `apps/api/app/services/pdf.py`, `apps/web/src/features/reports/reportsData.ts` | 2026-11-27 |
 | `docs/agents/domain.md` | panduan skill domain | konvensi pembacaan `GLOSSARY.md` dan `docs/adr/` | `AGENTS.md`, `GLOSSARY.md` | 2026-11-26 |
 | `docs/agents/issue-tracker.md` | panduan issue tracker | konvensi `gh` CLI dan fallback lokal `docs/tickets/` | `AGENTS.md`, `docs/tickets/README.md` | 2026-11-26 |
 | `docs/agents/triage-labels.md` | label triase | pemetaan lima peran label triase kanonik | `AGENTS.md` | 2026-11-26 |

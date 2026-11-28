@@ -4,7 +4,7 @@ Panduan tambahan untuk berkas di `apps/api/` dan `packages/riceguard_calc/`. Atu
 
 ## Konvensi Struktur
 
-- **Router HTTP** (`app/routers/public/`, `app/routers/admin/`): validasi query/body via Pydantic + FastAPI `Depends`, lalu delegasikan ke `app/services/`. **Dilarang menulis rumus** di router.
+- **Router HTTP** (`app/routers/publik/`, `app/routers/admin/`): validasi query/body via Pydantic + FastAPI `Depends`, lalu delegasikan ke `app/services/`. **Dilarang menulis rumus** di router.
 - **Schema** (`app/schemas/`): model Pydantic v2 request/response. PATCH input wajib memakai `ConfigDict(extra="forbid")` agar kolom turunan ditolak.
 - **Service** (`app/services/`): logika domain, query SQLAlchemy 2, cache (`app/core/cache.py`), komposisi ekspor/PDF. Service hitung/DB tidak boleh memanggil HTTP eksternal (kecuali `storage.py` dan `forecast.py`).
 - **Model DB** (`app/db/models.py`): pemetaan 1:1 terhadap `supabase/migrations/0001_init.sql` (SQL murni, **tanpa Alembic**).

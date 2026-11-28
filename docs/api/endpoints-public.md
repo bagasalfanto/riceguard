@@ -1,8 +1,8 @@
 ---
 scope: api/endpoints-public
 canonical-for: ["spesifikasi endpoint publik REST API"]
-sources: ["apps/api/app/main.py", "apps/api/app/routers/public/", "apps/api/app/schemas/"]
-last-verified: 2026-11-27
+sources: ["apps/api/app/main.py", "apps/api/app/routers/publik/", "apps/api/app/schemas/"]
+last-verified: 2026-11-28
 ---
 
 # Endpoint Publik (`/api/v1/*`)

@@ -1,8 +1,8 @@
 ---
 scope: adr
 canonical-for: ["keputusan arsitektur pembuatan laporan cetak"]
-sources: ["apps/api/app/routers/public/reports.py", "apps/api/app/services/pdf.py", "apps/api/app/templates/reports/laporan.html", "apps/web/src/features/reports/reportsData.ts"]
-last-verified: 2026-11-27
+sources: ["apps/api/app/routers/publik/reports.py", "apps/api/app/services/pdf.py", "apps/api/app/templates/reports/laporan.html", "apps/web/src/features/reports/reportsData.ts"]
+last-verified: 2026-11-28
 ---
 
 # 0003 — Laporan dicetak dari browser, bukan dirender PDF di backend

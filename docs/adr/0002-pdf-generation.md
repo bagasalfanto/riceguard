@@ -1,7 +1,7 @@
 ---
 scope: adr
 canonical-for: ["keputusan arsitektur pembuatan PDF backend"]
-sources: ["apps/api/app/services/pdf.py", "apps/api/app/routers/public/reports.py", "apps/api/app/templates/reports/laporan.html", "apps/api/Dockerfile", ".github/workflows/ci.yml"]
+sources: ["apps/api/app/services/pdf.py", "apps/api/app/routers/publik/reports.py", "apps/api/app/templates/reports/laporan.html", "apps/api/Dockerfile", ".github/workflows/ci.yml"]
 last-verified: 2026-11-27
 status: superseded
 superseded-by: docs/adr/0003-laporan-pdf-dicetak-browser.md

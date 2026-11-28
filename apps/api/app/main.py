@@ -1,36 +1,86 @@
 from __future__ import annotations
 
-import importlib
-import os
-import sys
-
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="RiceGuard API", version="0.1.0")
+from app.core.config import get_settings
+from app.core.errors import AppError, app_error_handler, validation_error_handler
+from app.routers.admin import audit as admin_audit
+from app.routers.admin import content as admin_content
+from app.routers.admin import versions as admin_versions
+from app.routers.publik import (
+    content,
+    data_exports,
+    distribution,
+    forecast,
+    map_layers,
+    meta,
+    provinces,
+    recommendations,
+    reports,
+    rice_balance,
+    summary,
+    trends,
+)
+
+app = FastAPI(
+    title="RiceGuard API",
+    version="0.1.0",
+    description="Keseimbangan produksi-kebutuhan beras dan rekomendasi distribusi 38 provinsi.",
+)
+
+_settings = get_settings()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_settings.cors_origin_list,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type"],
+    expose_headers=["Content-Disposition"],
+)
+
+app.add_exception_handler(AppError, app_error_handler)
+app.add_exception_handler(RequestValidationError, validation_error_handler)
+
+API = "/api/v1"
 
 
-def _listing(path: str) -> object:
-    try:
-        return sorted(os.listdir(path))
-    except Exception as exc:  # noqa: BLE001 - diagnostik sementara
-        return f"{type(exc).__name__}: {exc}"
+@app.middleware("http")
+async def cache_control_publik(request, call_next):
+    """Data publik jarang berubah: izinkan cache 5 menit.
+
+    Request yang membawa token admin (preview draft) tidak diberi header ini supaya
+    draft tidak ikut tersimpan di cache bersama.
+    """
+    response = await call_next(request)
+    if (
+        request.method == "GET"
+        and request.url.path.startswith(API)
+        and "authorization" not in request.headers
+        and response.status_code == 200
+    ):
+        response.headers["Cache-Control"] = "public, max-age=300"
+    return response
+
+
+app.include_router(meta.router, prefix=API)
+app.include_router(summary.router, prefix=API)
+app.include_router(content.router, prefix=API)
+app.include_router(provinces.router, prefix=API)
+app.include_router(map_layers.router, prefix=API)
+app.include_router(distribution.router, prefix=API)
+app.include_router(recommendations.router, prefix=API)
+app.include_router(rice_balance.router, prefix=API)
+app.include_router(trends.router, prefix=API)
+app.include_router(data_exports.router, prefix=API)
+app.include_router(reports.router, prefix=API)
+app.include_router(forecast.router, prefix=API)
+app.include_router(admin_versions.router, prefix=API)
+app.include_router(admin_content.router, prefix=API)
+app.include_router(admin_audit.router, prefix=API)
 
 
 @app.get("/health", tags=["meta"])
 def health() -> dict:
-    hasil: dict[str, object] = {
-        "cwd": os.getcwd(),
-        "sys_path": sys.path[:6],
-        "app_module_file": getattr(sys.modules.get("app"), "__file__", None),
-        "list_app": _listing("app"),
-        "list_routers": _listing("app/routers"),
-        "list_public": _listing("app/routers/public"),
-        "list_admin": _listing("app/routers/admin"),
-    }
-    for nama in ("app.routers", "app.routers.public", "app.routers.admin", "app.routers.public.meta"):
-        try:
-            importlib.import_module(nama)
-            hasil[nama] = "ok"
-        except Exception as exc:  # noqa: BLE001 - diagnostik sementara
-            hasil[nama] = f"{type(exc).__name__}: {exc}"
-    return hasil
+    return {"status": "ok"}

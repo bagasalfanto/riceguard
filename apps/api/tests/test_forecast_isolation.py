@@ -7,7 +7,7 @@ import httpx
 from app.core.cache import cache
 from app.core.config import Settings, get_settings
 from app.main import app
-from app.routers.public.forecast import get_forecast_transport
+from app.routers.publik.forecast import get_forecast_transport
 
 OFFICIAL_ENDPOINTS = (
     "/api/v1/summary",

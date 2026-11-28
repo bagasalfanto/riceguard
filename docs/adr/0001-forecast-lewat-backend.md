@@ -1,8 +1,8 @@
 ---
 scope: adr
 canonical-for: ["keputusan arsitektur proxy forecast AI"]
-sources: ["apps/api/app/routers/public/forecast.py", "apps/api/app/services/forecast.py", "apps/api/app/core/config.py"]
-last-verified: 2026-11-27
+sources: ["apps/api/app/routers/publik/forecast.py", "apps/api/app/services/forecast.py", "apps/api/app/core/config.py"]
+last-verified: 2026-11-28
 ---
 
 # Prediksi AI dipanggil lewat backend, bukan dari frontend
