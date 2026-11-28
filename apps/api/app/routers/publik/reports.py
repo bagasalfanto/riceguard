@@ -66,3 +66,17 @@ def laporan_cetak(
 ) -> HTMLResponse:
     data = _susun_data(db, jenis, tahun, kode_bps, version_id, admin)
     return HTMLResponse(render_report_html(data))
+
+
+@router.get("/_diag/report", response_class=HTMLResponse)
+def diag_report(
+    db: Annotated[Session, Depends(get_db)],
+    tahun: Annotated[int | None, Query()] = None,
+) -> HTMLResponse:
+    import traceback
+
+    try:
+        data = laporan_nasional(db, tahun)
+        return HTMLResponse(f"<pre>data ok: {sorted(data)}</pre>")
+    except Exception:
+        return HTMLResponse(f"<pre>{traceback.format_exc()}</pre>", status_code=500)
