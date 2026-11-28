@@ -80,3 +80,26 @@ def diag_report(
         return HTMLResponse(f"<pre>data ok: {sorted(data)}</pre>")
     except Exception:
         return HTMLResponse(f"<pre>{traceback.format_exc()}</pre>", status_code=500)
+
+
+@router.get("/_diag/render", response_class=HTMLResponse)
+def diag_render(
+    db: Annotated[Session, Depends(get_db)],
+    tahun: Annotated[int | None, Query()] = None,
+) -> HTMLResponse:
+    import os
+    import traceback
+
+    jejak: list[str] = [f"MPLCONFIGDIR={os.environ.get('MPLCONFIGDIR')}", f"cwd={os.getcwd()}"]
+    try:
+        from app.services.pdf import _load_geojson, _mpl
+
+        jejak.append(f"mpl={_mpl().__version__}")
+        jejak.append(f"geojson={len(_load_geojson().get('features', []))} fitur")
+        data = laporan_nasional(db, tahun)
+        html = render_report_html(data)
+        jejak.append(f"render ok: {len(html)} char")
+        return HTMLResponse("<pre>" + "\n".join(jejak) + "</pre>")
+    except Exception:
+        jejak.append(traceback.format_exc())
+        return HTMLResponse("<pre>" + "\n".join(jejak) + "</pre>", status_code=500)
