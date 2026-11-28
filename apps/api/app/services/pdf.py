@@ -65,10 +65,19 @@ def _load_geojson() -> dict[str, Any]:
 
 @lru_cache(maxsize=1)
 def _mpl() -> ModuleType:
-    """Import Matplotlib sekali dan paksa backend non-GUI (Agg) untuk host tanpa display."""
+    """Import Matplotlib sekali dan paksa backend non-GUI (Agg) untuk host tanpa display.
+
+    Font didaftarkan eksplisit dari `app/assets/fonts/`: bundle serverless kadang tidak
+    menyertakan `mpl-data/fonts/ttf`, dan tanpa font Matplotlib gagal menggambar teks.
+    """
     import matplotlib
 
     matplotlib.use("Agg")
+    from matplotlib import font_manager
+
+    for ttf in sorted((Path(__file__).resolve().parents[1] / "assets" / "fonts").glob("*.ttf")):
+        font_manager.fontManager.addfont(str(ttf))
+    matplotlib.rcParams["font.family"] = ["DejaVu Sans"]
     return matplotlib
 
 
