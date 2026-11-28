@@ -92,6 +92,17 @@ def diag_render(
 
     jejak: list[str] = [f"MPLCONFIGDIR={os.environ.get('MPLCONFIGDIR')}", f"cwd={os.getcwd()}"]
     try:
+        import matplotlib
+        from matplotlib import font_manager
+
+        data_dir = matplotlib.get_data_path()
+        ttf = os.path.join(data_dir, "fonts", "ttf")
+        jejak.append(f"data_path={data_dir}")
+        jejak.append(f"ttf_exists={os.path.isdir(ttf)}")
+        jejak.append(f"ttf_files={sorted(os.listdir(ttf))[:12] if os.path.isdir(ttf) else 'NA'}")
+        cfg = os.environ.get("MPLCONFIGDIR") or ""
+        jejak.append(f"cfg_list={sorted(os.listdir(cfg)) if cfg and os.path.isdir(cfg) else 'NA'}")
+        jejak.append(f"fonts_terdaftar={len(font_manager.fontManager.ttflist)}")
         from app.services.pdf import _load_geojson, _mpl
 
         jejak.append(f"mpl={_mpl().__version__}")
