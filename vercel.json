@@ -7,8 +7,7 @@
       "buildCommand": "mkdir -p dataset/geo && { cp ../../dataset/geo/provinsi-38.min.geojson dataset/geo/ 2>/dev/null || true; } && test -f dataset/geo/provinsi-38.min.geojson",
       "functions": {
         "app/main.py": {
-          "maxDuration": 60,
-          "excludeFiles": "{node_modules/**,**/node_modules/**,apps/web/**,apps/api/tests/**,apps/api/.pytest_cache/**,**/__pycache__/**,**/*.egg-info/**,.git/**,docs/**,dataset/raw/**,dataset/tests/**,scripts/**,supabase/**}"
+          "maxDuration": 60
         }
       }
     },
