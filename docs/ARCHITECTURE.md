@@ -92,10 +92,12 @@ FK `province_stats.kode_bps`, `province_stat_edits.kode_bps`, serta `distributio
 
 | Service | Root | Framework | Peran publik |
 |---|---|---|---|
-| `api` | `apps/api` | `fastapi` (`entrypoint: app.main:app`) | `/api/(.*)` dan `/health` |
+| `api` | `apps/api` | `fastapi` (entrypoint dideteksi otomatis: `app/main.py`) | `/api/(.*)` dan `/health` |
 | `web` | `apps/web` | `vite` | sisanya, dengan SPA fallback `/(.*)` → `/index.html` |
 
 - **Tanpa service binding:** `web` adalah SPA statis yang memanggil `/api/v1` same-origin (default `BASE_URL` di `src/lib/api.ts`); tidak ada panggilan server-ke-server sehingga tidak ada URL internal yang perlu di-inject.
 - **`packages/riceguard_calc` bukan service:** ia dependensi path `apps/api` lewat `[tool.uv.sources]`, sehingga installer uv Vercel ikut memasangnya. Instalasi lokal/CI tetap menyebut kedua editable sekaligus.
+- **Batas 250 MB bundle:** `functions["app/main.py"].excludeFiles` membuang `tests/`, `__pycache__`, `.pytest_cache`, `*.egg-info`, `.vercel`, dan `.venv` dari bundle. Tanpa itu bundle melewati 250 MB dan Vercel mengaktifkan mode "optimizing dependencies" yang memasang dependensi ke `/tmp` saat cold start — fungsi API lalu gagal boot tanpa traceback (`FUNCTION_INVOCATION_FAILED` pada semua rute, termasuk `/health`).
+- **`maxDuration: 60`** pada fungsi API memberi ruang render laporan Matplotlib (Hobby: 10 detik bawaan).
 - **GeoJSON laporan:** `buildCommand` service `api` menyalin `dataset/geo/provinsi-38.min.geojson` ke `apps/api/dataset/geo/` karena file itu berada di luar root service, lalu gagal build bila salinan tidak ada; `services/pdf.py` menemukannya lewat fallback `Path.cwd()`.
-- **Variabel lingkungan wajib di Vercel:** `DATABASE_URL` (pooler Supabase), `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`, `CORS_ORIGINS`. `AI_ENDPOINT_URL` opsional (kosong = `/forecast` membalas `503 AI_UNAVAILABLE`).
+- **Variabel lingkungan wajib di Vercel:** `DATABASE_URL` (pooler Supabase), `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`, `CORS_ORIGINS`, `MPLCONFIGDIR=/tmp` (cache font Matplotlib di filesystem read-only). `AI_ENDPOINT_URL` opsional (kosong = `/forecast` membalas `503 AI_UNAVAILABLE`).
