@@ -1,28 +1,39 @@
 from __future__ import annotations
 
+import sys
+import traceback
+
+print("riceguard: main.py mulai dimuat", file=sys.stderr, flush=True)
+
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.core.config import get_settings
-from app.core.errors import AppError, app_error_handler, validation_error_handler
-from app.routers.admin import audit as admin_audit
-from app.routers.admin import content as admin_content
-from app.routers.admin import versions as admin_versions
-from app.routers.public import (
-    content,
-    data_exports,
-    distribution,
-    forecast,
-    map_layers,
-    meta,
-    provinces,
-    recommendations,
-    reports,
-    rice_balance,
-    summary,
-    trends,
-)
+try:
+    from app.core.config import get_settings
+    from app.core.errors import AppError, app_error_handler, validation_error_handler
+    from app.routers.admin import audit as admin_audit
+    from app.routers.admin import content as admin_content
+    from app.routers.admin import versions as admin_versions
+    from app.routers.public import (
+        content,
+        data_exports,
+        distribution,
+        forecast,
+        map_layers,
+        meta,
+        provinces,
+        recommendations,
+        reports,
+        rice_balance,
+        summary,
+        trends,
+    )
+except Exception:
+    traceback.print_exc()
+    raise
+
+print("riceguard: seluruh router berhasil dimuat", file=sys.stderr, flush=True)
 
 app = FastAPI(
     title="RiceGuard API",
