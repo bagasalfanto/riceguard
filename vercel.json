@@ -8,7 +8,7 @@
       "functions": {
         "app/main.py": {
           "maxDuration": 60,
-          "excludeFiles": "{tests/**,**/__pycache__/**,.pytest_cache/**,*.egg-info/**,.vercel/**,.venv/**,.env,.env.*,AGENTS.md,Dockerfile}"
+          "excludeFiles": "{node_modules/**,**/node_modules/**,apps/web/**,apps/api/tests/**,apps/api/.pytest_cache/**,**/__pycache__/**,**/*.egg-info/**,.git/**,docs/**,dataset/raw/**,dataset/tests/**,scripts/**,supabase/**}"
         }
       }
     },
