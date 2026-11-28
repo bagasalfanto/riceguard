@@ -4,7 +4,7 @@
     "api": {
       "root": "apps/api",
       "framework": "fastapi",
-      "buildCommand": "mkdir -p dataset/geo && { cp ../../dataset/geo/provinsi-38.min.geojson dataset/geo/ 2>/dev/null || true; } && test -f dataset/geo/provinsi-38.min.geojson",
+      "buildCommand": "mkdir -p dataset/geo && { cp ../../dataset/geo/provinsi-38.min.geojson dataset/geo/ 2>/dev/null || true; } && test -f dataset/geo/provinsi-38.min.geojson && { V=.vercel/python/services/api/.venv; if [ -d \"$V\" ]; then find \"$V\" -type d \\( -name tests -o -name test \\) -prune -exec rm -rf {} + 2>/dev/null; find \"$V\" -name '*.pyi' -delete 2>/dev/null; find \"$V\" -path '*matplotlib/mpl-data/fonts/ttf/*' ! -name 'DejaVuSans*.ttf' -delete 2>/dev/null; fi; }",
       "functions": {
         "app/main.py": {
           "maxDuration": 60
